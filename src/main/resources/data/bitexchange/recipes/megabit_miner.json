@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MMM",
+    "MEM",
+    "MMM"
+  ],
+  "key": {
+    "M": {
+      "item": "bitexchange:kilobit_miner"
+    },
+    "E": {
+      "item": "minecraft:emerald"
+    }
+  },
+  "result": {
+    "item": "bitexchange:megabit_miner",
+    "count": 1
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "bitexchange",
+  "version": "${version}",
+
+  "name": "Bit Exchange",
+  "description": "Convert items to bits, and bits to items",
+  "authors": [
+    "Sylvi"
+  ],
+  "contributors": [],
+  "contact": {},
+
+  "license": "MIT",
+  "icon": "assets/bitexchange/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "moe.sylvi.bitexchange.BitExchange"
+    ],
+    "client": [
+      "moe.sylvi.bitexchange.BitExchangeClient"
+    ],
+    "server": [],
+    "cardinal-components": [
+      "moe.sylvi.bitexchange.BitComponents"
+    ]
+  },
+  "mixins": [
+    "bitexchange.mixins.json"
+  ],
+
+  "custom": {
+    "cardinal-components": [
+      "bitexchange:item_knowledge"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.17.x",
+    "java": ">=16"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "id": "minecraft:end_stone",
+      "value": 1,
+      "research": 16
+    },
+    {
+      "id": "minecraft:chorus_plant",
+      "value": 64,
+      "research": 16
+    },
+    {
+      "id": "minecraft:chorus_flower",
+      "value": 96,
+      "research": 8
+    },
+    {
+      "id": "minecraft:chorus_fruit",
+      "value": 192,
+      "research": 16
+    },
+    {
+      "id": "minecraft:elytra",
+      "value": 131072,
+      "research": 2
+    }
+  ]
+}

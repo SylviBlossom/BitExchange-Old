@@ -1,0 +1,55 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "override": false,
+      "id": "#minecraft:logs",
+      "value": 32,
+      "research": 16
+    },
+    {
+      "override": false,
+      "id": "#minecraft:saplings",
+      "value": 32,
+      "research": 16
+    },
+    {
+      "override": false,
+      "id": "#minecraft:leaves",
+      "value": 4,
+      "research": 16
+    },
+    {
+      "override": false,
+      "id": "#minecraft:planks",
+      "value": 8,
+      "research": 16,
+      "resource": false
+    },
+    {
+      "override": false,
+      "id": "#minecraft:wool",
+      "value_ref": "minecraft:white_wool",
+      "research": 16,
+      "resource": false
+    },
+    {
+      "override": false,
+      "id": "#minecraft:tall_flowers",
+      "value": 32,
+      "research": 8
+    },
+    {
+      "override": false,
+      "id": "#minecraft:small_flowers",
+      "value": 16,
+      "research": 8
+    },
+    {
+      "override": false,
+      "id": "#minecraft:music_discs",
+      "value": 2048,
+      "research": 2
+    }
+  ]
+}

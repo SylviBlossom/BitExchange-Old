@@ -1,0 +1,39 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "id": "minecraft:obsidian",
+      "value": 64,
+      "research": 8
+    },
+    {
+      "ids": [
+        "minecraft:melon",
+        "minecraft:pumpkin"
+      ],
+      "value": 144,
+      "research": 8
+    },
+    {
+      "id": "minecraft:carved_pumpkin",
+      "value": 144,
+      "research": 8,
+      "resource": false
+    },
+    {
+      "id": "minecraft:cobweb",
+      "value": 12,
+      "research": 16
+    },
+    {
+      "id": "minecraft:bell",
+      "value_ref": "minecraft:gold_ingot*7",
+      "research": 4
+    },
+    {
+      "id": "minecraft:sculk_sensor",
+      "value": 1536,
+      "research": 4
+    }
+  ]
+}

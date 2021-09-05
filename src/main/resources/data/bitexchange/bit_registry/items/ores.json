@@ -1,0 +1,60 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "id": "minecraft:redstone",
+      "value": 64,
+      "research": 16
+    },
+    {
+      "id": "minecraft:coal",
+      "value": 128,
+      "research": 16
+    },
+    {
+      "id": "minecraft:iron_ingot",
+      "value": 256,
+      "research": 16
+    },
+    {
+      "id": "minecraft:copper_ingot",
+      "value": 256,
+      "research": 16
+    },
+    {
+      "id": "minecraft:quartz",
+      "value": 256,
+      "research": 16
+    },
+    {
+      "id": "minecraft:lapis_lazuli",
+      "value": 864,
+      "research": 16
+    },
+    {
+      "id": "minecraft:amethyst_shard",
+      "value": 864,
+      "research": 16
+    },
+    {
+      "id": "minecraft:gold_ingot",
+      "value": 2048,
+      "research": 16
+    },
+    {
+      "id": "minecraft:emerald",
+      "value": 4096,
+      "research": 8
+    },
+    {
+      "id": "minecraft:diamond",
+      "value": 8192,
+      "research": 8
+    },
+    {
+      "id": "minecraft:netherite_scrap",
+      "value": 32768,
+      "research": 8
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "DFD",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "bitexchange:bit"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "result": {
+    "item": "bitexchange:bit_converter",
+    "count": 1
+  }
+}

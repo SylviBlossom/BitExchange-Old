@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "bitexchange:block/bit_researcher" },
+    "facing=east": { "model": "bitexchange:block/bit_researcher", "y": 90 },
+    "facing=south": { "model": "bitexchange:block/bit_researcher", "y": 180 },
+    "facing=west": { "model": "bitexchange:block/bit_researcher", "y": 270 }
+  }
+}

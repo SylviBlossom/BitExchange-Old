@@ -1,0 +1,95 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "id": "minecraft:prismarine_shard",
+      "value": 256,
+      "research": 16
+    },
+    {
+      "id": "minecraft:prismarine_crystals",
+      "value": 512,
+      "research": 16
+    },
+    {
+      "id": "minecraft:heart_of_the_sea",
+      "value": 32768,
+      "research": 4
+    },
+    {
+      "ids": [
+        "minecraft:seagrass",
+        "minecraft:kelp"
+      ],
+      "value": 1,
+      "research": 16
+    },
+    {
+      "ids": [
+        "minecraft:sponge",
+        "minecraft:wet_sponge"
+      ],
+      "value": 128,
+      "research": 16
+    },
+    {
+      "id": "minecraft:sea_pickle",
+      "value": 16,
+      "research": 16
+    },
+    {
+      "ids": [
+        "minecraft:tube_coral",
+        "minecraft:brain_coral",
+        "minecraft:bubble_coral",
+        "minecraft:fire_coral",
+        "minecraft:horn_coral",
+        "minecraft:tube_coral_fan",
+        "minecraft:brain_coral_fan",
+        "minecraft:bubble_coral_fan",
+        "minecraft:fire_coral_fan",
+        "minecraft:horn_coral_fan"
+      ],
+      "value": 16,
+      "research": 16
+    },
+    {
+      "ids": [
+        "minecraft:tube_coral_block",
+        "minecraft:brain_coral_block",
+        "minecraft:bubble_coral_block",
+        "minecraft:fire_coral_block",
+        "minecraft:horn_coral_block"
+      ],
+      "value": 64,
+      "research": 16
+    },
+    {
+      "ids": [
+        "minecraft:dead_tube_coral",
+        "minecraft:dead_brain_coral",
+        "minecraft:dead_bubble_coral",
+        "minecraft:dead_fire_coral",
+        "minecraft:dead_horn_coral",
+        "minecraft:dead_tube_coral_fan",
+        "minecraft:dead_brain_coral_fan",
+        "minecraft:dead_bubble_coral_fan",
+        "minecraft:dead_fire_coral_fan",
+        "minecraft:dead_horn_coral_fan"
+      ],
+      "value": 1,
+      "research": 16
+    },
+    {
+      "ids": [
+        "minecraft:dead_tube_coral_block",
+        "minecraft:dead_brain_coral_block",
+        "minecraft:dead_bubble_coral_block",
+        "minecraft:dead_fire_coral_block",
+        "minecraft:dead_horn_coral_block"
+      ],
+      "value": 4,
+      "research": 16
+    }
+  ]
+}

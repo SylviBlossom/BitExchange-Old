@@ -1,0 +1,26 @@
+{
+  "block.bitexchange.bit_converter": "Bit Converter",
+  "block.bitexchange.bit_researcher": "Bit Researcher",
+  "block.bitexchange.bit_factory": "Bit Factory",
+
+  "item.bitexchange.bit_array": "Bit Array",
+
+  "block.bitexchange.bit_miner": "Bit Miner",
+  "block.bitexchange.byte_miner": "Byte Miner",
+  "block.bitexchange.kilobit_miner": "Kilobit Miner",
+  "block.bitexchange.megabit_miner": "Megabit Miner",
+  "block.bitexchange.gigabit_miner": "Gigabit Miner",
+  "block.bitexchange.terabit_miner": "Terabit Miner",
+  "block.bitexchange.petabit_miner": "Petabit Miner",
+  "block.bitexchange.exabit_miner": "Exabit Miner",
+  "block.bitexchange.itty_bit_miner": "Itty Bit Miner",
+  "item.bitexchange.bit": "Bit",
+  "item.bitexchange.byte": "Byte",
+  "item.bitexchange.kilobit": "Kilobit",
+  "item.bitexchange.megabit": "Megabit",
+  "item.bitexchange.gigabit": "Gigabit",
+  "item.bitexchange.terabit": "Terabit",
+  "item.bitexchange.petabit": "Petabit",
+  "item.bitexchange.exabit": "Exabit",
+  "item.bitexchange.itty_bit": "Itty Bit"
+}

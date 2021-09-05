@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "bitexchange:bit_miner"
+    }
+  ],
+  "result": {
+    "item": "bitexchange:itty_bit_miner",
+    "count": 9
+  }
+}

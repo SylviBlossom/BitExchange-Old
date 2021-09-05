@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "DKD",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "bitexchange:bit"
+    },
+    "K": {
+      "item": "minecraft:book"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "bitexchange:bit_researcher",
+    "count": 1
+  }
+}

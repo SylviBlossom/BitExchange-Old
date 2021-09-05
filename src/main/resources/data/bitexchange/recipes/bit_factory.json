@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "RFR",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "bitexchange:bit"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "bitexchange:bit_factory",
+    "count": 1
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "bitexchange:fluid",
+  "values": [
+    {
+      "id": "minecraft:water",
+      "value": 1
+    },
+    {
+      "id": "minecraft:lava",
+      "value": 64
+    }
+  ]
+}

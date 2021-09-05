@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MMM",
+    "MNM",
+    "MMM"
+  ],
+  "key": {
+    "M": {
+      "item": "bitexchange:terabit_miner"
+    },
+    "N": {
+      "item": "minecraft:netherite_scrap"
+    }
+  },
+  "result": {
+    "item": "bitexchange:petabit_miner",
+    "count": 1
+  }
+}

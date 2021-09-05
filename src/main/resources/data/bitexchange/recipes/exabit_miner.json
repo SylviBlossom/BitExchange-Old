@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MMM",
+    "MNM",
+    "MMM"
+  ],
+  "key": {
+    "M": {
+      "item": "bitexchange:petabit_miner"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "result": {
+    "item": "bitexchange:exabit_miner",
+    "count": 1
+  }
+}

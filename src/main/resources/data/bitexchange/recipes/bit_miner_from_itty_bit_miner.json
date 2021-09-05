@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "III",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "bitexchange:itty_bit_miner"
+    }
+  },
+  "result": {
+    "item": "bitexchange:bit_miner",
+    "count": 1
+  }
+}

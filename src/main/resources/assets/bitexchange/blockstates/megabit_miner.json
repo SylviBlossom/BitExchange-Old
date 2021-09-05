@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "bitexchange:block/megabit_miner" }
+  }
+}

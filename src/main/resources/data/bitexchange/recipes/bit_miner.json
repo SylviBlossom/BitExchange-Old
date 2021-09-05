@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SIS",
+    "PBP",
+    "SIS"
+  ],
+  "key": {
+    "B": {
+      "item": "bitexchange:bit_array"
+    },
+    "P": {
+      "item": "minecraft:iron_pickaxe"
+    },
+    "S": {
+      "item": "minecraft:stone"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "bitexchange:bit_miner",
+    "count": 1
+  }
+}

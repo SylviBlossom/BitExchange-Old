@@ -1,0 +1,146 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "id": "minecraft:milk_bucket",
+      "value_ref": "minecraft:bucket",
+      "value": 64
+    },
+    {
+      "id": "minecraft:powder_snow_bucket",
+      "value_ref": "minecraft:bucket",
+      "value": 1,
+      "research": 4
+    },
+    {
+      "id": "minecraft:pufferfish_bucket",
+      "value_ref": "minecraft:water_bucket,minecraft:pufferfish",
+      "research": 4
+    },
+    {
+      "id": "minecraft:salmon_bucket",
+      "value_ref": "minecraft:water_bucket,minecraft:salmon",
+      "research": 4
+    },
+    {
+      "id": "minecraft:cod_bucket",
+      "value_ref": "minecraft:water_bucket,minecraft:cod",
+      "research": 4
+    },
+    {
+      "id": "minecraft:tropical_fish_bucket",
+      "value_ref": "minecraft:water_bucket,minecraft:tropical_fish",
+      "research": 4
+    },
+    {
+      "id": "minecraft:axolotl_bucket",
+      "value_ref": "minecraft:water_bucket",
+      "value": 128,
+      "research": 4
+    },
+    {
+      "id": "minecraft:flint",
+      "value": 4,
+      "research": 8
+    },
+    {
+      "id": "minecraft:apple",
+      "value": 128,
+      "research": 8
+    },
+    {
+      "ids": [
+        "minecraft:wheat_seeds",
+        "minecraft:melon_seeds",
+        "minecraft:pumpkin_seeds",
+        "minecraft:beetroot_seeds"
+      ],
+      "value": 16,
+      "research": 16
+    },
+    {
+      "ids": [
+        "minecraft:wheat",
+        "minecraft:beetroot",
+        "minecraft:carrot",
+        "minecraft:potato",
+        "minecraft:poisonous_potato"
+      ],
+      "value": 24,
+      "research": 16
+    },
+    {
+      "id": "minecraft:melon_slice",
+      "value": 16,
+      "research": 16,
+      "resource": false
+    },
+    {
+      "ids": [
+        "minecraft:sweet_berries",
+        "minecraft:glow_berries"
+      ],
+      "value": 16,
+      "research": 16
+    },
+    {
+      "id": "minecraft:cocoa_beans",
+      "value": 64,
+      "research": 16
+    },
+    {
+      "id": "minecraft:clay_ball",
+      "value": 16,
+      "research": 16
+    },
+    {
+      "id": "minecraft:enchanted_golden_apple",
+      "value": 131072,
+      "research": 4
+    },
+    {
+      "ids": [
+        "minecraft:saddle",
+        "minecraft:name_tag"
+      ],
+      "value": 192,
+      "research": 4
+    },
+    {
+      "id": "minecraft:honey_bottle",
+      "value_ref": "minecraft:sugar_cane*3",
+      "value": 1,
+      "research": 8
+    },
+    {
+      "id": "minecraft:honeycomb",
+      "value": 32,
+      "research": 16
+    },
+    {
+      "id": "minecraft:dragon_breath",
+      "value": 2,
+      "research": 8
+    },
+    {
+      "id": "minecraft:experience_bottle",
+      "value": 49152,
+      "research": 4
+    },
+    {
+      "id": "minecraft:iron_horse_armor",
+      "value_ref": "minecraft:iron_ingot*8",
+      "research": 4
+    },
+    {
+      "id": "minecraft:golden_horse_armor",
+      "value_ref": "minecraft:gold_ingot*8",
+      "research": 4
+    },
+    {
+      "id": "minecraft:diamond_horse_armor",
+      "value_ref": "minecraft:diamond*8",
+      "research": 4
+    }
+  ]
+}

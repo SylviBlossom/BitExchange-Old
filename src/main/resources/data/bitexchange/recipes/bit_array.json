@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BRB",
+    "BGB",
+    "BRB"
+  ],
+  "key": {
+    "B": {
+      "item": "bitexchange:bit"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "result": {
+    "item": "bitexchange:bit_array",
+    "count": 1
+  }
+}

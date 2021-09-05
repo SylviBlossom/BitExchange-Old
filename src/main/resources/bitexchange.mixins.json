@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "moe.sylvi.bitexchange.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "MinecraftServerMixin",
+    "IngredientMixin",
+    "SmithingRecipeMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

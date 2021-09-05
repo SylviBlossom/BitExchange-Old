@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MMM",
+    "MDM",
+    "MMM"
+  ],
+  "key": {
+    "M": {
+      "item": "bitexchange:megabit_miner"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "bitexchange:gigabit_miner",
+    "count": 1
+  }
+}

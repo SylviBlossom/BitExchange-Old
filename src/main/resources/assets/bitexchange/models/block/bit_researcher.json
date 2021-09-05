@@ -1,0 +1,8 @@
+{
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "top": "bitexchange:block/bit_researcher_top",
+    "side": "bitexchange:block/bit_researcher_side",
+    "bottom": "bitexchange:block/bit_researcher_bottom"
+  }
+}
