@@ -1,8 +1,12 @@
 package moe.sylvi.bitexchange;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
+import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
+import moe.sylvi.bitexchange.bit.registry.ResearchableBitRegistry;
 import moe.sylvi.bitexchange.bit.registry.builder.*;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.storage.BitStorage;
@@ -29,8 +33,10 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
@@ -188,29 +194,53 @@ public class BitExchange implements ModInitializer {
                                 BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).addKnowledge(itemArg.getItem(), Integer.MAX_VALUE);
                                 return 1;
                             })
+                        ).then(argument("fluid", StringArgumentType.string())
+                            .executes((ctx) -> {
+                                var fluidStr = StringArgumentType.getString(ctx, "fluid");
+                                var fluid = Registry.FLUID.getOrEmpty(new Identifier(fluidStr));
+                                if (!fluid.isEmpty()) {
+                                    BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayer()).addKnowledge(fluid.get(), Long.MAX_VALUE);
+                                }
+                                return 1;
+                            })
                         )
                     ).then(literal("set")
                         .then(argument("item", ItemStackArgumentType.itemStack())
                             .then(argument("count", IntegerArgumentType.integer(0))
                                 .executes((ctx) -> {
                                     ItemStackArgument itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
-                                    BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).addKnowledge(itemArg.getItem(), Integer.MAX_VALUE);
+                                    var knowledge = BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer());
+                                    var knowledgeMap = knowledge.getKnowledgeMap();
+                                    knowledgeMap.put(itemArg.getItem(), Math.min(LongArgumentType.getLong(ctx, "count"), BitRegistries.ITEM.getResearch(itemArg.getItem())));
+                                    knowledge.setKnowledgeMap(knowledgeMap);
+                                    return 1;
+                                })
+                            )
+                        ).then(argument("fluid", StringArgumentType.string())
+                            .then(argument("count", LongArgumentType.longArg(0))
+                                .executes((ctx) -> {
+                                    var fluidStr = StringArgumentType.getString(ctx, "fluid");
+                                    var fluid = Registry.FLUID.getOrEmpty(new Identifier(fluidStr));
+                                    if (!fluid.isEmpty()) {
+                                        var knowledge = BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayer());
+                                        var knowledgeMap = knowledge.getKnowledgeMap();
+                                        knowledgeMap.put(fluid.get(), Math.min(LongArgumentType.getLong(ctx, "count"), BitRegistries.FLUID.getResearch(fluid.get())));
+                                        knowledge.setKnowledgeMap(knowledgeMap);
+                                    }
                                     return 1;
                                 })
                             )
                         )
                     ).then(literal("complete")
                         .executes((ctx) -> {
-                            Map<Item, Long> knowledge = BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).getAllKnowledge();
-                            for (ItemBitInfo info : BitRegistries.ITEM) {
-                                knowledge.put(info.getResource(), info.getResearch());
-                            }
-                            BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).setAllKnowledge(knowledge);
+                            completeKnowledge(BitRegistries.ITEM, ctx.getSource().getPlayer());
+                            completeKnowledge(BitRegistries.FLUID, ctx.getSource().getPlayer());
                             return 1;
                         })
                     ).then(literal("clear")
                         .executes((ctx) -> {
-                            BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).setAllKnowledge(new HashMap<>());
+                            BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).setKnowledgeMap(new HashMap<>());
+                            BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayer()).setKnowledgeMap(new HashMap<>());
                             return 1;
                         })
                     )
@@ -239,6 +269,14 @@ public class BitExchange implements ModInitializer {
                 )
             );
         });
+    }
+
+    private <R,I extends BitInfoResearchable<R>> void completeKnowledge(ResearchableBitRegistry<R, I> registry, PlayerEntity player) {
+        Map<R, Long> knowledge = registry.getKnowledge(player).getKnowledgeMap();
+        for (BitInfoResearchable<R> info : registry) {
+            knowledge.put(info.getResource(), info.getResearch());
+        }
+        registry.getKnowledge(player).setKnowledgeMap(knowledge);
     }
 
     public static void log(Level level, String message){

@@ -69,8 +69,8 @@ public class BitConverterScreen extends HandledScreen<ScreenHandler> {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    protected void handledScreenTick() {
+        super.handledScreenTick();
         getHandler().buildList(searchBox.getText(), scrollAmount);
         updateBitText();
         if (!this.shouldScroll() && this.scrollAmount > 0) {

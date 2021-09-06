@@ -6,6 +6,13 @@ import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.component.BitKnowledgeComponent;
 import moe.sylvi.bitexchange.inventory.ImplementedInventory;
 import moe.sylvi.bitexchange.screen.BitResearcherScreenHandler;
+import moe.sylvi.bitexchange.transfer.FullInventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,6 +32,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -75,16 +83,55 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
         if (!world.isClient) {
             PlayerEntity player = entity.getOwner();
             if (player != null) {
+                var storage = FullInventoryStorage.of(entity);
+                var context = ContainerItemContext.ofSingleSlot(storage.getSlot(0));
+                var fluidStorage = context.find(FluidStorage.ITEM);
+                if (fluidStorage != null && fluidStorage.supportsExtraction()) {
+                    var fluidComponent = BitComponents.FLUID_KNOWLEDGE.get(player);
+                    try (Transaction transaction = Transaction.openOuter()) {
+                        var success = false;
+                        for (var view : fluidStorage.iterable(transaction)) {
+                            if (view.isResourceBlank()) {
+                                continue;
+                            }
+                            var fluid = view.getResource().getFluid();
+                            if (fluidComponent.canLearn(fluid)) {
+                                var knowledge = fluidComponent.getKnowledge(fluid);
+                                var maxKnowledge = BitRegistries.FLUID.getResearch(fluid);
+                                if (knowledge < maxKnowledge) {
+                                    long extracted;
+                                    try (Transaction nested = transaction.openNested()) {
+                                        var toExtract = Math.min(view.getAmount(), maxKnowledge - knowledge);
+                                        extracted = view.extract(view.getResource(), toExtract, nested);
+                                    }
+                                    BitExchange.log(Level.INFO, "Extracted: " + extracted);
+                                    var added = fluidComponent.addKnowledge(fluid, extracted);
+                                    if (added > 0) {
+                                        view.extract(view.getResource(), added, transaction);
+                                        if (fluidComponent.hasLearned(fluid)) {
+                                            var hover = fluid.getDefaultState().getBlockState().getBlock().getName().formatted(Formatting.WHITE);
+                                            player.sendMessage(new LiteralText("Researched fluid: ").formatted(Formatting.LIGHT_PURPLE).append(hover), false);
+                                        }
+                                        success = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (success) {
+                            transaction.commit();
+                        }
+                    }
+                }
                 ItemStack input = entity.getStack(0);
                 if (!input.isEmpty()) {
                     Item item = input.getItem();
-                    BitKnowledgeComponent<Item> component = BitComponents.ITEM_KNOWLEDGE.get(player);
+                    var component = BitComponents.ITEM_KNOWLEDGE.get(player);
                     if (component.canLearn(item)) {
                         long knowledge = component.getKnowledge(item);
                         if (knowledge < BitRegistries.ITEM.getResearch(item)) {
                             int count = (int) component.addKnowledge(item, input.getCount());
                             input.decrement(count);
-                            if (component.getLearned(item)) {
+                            if (component.hasLearned(item)) {
                                 player.sendMessage(new LiteralText("Researched item: ").formatted(Formatting.LIGHT_PURPLE).append(item.getDefaultStack().toHoverableText()), false);
                             }
                             entity.setStack(0, input);
@@ -113,6 +160,6 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
     @Override
     public boolean canExtract(int slot, ItemStack stack, Direction dir) {
         PlayerEntity player = getOwner();
-        return player != null && BitComponents.ITEM_KNOWLEDGE.get(player).getLearned(stack.getItem());
+        return player != null && BitComponents.ITEM_KNOWLEDGE.get(player).hasLearned(stack.getItem());
     }
 }

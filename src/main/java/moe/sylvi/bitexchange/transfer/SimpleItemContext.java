@@ -45,9 +45,4 @@ public class SimpleItemContext implements ContainerItemContext {
     public List<SingleSlotStorage<ItemVariant>> getAdditionalSlots() {
         return Lists.newArrayList();
     }
-
-    @Override
-    public World getWorld() {
-        return null;
-    }
 }

@@ -28,8 +28,8 @@ public class BitFactoryScreen extends HandledScreen<ScreenHandler> {
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    protected void handledScreenTick() {
+        super.handledScreenTick();
         updateBitText();
         updateProgress();
     }

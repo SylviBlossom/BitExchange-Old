@@ -24,7 +24,7 @@ public class BitResearchRequirement<T> implements ResearchRequirement {
     @Override
     public boolean isMet(PlayerEntity player) {
         if (registry.get(resource) instanceof BitInfoResearchable<T> researchable) {
-            return researchable.getKnowledgeComponent(player).getLearned(resource);
+            return researchable.getKnowledge(player).hasLearned(resource);
         }
         return false;
     }

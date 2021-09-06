@@ -45,9 +45,4 @@ public class PreviewContainerItemContext implements ContainerItemContext {
     public List<SingleSlotStorage<ItemVariant>> getAdditionalSlots() {
         return getStorage().getSlots();
     }
-
-    @Override
-    public World getWorld() {
-        return world;
-    }
 }

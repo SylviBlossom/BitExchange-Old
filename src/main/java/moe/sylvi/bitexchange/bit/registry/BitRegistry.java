@@ -8,7 +8,7 @@ import net.minecraft.util.registry.Registry;
 
 public interface BitRegistry<R,I extends BitInfo<R>> extends Iterable<I> {
     static <T,O extends BitInfo<T>> BitRegistry<T,O> of(Class<O> infoType, Registry<T> resourceRegistry) {
-        return new BitRegistryImpl<>(resourceRegistry);
+        return new SimpleBitRegistry<>(resourceRegistry);
     }
 
     void registerBuilder(BitRegistryBuilder<R,I> builder);

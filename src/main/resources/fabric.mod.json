@@ -33,7 +33,8 @@
 
   "custom": {
     "cardinal-components": [
-      "bitexchange:item_knowledge"
+      "bitexchange:item_knowledge",
+      "bitexchange:fluid_knowledge"
     ]
   },
 

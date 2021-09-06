@@ -19,7 +19,7 @@ public class SlotResource extends Slot {
     @Override
     public boolean canInsert(ItemStack stack) {
         Item item = stack.getItem();
-        return getStack().isEmpty() && BitRegistries.ITEM.isAutomatable(item) && BitComponents.ITEM_KNOWLEDGE.get(playerInventory.player).getLearned(item);
+        return getStack().isEmpty() && BitRegistries.ITEM.isAutomatable(item) && BitComponents.ITEM_KNOWLEDGE.get(playerInventory.player).hasLearned(item);
     }
 
     @Override

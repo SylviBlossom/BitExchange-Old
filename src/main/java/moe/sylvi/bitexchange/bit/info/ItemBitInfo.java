@@ -3,6 +3,7 @@ package moe.sylvi.bitexchange.bit.info;
 import com.google.common.collect.Lists;
 import moe.sylvi.bitexchange.BitComponents;
 import moe.sylvi.bitexchange.BitRegistries;
+import moe.sylvi.bitexchange.bit.research.BitKnowledge;
 import moe.sylvi.bitexchange.bit.research.ItemBitResearchRequirement;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
 import moe.sylvi.bitexchange.component.BitKnowledgeComponent;
@@ -11,15 +12,12 @@ import net.minecraft.item.Item;
 import java.util.List;
 
 public class ItemBitInfo implements BitInfoResearchable<Item> {
-    protected Item item;
-    protected double value;
-    protected long research;
-    protected boolean automatable;
-    protected List<ResearchRequirement> researchRequirements;
+    protected final Item item;
+    protected final double value;
+    protected final long research;
+    protected final boolean automatable;
+    protected final List<ResearchRequirement> researchRequirements;
 
-    public ItemBitInfo(Item item, double value, long research, boolean automatable) {
-        this(item, value, research, automatable, Lists.newArrayList());
-    }
     public ItemBitInfo(Item item, double value, long research, boolean automatable, List<ResearchRequirement> researchRequirements) {
         this.item = item;
         this.value = value;
@@ -32,11 +30,6 @@ public class ItemBitInfo implements BitInfoResearchable<Item> {
     @Override
     public Item getResource() {
         return item;
-    }
-
-    @Override
-    public void setResource(Item resource) {
-        this.item = resource;
     }
 
     @Override
@@ -59,7 +52,7 @@ public class ItemBitInfo implements BitInfoResearchable<Item> {
     }
 
     @Override
-    public <V> BitKnowledgeComponent<Item> getKnowledgeComponent(V provider) {
+    public <V> BitKnowledge<Item> getKnowledge(V provider) {
         return BitComponents.ITEM_KNOWLEDGE.get(provider);
     }
 

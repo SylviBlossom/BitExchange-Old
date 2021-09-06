@@ -21,7 +21,7 @@ public class IngredientResearchRequirement extends CombinedResearchRequirement<R
     @Override
     public List<ResearchRequirement> getRequirements() {
         List<ResearchRequirement> requirements = Lists.newArrayList();
-        for (ItemStack stack : ingredient.getMatchingStacksClient()) {
+        for (ItemStack stack : ingredient.getMatchingStacks()) {
             ResearchRequirement requirement = cached.computeIfAbsent(stack.getItem(), item -> {
                 Recursable<ItemBitInfo> info = BitRegistries.ITEM.getOrProcess(item);
                 return info.notNullOrRecursive() ? info.get().createResearchRequirement() : null;

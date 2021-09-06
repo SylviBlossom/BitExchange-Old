@@ -1,5 +1,6 @@
 package moe.sylvi.bitexchange.bit.info;
 
+import moe.sylvi.bitexchange.bit.research.BitKnowledge;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
 import moe.sylvi.bitexchange.component.BitKnowledgeComponent;
 
@@ -18,5 +19,5 @@ public interface BitInfoResearchable<T> extends BitInfo<T> {
         }
     }
 
-    <V> BitKnowledgeComponent<T> getKnowledgeComponent(V provider);
+    <V> BitKnowledge<T> getKnowledge(V provider);
 }

@@ -80,7 +80,6 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
 
         boolean success = true;
         double bits = 0.0;
-        boolean automatable = true;
         List<ResearchRequirement> requirements = Lists.newArrayList();
         try (Transaction transaction = Transaction.openOuter()) {
             for (StorageView<FluidVariant> view : storage.iterable(transaction)) {
@@ -98,6 +97,10 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
                     break;
                 }
                 bits += (amount * bitResult.get().getValue()) / FluidConstants.BUCKET;
+                var requirement = bitResult.get().createResearchRequirement();
+                if (!requirements.contains(requirement)) {
+                    requirements.add(requirement);
+                }
             }
             BitExchange.log(Level.INFO, "Stage 1: " + (success ? "Passed" : "Failed"));
             if (success) {
@@ -113,7 +116,6 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
                             break;
                         }
                         bits += result.get().getValue();
-                        automatable = automatable && result.get().isAutomatable();
                         ResearchRequirement requirement = result.get().createResearchRequirement();
                         if (!requirements.contains(requirement)) {
                             requirements.add(requirement);
@@ -123,7 +125,6 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
                     Recursable<ItemBitInfo> bitResult = registry.getOrProcess(item.getRecipeRemainder());
                     if (bitResult.notNullOrRecursive()) {
                         bits += bitResult.get().getValue();
-                        automatable = bitResult.get().isAutomatable();
                         ResearchRequirement requirement = bitResult.get().createResearchRequirement();
                         if (!requirements.contains(requirement)) {
                             requirements.add(requirement);
@@ -136,7 +137,7 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
         }
 
         if (success) {
-            return BitInfo.ofItem(item, bits, 1, automatable, requirements);
+            return BitInfo.ofItem(item, bits, 1, false, requirements);
         } else {
             return null;
         }

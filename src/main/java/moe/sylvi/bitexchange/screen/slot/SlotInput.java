@@ -22,6 +22,6 @@ public class SlotInput extends Slot {
     public boolean canInsert(ItemStack stack) {
         Item item = stack.getItem();
         SimpleItemContext context = new SimpleItemContext(stack);
-        return context.find(BitStorages.ITEM) != null || (BitRegistries.ITEM.getValue(item) > 0 && BitComponents.ITEM_KNOWLEDGE.get(playerInventory.player).getLearned(item));
+        return context.find(BitStorages.ITEM) != null || (BitRegistries.ITEM.getValue(item) > 0 && BitComponents.ITEM_KNOWLEDGE.get(playerInventory.player).hasLearned(item));
     }
 }

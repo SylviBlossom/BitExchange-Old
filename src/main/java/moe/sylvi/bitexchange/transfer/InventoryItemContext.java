@@ -39,9 +39,4 @@ public class InventoryItemContext implements ContainerItemContext {
     public List<SingleSlotStorage<ItemVariant>> getAdditionalSlots() {
         return storage.getSlots();
     }
-
-    @Override
-    public World getWorld() {
-        return world;
-    }
 }

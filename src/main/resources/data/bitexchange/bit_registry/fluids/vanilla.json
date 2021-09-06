@@ -3,11 +3,13 @@
   "values": [
     {
       "id": "minecraft:water",
-      "value": 1
+      "value": 1,
+      "research": 162000
     },
     {
       "id": "minecraft:lava",
-      "value": 64
+      "value": 64,
+      "research": 648000
     }
   ]
 }

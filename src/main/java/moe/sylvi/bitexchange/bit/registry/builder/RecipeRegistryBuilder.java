@@ -127,34 +127,36 @@ public class RecipeRegistryBuilder implements BitRegistryBuilder<Item, ItemBitIn
         List<Ingredient> ingredients = info.getIngredients(recipe);
         AtomicBoolean recursed = new AtomicBoolean(false);
         for (Ingredient ingredient : ingredients) {
-            ItemStack[] stacks = ingredient.getMatchingStacksClient();
-            if (!ingredient.isEmpty() && stacks.length > 0) {
-                double smallestBits = 0;
-                for (ItemStack itemStack : stacks) {
-                    Item item = itemStack.getItem();
-                    double newBits = getExactValue(item).consumeRecursive(() -> recursed.set(true));
-                    if (item.hasRecipeRemainder()) {
-                        newBits = Math.max(0, newBits - Math.max(0, getExactValue(item.getRecipeRemainder())
-                                .consumeRecursive(() -> recursed.set(true))));
+            if (!ingredient.isEmpty()) {
+                ItemStack[] stacks = ingredient.getMatchingStacks();
+                if (stacks != null && stacks.length > 0) {
+                    double smallestBits = 0;
+                    for (ItemStack itemStack : stacks) {
+                        Item item = itemStack.getItem();
+                        double newBits = getExactValue(item).consumeRecursive(() -> recursed.set(true));
+                        if (item.hasRecipeRemainder()) {
+                            newBits = Math.max(0, newBits - Math.max(0, getExactValue(item.getRecipeRemainder())
+                                    .consumeRecursive(() -> recursed.set(true))));
+                        }
+                        if (recursed.get()) {
+                            break;
+                        }
+                        if (smallestBits == 0) {
+                            smallestBits = newBits;
+                        } else if (newBits > 0) {
+                            smallestBits = Math.min(smallestBits, newBits);
+                        }
                     }
                     if (recursed.get()) {
+                        failed = true;
                         break;
                     }
                     if (smallestBits == 0) {
-                        smallestBits = newBits;
-                    } else if (newBits > 0) {
-                        smallestBits = Math.min(smallestBits, newBits);
+                        failed = true;
+                        break;
                     }
+                    finalBits += smallestBits;
                 }
-                if (recursed.get()) {
-                    failed = true;
-                    break;
-                }
-                if (smallestBits == 0) {
-                    failed = true;
-                    break;
-                }
-                finalBits += smallestBits;
             }
         }
         if (!failed && finalBits > 0) {

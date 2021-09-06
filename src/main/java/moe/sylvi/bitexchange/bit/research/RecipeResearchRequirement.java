@@ -14,9 +14,11 @@ public class RecipeResearchRequirement extends ListResearchRequirement<Ingredien
     public RecipeResearchRequirement(Recipe<Inventory> recipe, RecipeInfo info) {
         this.requirements = Lists.newArrayList();
         for (Ingredient ingredient : (info != null ? info.getIngredients(recipe) : recipe.getIngredients())) {
-            IngredientResearchRequirement requirement = new IngredientResearchRequirement(ingredient);
-            if (!requirements.contains(requirement)) {
-                requirements.add(requirement);
+            if (!ingredient.isEmpty() && ingredient.getMatchingStacks() != null) {
+                IngredientResearchRequirement requirement = new IngredientResearchRequirement(ingredient);
+                if (!requirements.contains(requirement)) {
+                    requirements.add(requirement);
+                }
             }
         }
     }

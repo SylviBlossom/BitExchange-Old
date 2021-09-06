@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class BitRegistryImpl<R,I extends BitInfo<R>> implements BitRegistry<R,I> {
+public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,I> {
     private final Logger logger;
     private final Registry<R> resourceRegistry;
 
@@ -28,7 +28,7 @@ public class BitRegistryImpl<R,I extends BitInfo<R>> implements BitRegistry<R,I>
     private BitRegistryBuilder<R,I> currentProcessor;
     private boolean processing;
 
-    public BitRegistryImpl(Registry<R> resourceRegistry) {
+    public SimpleBitRegistry(Registry<R> resourceRegistry) {
         this.resourceRegistry = resourceRegistry;
         this.logger = LogManager.getLogger();
     }
@@ -125,7 +125,7 @@ public class BitRegistryImpl<R,I extends BitInfo<R>> implements BitRegistry<R,I>
                 I result = builder.process(resource);
                 currentProcessor = topProcessor ? null : currentProcessor;
                 if (result != null) {
-                    add(result.withResource(resource));
+                    add(result);
                     recursiveCheck.remove(recursivePair);
                     return Recursable.of(result, false);
                 }
