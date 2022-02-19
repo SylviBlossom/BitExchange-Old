@@ -4,6 +4,7 @@ import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.inventory.block.BitFactoryBlockInventory;
 import moe.sylvi.bitexchange.screen.BitFactoryScreenHandler;
+import moe.sylvi.bitexchange.transfer.BitFluidStorage;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,9 +26,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class BitFactoryBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, SidedInventory, BitFactoryBlockInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(getDefaultInventorySize(), ItemStack.EMPTY);
+    private final BitFluidStorage inputFluid = new BitFluidStorage();
 
     public BitFactoryBlockEntity(BlockPos pos, BlockState state) {
         super(BitExchange.BIT_FACTORY_BLOCK_ENTITY, pos, state);
+    }
+
+    @Override
+    public BitFluidStorage getInputFluid() {
+        return inputFluid;
     }
 
     @Override
@@ -62,15 +69,11 @@ public class BitFactoryBlockEntity extends BlockEntity implements NamedScreenHan
         if (!world.isClient) {
             ItemStack storage = entity.getStack(0);
             ItemStack resource = entity.getStack(1);
-            ItemStack input = entity.getStack(2);
 
-            if (!storage.isEmpty()) {
-                if (!input.isEmpty()) {
-                    entity.consumeInput();
-                }
-                if (!resource.isEmpty()) {
-                    entity.createStacks(resource, 1, 3, 9);
-                }
+            entity.consumeInputs();
+
+            if (!storage.isEmpty() && !resource.isEmpty()) {
+                entity.createStacks(resource, 1, 3, 9);
             }
         }
     }

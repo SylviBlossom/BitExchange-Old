@@ -7,14 +7,19 @@ import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
 import moe.sylvi.bitexchange.bit.storage.BitStorage;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
+import moe.sylvi.bitexchange.client.gui.*;
 import moe.sylvi.bitexchange.mixin.SpriteMixin;
+import moe.sylvi.bitexchange.render.BitLiquefierRenderer;
 import moe.sylvi.bitexchange.transfer.SimpleItemContext;
-import moe.sylvi.bitexchange.client.gui.BitConverterScreen;
-import moe.sylvi.bitexchange.client.gui.BitFactoryScreen;
-import moe.sylvi.bitexchange.client.gui.BitMinerScreen;
-import moe.sylvi.bitexchange.client.gui.BitResearcherScreen;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.model.ExtraModelProvider;
+import net.fabricmc.fabric.api.client.model.ModelAppender;
+import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
+import net.fabricmc.fabric.api.client.model.ModelResourceProvider;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
@@ -27,12 +32,14 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.impl.client.indigo.renderer.helper.ColorHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.Format;
@@ -41,11 +48,15 @@ import java.util.List;
 public class BitExchangeClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        BlockEntityRendererRegistry.register(BitExchange.BIT_LIQUEFIER_BLOCK_ENTITY, ctx -> new BitLiquefierRenderer());
+
+        BlockRenderLayerMap.INSTANCE.putBlock(BitExchange.BIT_LIQUEFIER_BLOCK, RenderLayer.getCutout());
+
         ScreenRegistry.register(BitExchange.BIT_CONVERTER_SCREEN_HANDLER, BitConverterScreen::new);
         ScreenRegistry.register(BitExchange.BIT_RESEARCHER_SCREEN_HANDLER, BitResearcherScreen::new);
         ScreenRegistry.register(BitExchange.BIT_FACTORY_SCREEN_HANDLER, BitFactoryScreen::new);
+        ScreenRegistry.register(BitExchange.BIT_LIQUEFIER_SCREEN_HANDLER, BitLiquefierScreen::new);
         ScreenRegistry.register(BitExchange.BIT_MINER_SCREEN_HANDLER, BitMinerScreen::new);
-
 
         ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
             if (MinecraftClient.getInstance() == null) {

@@ -1,15 +1,22 @@
 package moe.sylvi.bitexchange.inventory.block;
 
+import moe.sylvi.bitexchange.transfer.BitFluidStorage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
 public class BitConverterBlockInventoryImpl implements BitConverterBlockInventory {
-    private final DefaultedList<ItemStack> items = DefaultedList.ofSize(2, ItemStack.EMPTY);
+    private final DefaultedList<ItemStack> items = DefaultedList.ofSize(getDefaultInventorySize(), ItemStack.EMPTY);
+    private final BitFluidStorage inputFluid = new BitFluidStorage();
 
     @Override
     public World getWorld() {
         return null;
+    }
+
+    @Override
+    public BitFluidStorage getInputFluid() {
+        return inputFluid;
     }
 
     @Override

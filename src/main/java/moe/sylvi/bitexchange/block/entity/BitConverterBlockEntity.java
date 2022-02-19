@@ -6,8 +6,10 @@ import moe.sylvi.bitexchange.bit.storage.BitStorage;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
 import moe.sylvi.bitexchange.inventory.block.BitConverterBlockInventory;
 import moe.sylvi.bitexchange.screen.BitConverterScreenHandler;
+import moe.sylvi.bitexchange.transfer.BitFluidStorage;
 import moe.sylvi.bitexchange.transfer.SimpleItemContext;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.InventoryProvider;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -23,13 +25,20 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class BitConverterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, BitConverterBlockInventory, SidedInventory {
+public class BitConverterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, BitConverterBlockInventory, SidedInventory, InventoryProvider {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(getDefaultInventorySize(), ItemStack.EMPTY);
+    private final BitFluidStorage inputFluid = new BitFluidStorage();
 
     public BitConverterBlockEntity(BlockPos pos, BlockState state) {
         super(BitExchange.BIT_CONVERTER_BLOCK_ENTITY, pos, state);
+    }
+
+    @Override
+    public BitFluidStorage getInputFluid() {
+        return inputFluid;
     }
 
     @Override
@@ -74,10 +83,7 @@ public class BitConverterBlockEntity extends BlockEntity implements NamedScreenH
 
     public static void tick(World world, BlockPos pos, BlockState state, BitConverterBlockEntity entity) {
         if (!world.isClient) {
-            ItemStack input = entity.getStack(1);
-            if (!input.isEmpty()) {
-                entity.consumeInput();
-            }
+            entity.consumeInputs();
         }
     }
 
@@ -94,5 +100,10 @@ public class BitConverterBlockEntity extends BlockEntity implements NamedScreenH
     @Override
     public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
         return false;
+    }
+
+    @Override
+    public SidedInventory getInventory(BlockState state, WorldAccess world, BlockPos pos) {
+        return this;
     }
 }

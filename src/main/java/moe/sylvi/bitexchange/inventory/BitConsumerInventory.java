@@ -2,14 +2,19 @@ package moe.sylvi.bitexchange.inventory;
 
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.BitHelper;
+import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.storage.BitStorage;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
+import moe.sylvi.bitexchange.transfer.BitFluidStorage;
 import moe.sylvi.bitexchange.transfer.InventoryItemContext;
 import moe.sylvi.bitexchange.transfer.FullInventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -18,6 +23,7 @@ public interface BitConsumerInventory extends ImplementedInventory {
 
     int getStorageSlot();
     int getInputSlot();
+    BitFluidStorage getInputFluid();
 
     default BitStorage getStorage() {
         ItemStack stack = getStack(getStorageSlot());
@@ -92,23 +98,52 @@ public interface BitConsumerInventory extends ImplementedInventory {
         }
     }
 
-    default void consumeInput() {
+    default void consumeInputs() {
         ItemStack storageStack = getStack(getStorageSlot());
         if (storageStack.isEmpty()) {
             return;
         }
-        InventoryStorage inventoryStorage = FullInventoryStorage.of(this);
-        InventoryItemContext inputContext = new InventoryItemContext(inventoryStorage, getInputSlot(), getWorld());
-        BitStorage storage = getStorage();
-        if (storage != null) {
-            try (Transaction transaction = Transaction.openOuter()) {
-                double converted;
-                try (Transaction initialTransaction = transaction.openNested()) {
-                    converted = BitHelper.convertToBits(storage.getMaxBits() - storage.getBits(), inputContext, initialTransaction);
+        ItemStack inputStack = getStack(getInputSlot());
+        if (!inputStack.isEmpty()) {
+            InventoryStorage inventoryStorage = FullInventoryStorage.of(this);
+            InventoryItemContext inputContext = new InventoryItemContext(inventoryStorage, getInputSlot(), getWorld());
+            BitStorage storage = getStorage();
+            if (storage != null) {
+                try (Transaction transaction = Transaction.openOuter()) {
+                    double converted;
+                    try (Transaction initialTransaction = transaction.openNested()) {
+                        converted = BitHelper.convertToBits(storage.getMaxBits() - storage.getBits(), inputContext, initialTransaction);
+                    }
+                    double inserted = storage.insert(converted, transaction);
+                    BitHelper.convertToBits(inserted, inputContext, transaction);
+                    transaction.commit();
                 }
-                double inserted = storage.insert(converted, transaction);
-                BitHelper.convertToBits(inserted, inputContext, transaction);
-                transaction.commit();
+            }
+        }
+        consumeFluid(getInputFluid());
+    }
+
+    default void consumeFluid(BitFluidStorage fluidStorage) {
+        if (!fluidStorage.isResourceBlank()) {
+            BitStorage storage = getStorage();
+            Fluid fluid = fluidStorage.variant.getFluid();
+            FluidBitInfo info = BitRegistries.FLUID.get(fluid);
+            if (storage != null && info != null && info.getValue() > 0) {
+                try (Transaction transaction = Transaction.openOuter()) {
+                    double cost = info.getValue() / FluidConstants.BUCKET;
+                    double toInsert = fluidStorage.amount * cost;
+                    try (Transaction initialTransaction = transaction.openNested()) {
+                        toInsert = storage.insert(toInsert, initialTransaction);
+                    }
+                    long inserted = (long)Math.floor(toInsert / cost);
+                    fluidStorage.amount -= inserted;
+                    if (fluidStorage.amount <= 0) {
+                        fluidStorage.amount = 0;
+                        fluidStorage.variant = FluidVariant.blank();
+                    }
+                    storage.insert(inserted * cost, transaction);
+                    transaction.commit();
+                }
             }
         }
     }
