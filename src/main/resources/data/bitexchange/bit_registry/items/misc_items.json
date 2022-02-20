@@ -72,8 +72,7 @@
     {
       "id": "minecraft:melon_slice",
       "value": 16,
-      "research": 16,
-      "resource": false
+      "research": 16
     },
     {
       "ids": [

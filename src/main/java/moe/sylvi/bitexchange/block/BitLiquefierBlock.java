@@ -145,7 +145,7 @@ public class BitLiquefierBlock extends BlockWithEntity {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof BitLiquefierBlockEntity liquefier) {
                 // convert the fluid back to bits
-                liquefier.consumeFluid(liquefier.outputFluid);
+                liquefier.consumeFluid(liquefier.outputFluid, false);
                 // drop items
                 ItemScatterer.spawn(world, pos, liquefier);
                 // update comparators

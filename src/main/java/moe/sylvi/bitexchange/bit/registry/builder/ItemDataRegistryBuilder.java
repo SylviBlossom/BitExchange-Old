@@ -24,4 +24,9 @@ public class ItemDataRegistryBuilder extends DataRegistryBuilder<Item, ItemBitIn
 
         return BitInfo.ofItem(resource, value, research, automatable, researchRequirements);
     }
+
+    @Override
+    ItemBitInfo copyResource(Item resource, ItemBitInfo source) throws Throwable {
+        return BitInfo.ofItem(resource, source.getValue(), source.getResearch(), source.isAutomatable(), source.getResearchRequirements());
+    }
 }

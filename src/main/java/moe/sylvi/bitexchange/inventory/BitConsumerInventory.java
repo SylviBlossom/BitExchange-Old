@@ -120,10 +120,10 @@ public interface BitConsumerInventory extends ImplementedInventory {
                 }
             }
         }
-        consumeFluid(getInputFluid());
+        consumeFluid(getInputFluid(), true);
     }
 
-    default void consumeFluid(BitFluidStorage fluidStorage) {
+    default void consumeFluid(BitFluidStorage fluidStorage, boolean markDirty) {
         if (!fluidStorage.isResourceBlank()) {
             BitStorage storage = getStorage();
             Fluid fluid = fluidStorage.variant.getFluid();
@@ -143,6 +143,9 @@ public interface BitConsumerInventory extends ImplementedInventory {
                     }
                     storage.insert(inserted * cost, transaction);
                     transaction.commit();
+                    if (markDirty) {
+                        this.markDirty();
+                    }
                 }
             }
         }

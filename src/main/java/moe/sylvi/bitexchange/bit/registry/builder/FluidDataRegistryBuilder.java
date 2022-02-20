@@ -23,4 +23,9 @@ public class FluidDataRegistryBuilder extends DataRegistryBuilder<Fluid, FluidBi
 
         return BitInfo.ofFluid(resource, value, research, researchRequirements);
     }
+
+    @Override
+    FluidBitInfo copyResource(Fluid resource, FluidBitInfo source) throws Throwable {
+        return BitInfo.ofFluid(resource, source.getValue(), source.getResearch(), source.getResearchRequirements());
+    }
 }

@@ -147,14 +147,18 @@ public class BitLiquefierBlockEntity extends BlockEntity implements NamedScreenH
         BitStorage bitStorage = this.getStorage();
         Storage<FluidVariant> fluidStorage = this.getFluidResource();
 
-        if (bitStorage != null && fluidStorage != null) {
+        if (bitStorage != null) {
             var fluidVariant = StorageUtil.findStoredResource(fluidStorage, null);
 
-            if (!fluidVariant.equals(this.outputFluid.variant)) {
-                consumeFluid(this.outputFluid);
+            if (fluidVariant == null && !this.outputFluid.isResourceBlank()) {
+                consumeFluid(this.outputFluid, true);
             }
 
-            if (!fluidVariant.isBlank()) {
+            if (fluidVariant != null && !fluidVariant.isBlank()) {
+                if (!fluidVariant.equals(this.outputFluid.variant)) {
+                    consumeFluid(this.outputFluid, true);
+                }
+
                 FluidBitInfo info = BitRegistries.FLUID.get(fluidVariant.getFluid());
 
                 if (info != null && (this.outputFluid.isResourceBlank() || fluidVariant.equals(this.outputFluid.variant))) {

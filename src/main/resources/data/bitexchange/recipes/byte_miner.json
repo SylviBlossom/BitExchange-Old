@@ -2,15 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "MMM",
-    "MGM",
+    "MCM",
     "MMM"
   ],
   "key": {
     "M": {
       "item": "bitexchange:bit_miner"
     },
-    "G": {
-      "item": "minecraft:glowstone_dust"
+    "C": {
+      "item": "minecraft:copper_block"
     }
   },
   "result": {

@@ -12,7 +12,17 @@
       "research": 16
     },
     {
+      "id": "minecraft:raw_iron",
+      "value": 256,
+      "research": 16
+    },
+    {
       "id": "minecraft:iron_ingot",
+      "value": 256,
+      "research": 16
+    },
+    {
+      "id": "minecraft:raw_copper",
       "value": 256,
       "research": 16
     },
@@ -34,6 +44,11 @@
     {
       "id": "minecraft:amethyst_shard",
       "value": 864,
+      "research": 16
+    },
+    {
+      "id": "minecraft:raw_gold",
+      "value": 2048,
       "research": 16
     },
     {

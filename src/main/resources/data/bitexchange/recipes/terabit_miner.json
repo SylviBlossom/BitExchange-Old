@@ -2,15 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "MMM",
-    "MLM",
+    "MBM",
     "MMM"
   ],
   "key": {
     "M": {
       "item": "bitexchange:gigabit_miner"
     },
-    "L": {
-      "item": "minecraft:lapis_block"
+    "B": {
+      "item": "minecraft:beacon"
     }
   },
   "result": {

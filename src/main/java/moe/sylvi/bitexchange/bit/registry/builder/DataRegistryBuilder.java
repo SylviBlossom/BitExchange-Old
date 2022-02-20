@@ -77,7 +77,11 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         }
         JsonObject json = processing.get(resource);
         try {
-            return parseJson(resource, json);
+            if (json.has("copy")) {
+                return parseCopyResource(resource, json);
+            } else {
+                return parseJson(resource, json);
+            }
         } catch (Throwable throwable) {
             BitExchange.error("Error occured while processing resource " + JSON_IDS.get(json).toString(), throwable);
             return null;
@@ -112,6 +116,8 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
     }
 
     abstract I parseJson(R resource, JsonObject json) throws Throwable;
+
+    abstract I copyResource(R resource, I source) throws Throwable;
 
     protected double parseJsonBits(R resource, JsonObject json) throws Throwable {
         if (calculated.containsKey(json)) {
@@ -167,6 +173,22 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         return result;
     }
 
+    protected I parseCopyResource(R resource, JsonObject json) throws Throwable {
+        String id = JsonHelper.getString(json, "copy");
+        TypedBitResource<R, I> parsed = parseTypedResourceId(id);
+
+        Recursable<I> result = parsed.registry.getOrProcess(parsed.resource);
+
+        if (result.isRecursive()) {
+            throw new Exception("Found circular reference for " + id + "");
+        }
+        if (result.get() == null) {
+            throw new Exception("Copy failed, could not find " + id + "");
+        }
+
+        return copyResource(resource, result.get());
+    }
+
     protected GenericBitResource parseResourceId(String id) throws Throwable {
         BitRegistry registryRef = registry;
         long count = 1;
@@ -190,6 +212,21 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         Object resourceRef = registryRef.getResourceRegistry().getOrEmpty(new Identifier(id)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
 
         return new GenericBitResource(registryRef, resourceRef, count);
+    }
+
+    protected TypedBitResource<R, I> parseTypedResourceId(String id) throws Throwable {
+        long count = 1;
+
+        int multIndex = id.indexOf("*");
+        if (multIndex >= 0) {
+            count = Integer.parseInt(id.substring(multIndex + 1));
+            id = id.substring(0, multIndex);
+        }
+
+        String finalId = id;
+        Object resourceRef = registry.getResourceRegistry().getOrEmpty(new Identifier(id)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
+
+        return new TypedBitResource(registry, resourceRef, count);
     }
 
     protected List<GenericBitResource> parseMultiResourceId(String fullId) throws Throwable {
@@ -264,4 +301,6 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
     }
 
     public record GenericBitResource(BitRegistry registry, Object resource, long amount) {}
+
+    public record TypedBitResource<R, I extends BitInfo<R>>(BitRegistry<R, I> registry, R resource, long amount) {}
 }

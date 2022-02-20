@@ -2,15 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "MMM",
-    "MNM",
+    "MDM",
     "MMM"
   ],
   "key": {
     "M": {
       "item": "bitexchange:petabit_miner"
     },
-    "N": {
-      "item": "minecraft:nether_star"
+    "D": {
+      "item": "minecraft:dragon_egg"
     }
   },
   "result": {

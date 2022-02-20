@@ -24,14 +24,14 @@
       "id": "#minecraft:planks",
       "value": 8,
       "research": 16,
-      "resource": false
+      "automatable": false
     },
     {
       "override": false,
       "id": "#minecraft:wool",
       "value_ref": "minecraft:white_wool",
       "research": 16,
-      "resource": false
+      "automatable": false
     },
     {
       "override": false,

@@ -16,7 +16,7 @@
       ],
       "value": 1,
       "research": 16,
-      "resource": false
+      "automatable": false
     },
     {
       "ids": [
