@@ -124,7 +124,7 @@ public class BitLiquefierScreen extends HandledScreen<ScreenHandler> {
                 fy -= sprite.getHeight();
             }
             if (remainder > 0) {
-                DrawableHelperMixin.bitexchange_drawTexturedQuad(matrices.peek().getModel(), x, x + width, fy - remainder, fy, getZOffset(), sprite.getMinU(), sprite.getMaxU(), sprite.getMinV() + (((float)(sprite.getHeight() - remainder)/sprite.getHeight()) * (sprite.getMaxV() - sprite.getMinV())), sprite.getMaxV());
+                DrawableHelperMixin.bitexchange_drawTexturedQuad(matrices.peek().getPositionMatrix(), x, x + width, fy - remainder, fy, getZOffset(), sprite.getMinU(), sprite.getMaxU(), sprite.getMinV() + (((float)(sprite.getHeight() - remainder)/sprite.getHeight()) * (sprite.getMaxV() - sprite.getMinV())), sprite.getMaxV());
             }
 
             RenderSystem.disableBlend();

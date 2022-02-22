@@ -59,10 +59,9 @@ public class BitFactoryBlockEntity extends BlockEntity implements NamedScreenHan
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
-        super.writeNbt(tag);
+    public void writeNbt(NbtCompound tag) {
         Inventories.writeNbt(tag, this.inventory);
-        return tag;
+        super.writeNbt(tag);
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, BitFactoryBlockEntity entity) {

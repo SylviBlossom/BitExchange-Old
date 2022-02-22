@@ -67,13 +67,12 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
-        super.writeNbt(tag);
+    public void writeNbt(NbtCompound tag) {
         Inventories.writeNbt(tag, this.inventory);
         if (owner != null) {
             tag.putUuid("Owner", this.owner);
         }
-        return tag;
+        super.writeNbt(tag);
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, BitResearcherBlockEntity entity) {

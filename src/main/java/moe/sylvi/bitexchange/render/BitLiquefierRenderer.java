@@ -76,7 +76,7 @@ public class BitLiquefierRenderer implements BlockEntityRenderer<BitLiquefierBlo
         matrices.push();
 
         var handler = FluidVariantRendering.getHandlerOrDefault(variant.getFluid());
-        var sprite = handler.getSprite(variant);
+        var sprite = handler.getSprites(variant)[0];
         var color = handler.getColor(variant, view, pos);
         var flipped = handler.fillsFromTop(variant);
         var luminance = variant.getFluid().getDefaultState().getBlockState().getLuminance();

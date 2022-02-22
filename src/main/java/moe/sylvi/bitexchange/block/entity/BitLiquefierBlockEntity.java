@@ -15,7 +15,6 @@ import moe.sylvi.bitexchange.transfer.BitFluidStorage;
 import moe.sylvi.bitexchange.transfer.FullInventoryStorage;
 import moe.sylvi.bitexchange.transfer.InventoryItemContext;
 import moe.sylvi.bitexchange.transfer.SimpleItemContext;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -36,7 +35,10 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -54,7 +56,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class BitLiquefierBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, BitLiquefierBlockInventory, SidedInventory, InventoryProvider, BlockEntityClientSerializable {
+public class BitLiquefierBlockEntity extends SyncingBlockEntity implements ExtendedScreenHandlerFactory, BitLiquefierBlockInventory, SidedInventory, InventoryProvider {
     public static final long FLUID_CAPACITY = FluidConstants.BUCKET * 8;
 
     private final DefaultedList<ItemStack> inventory;
@@ -218,7 +220,6 @@ public class BitLiquefierBlockEntity extends BlockEntity implements ExtendedScre
     @Override
     public void markDirty() {
         super.markDirty();
-        sync();
         updateLuminance();
     }
 
@@ -269,21 +270,10 @@ public class BitLiquefierBlockEntity extends BlockEntity implements ExtendedScre
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
-        super.writeNbt(tag);
+    public void writeNbt(NbtCompound tag) {
         Inventories.writeNbt(tag, this.inventory);
         writeFluidNBT(tag);
-        return tag;
-    }
-
-    @Override
-    public void fromClientTag(NbtCompound tag) {
-        readFluidNBT(tag);
-    }
-
-    @Override
-    public NbtCompound toClientTag(NbtCompound tag) {
-        return writeFluidNBT(tag);
+        super.writeNbt(tag);
     }
 
     @Override

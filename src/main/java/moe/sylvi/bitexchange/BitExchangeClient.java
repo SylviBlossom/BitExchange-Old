@@ -135,7 +135,7 @@ public class BitExchangeClient implements ClientModInitializer {
                         var displayMax = BitHelper.format((double)maxResearch / FluidConstants.BUCKET) + "B";
 
                         var name = fluidInfo.getDisplayName().shallowCopy();
-                        var fluidSpriteColor = ColorHelper.swapRedBlueIfNeeded(((SpriteMixin)FluidVariantRendering.getSprite(resource)).bitexchange_getImages()[0].getPixelColor(0, 0));
+                        var fluidSpriteColor = ColorHelper.swapRedBlueIfNeeded(((SpriteMixin)FluidVariantRendering.getSprite(resource)).bitexchange_getImages()[0].getColor(0, 0));
                         var fluidColor = ColorHelper.multiplyColor(fluidSpriteColor, FluidVariantRendering.getColor(resource));
                         var fluidText = name.formatted(getClosestFormatting(fluidColor));
                         if (research >= maxResearch || config.showUnlearnedValues) {

@@ -63,10 +63,9 @@ public class BitConverterBlockEntity extends BlockEntity implements NamedScreenH
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
-        super.writeNbt(tag);
+    public void writeNbt(NbtCompound tag) {
         Inventories.writeNbt(tag, this.inventory);
-        return tag;
+        super.writeNbt(tag);
     }
 
     @Override
