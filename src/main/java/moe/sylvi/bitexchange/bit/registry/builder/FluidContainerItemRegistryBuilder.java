@@ -137,7 +137,7 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
         }
 
         if (success) {
-            return BitInfo.ofItem(item, bits, 1, false, requirements);
+            return BitInfo.ofItem(item, bits, 1, true, false, requirements);
         } else {
             return null;
         }

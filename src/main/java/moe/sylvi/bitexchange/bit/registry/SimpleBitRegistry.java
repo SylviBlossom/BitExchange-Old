@@ -164,4 +164,7 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
     public Iterator<I> iterator() {
         return infoList.iterator();
     }
+
+    @Override
+    public List<I> getList() { return infoList; }
 }

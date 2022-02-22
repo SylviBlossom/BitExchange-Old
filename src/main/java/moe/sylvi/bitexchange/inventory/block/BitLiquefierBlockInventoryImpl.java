@@ -5,9 +5,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
+import static moe.sylvi.bitexchange.block.entity.BitLiquefierBlockEntity.FLUID_CAPACITY;
+
 public class BitLiquefierBlockInventoryImpl implements BitLiquefierBlockInventory {
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(getDefaultInventorySize(), ItemStack.EMPTY);
     private final BitFluidStorage inputFluid = new BitFluidStorage();
+    private final BitFluidStorage outputFluid = new BitFluidStorage(FLUID_CAPACITY, false, true);
 
     @Override
     public World getWorld() {
@@ -17,6 +20,11 @@ public class BitLiquefierBlockInventoryImpl implements BitLiquefierBlockInventor
     @Override
     public BitFluidStorage getInputFluid() {
         return inputFluid;
+    }
+
+    @Override
+    public BitFluidStorage getOuputFluid() {
+        return outputFluid;
     }
 
     @Override

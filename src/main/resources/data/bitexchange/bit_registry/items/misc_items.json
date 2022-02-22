@@ -123,8 +123,8 @@
     },
     {
       "id": "minecraft:experience_bottle",
-      "value": 49152,
-      "research": 4
+      "value": 2048,
+      "research": 8
     },
     {
       "id": "minecraft:iron_horse_armor",

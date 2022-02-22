@@ -18,6 +18,7 @@ import net.fabricmc.fabric.api.client.model.ExtraModelProvider;
 import net.fabricmc.fabric.api.client.model.ModelAppender;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.model.ModelResourceProvider;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
@@ -85,7 +86,11 @@ public class BitExchangeClient implements ClientModInitializer {
                 if ((research >= maxResearch || config.showUnlearnedValues) && (storage == null || Screen.hasShiftDown())) {
                     MutableText text = new LiteralText("Bits: ").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText(BitHelper.format(itemInfo.getValue())).formatted(Formatting.YELLOW));
                     if (config.showUnlearnedValues) {
-                        text.append(new LiteralText(" [" + research + "/" + maxResearch + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                        if (!itemInfo.isResearchable()) {
+                            text.append(new LiteralText(" [" + (research < maxResearch ? "???" : "⭐") + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                        } else {
+                            text.append(new LiteralText(" [" + research + "/" + maxResearch + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                        }
                     }
                     lines.add(text);
                     if (Screen.hasShiftDown() || bitScreen) {
@@ -95,17 +100,19 @@ public class BitExchangeClient implements ClientModInitializer {
                         if (itemInfo.isAutomatable()) {
                             lines.add(new LiteralText("- ").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("Automatable").formatted(Formatting.DARK_PURPLE)));
                         }
-                        if (config.showUnlearnedValues) {
+                        if (config.showUnlearnedValues && itemInfo.isResearchable()) {
                             addResearchRequirementLines(true, itemInfo, player, lines);
                         }
                     }
                 } else if (research < maxResearch) {
                     MutableText text = new LiteralText("Unlearned").formatted(Formatting.DARK_PURPLE);
-                    if (Screen.hasShiftDown() || bitScreen) {
+                    if (!itemInfo.isResearchable()) {
+                        text.append(new LiteralText(" ⭐").formatted(Formatting.DARK_PURPLE));
+                    } else if (Screen.hasShiftDown() || bitScreen) {
                         text.append(new LiteralText(" [" + research + "/" + maxResearch + "]").formatted(Formatting.DARK_GRAY));
                     }
                     lines.add(text);
-                    if (Screen.hasShiftDown() || bitScreen) {
+                    if (itemInfo.isResearchable() && (Screen.hasShiftDown() || bitScreen)) {
                         addResearchRequirementLines(false, itemInfo, player, lines);
                     }
                 }
@@ -127,31 +134,37 @@ public class BitExchangeClient implements ClientModInitializer {
                         var displayResearch = BitHelper.format((double)research / FluidConstants.BUCKET) + "B";
                         var displayMax = BitHelper.format((double)maxResearch / FluidConstants.BUCKET) + "B";
 
-                        var name = fluid.getDefaultState().getBlockState().getBlock().getName().shallowCopy();
+                        var name = fluidInfo.getDisplayName().shallowCopy();
                         var fluidSpriteColor = ColorHelper.swapRedBlueIfNeeded(((SpriteMixin)FluidVariantRendering.getSprite(resource)).bitexchange_getImages()[0].getPixelColor(0, 0));
                         var fluidColor = ColorHelper.multiplyColor(fluidSpriteColor, FluidVariantRendering.getColor(resource));
                         var fluidText = name.formatted(getClosestFormatting(fluidColor));
                         if (research >= maxResearch || config.showUnlearnedValues) {
-                            var text = new LiteralText("Bits - ").formatted(Formatting.LIGHT_PURPLE).append(fluidText.shallowCopy())
+                            var text = new LiteralText("Bits | ").formatted(Formatting.LIGHT_PURPLE).append(fluidText.shallowCopy())
                                     .append(new LiteralText(": ").formatted(Formatting.LIGHT_PURPLE))
                                     .append(new LiteralText(BitHelper.format(fluidInfo.getValue() * displayAmount)).formatted(Formatting.YELLOW))
                                     .append(new LiteralText(" (").formatted(Formatting.WHITE))
                                     .append(new LiteralText(BitHelper.format(fluidInfo.getValue()) + "/B").formatted(Formatting.YELLOW))
                                     .append(new LiteralText(")").formatted(Formatting.WHITE));
                             if (config.showUnlearnedValues) {
-                                text.append(new LiteralText(" [" + displayResearch + "/" + displayMax + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                                if (!fluidInfo.isResearchable()) {
+                                    text.append(new LiteralText(" [" + (research < maxResearch ? "???" : "⭐") + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                                } else {
+                                    text.append(new LiteralText(" [" + displayResearch + "/" + displayMax + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                                }
                             }
                             lines.add(text);
-                            if ((screen.hasShiftDown() || bitScreen) && config.showUnlearnedValues) {
+                            if ((screen.hasShiftDown() || bitScreen) && config.showUnlearnedValues && fluidInfo.isResearchable()) {
                                 addResearchRequirementLines(true, fluidInfo, player, lines);
                             }
                         } else if (research < maxResearch) {
-                            var text = new LiteralText("Unlearned - ").formatted(Formatting.DARK_PURPLE).append(fluidText.shallowCopy());
-                            if (Screen.hasShiftDown() || bitScreen) {
+                            var text = new LiteralText("Unlearned | ").formatted(Formatting.DARK_PURPLE).append(fluidText.shallowCopy());
+                            if (!fluidInfo.isResearchable()) {
+                                text.append(new LiteralText(" ⭐").formatted(Formatting.DARK_PURPLE));
+                            } else if (Screen.hasShiftDown() || bitScreen) {
                                 text.append(new LiteralText(" [" + displayResearch + "/" + displayMax + "]").formatted(Formatting.DARK_GRAY));
                             }
                             lines.add(text);
-                            if (Screen.hasShiftDown() || bitScreen) {
+                            if (fluidInfo.isResearchable() && (Screen.hasShiftDown() || bitScreen)) {
                                 addResearchRequirementLines(true, fluidInfo, player, lines);
                             }
                         }
@@ -161,7 +174,7 @@ public class BitExchangeClient implements ClientModInitializer {
         });
     }
 
-    private void addResearchRequirementLines(boolean header, BitInfoResearchable info, PlayerEntity player, List<Text> lines) {
+    public static void addResearchRequirementLines(boolean header, BitInfoResearchable info, PlayerEntity player, List<Text> lines) {
         List<ResearchRequirement> requirements = info.getResearchRequirements();
 
         boolean anyFailed = false;
@@ -194,7 +207,7 @@ public class BitExchangeClient implements ClientModInitializer {
         return null;
     }
 
-    private Formatting getClosestFormatting(Integer color) {
+    public static Formatting getClosestFormatting(Integer color) {
         var closest = Formatting.WHITE;
         var closestDist = -1D;
         for (var formatting : Formatting.values()) {
@@ -211,7 +224,7 @@ public class BitExchangeClient implements ClientModInitializer {
     }
 
     // https://www.compuphase.com/cmetric.htm
-    private double colorDistance(Integer c1, Integer c2)
+    private static double colorDistance(Integer c1, Integer c2)
     {
         long r1 = ((c1 & 0xFF0000) >> 16);
         long r2 = ((c2 & 0xFF0000) >> 16);

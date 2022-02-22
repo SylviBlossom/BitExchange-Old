@@ -3,15 +3,12 @@ package moe.sylvi.bitexchange.block.entity;
 import moe.sylvi.bitexchange.BitComponents;
 import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
-import moe.sylvi.bitexchange.component.BitKnowledgeComponent;
+import moe.sylvi.bitexchange.bit.research.ResearchableItem;
 import moe.sylvi.bitexchange.inventory.ImplementedInventory;
 import moe.sylvi.bitexchange.screen.BitResearcherScreenHandler;
 import moe.sylvi.bitexchange.transfer.FullInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -125,6 +122,13 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
                 ItemStack input = entity.getStack(0);
                 if (!input.isEmpty()) {
                     Item item = input.getItem();
+                    if (item instanceof ResearchableItem researchableItem) {
+                        var owner = entity.getOwner();
+                        if (researchableItem.canResearch(input, owner) && !researchableItem.hasResearched(input, owner)) {
+                            entity.setStack(0, researchableItem.research(input, owner));
+                            entity.markDirty();
+                        }
+                    }
                     var component = BitComponents.ITEM_KNOWLEDGE.get(player);
                     if (component.canLearn(item)) {
                         long knowledge = component.getKnowledge(item);
@@ -154,12 +158,23 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
 
     @Override
     public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
-        return BitRegistries.ITEM.getResearch(stack.getItem()) > 0;
+        var item = stack.getItem();
+        if (item instanceof ResearchableItem researchableItem) {
+            return researchableItem.canResearch(stack, getOwner());
+        } else {
+            var info = BitRegistries.ITEM.get(item);
+            return info != null && info.isResearchable() && info.getResearch() > 0;
+        }
     }
 
     @Override
     public boolean canExtract(int slot, ItemStack stack, Direction dir) {
-        PlayerEntity player = getOwner();
-        return player != null && BitComponents.ITEM_KNOWLEDGE.get(player).hasLearned(stack.getItem());
+        var item = stack.getItem();
+        if (item instanceof ResearchableItem researchableItem) {
+            return researchableItem.hasResearched(stack, getOwner());
+        } else {
+            PlayerEntity player = getOwner();
+            return player != null && BitComponents.ITEM_KNOWLEDGE.get(player).hasLearned(stack.getItem());
+        }
     }
 }

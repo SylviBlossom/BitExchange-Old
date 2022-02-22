@@ -29,14 +29,14 @@ public class BitResearchRequirement<T> implements ResearchRequirement {
         return false;
     }
 
-    public MutableText getName(PlayerEntity player) {
-        return new LiteralText(registry.getResourceRegistry().getId(resource).toString());
+    public Text getName(PlayerEntity player) {
+        return registry.get(resource).getDisplayName();
     }
 
     @Override
     public void createTooltip(PlayerEntity player, List<Text> lines, Formatting failColor, Formatting metColor, boolean met) {
         Formatting formatting = met ? metColor : failColor;
-        lines.add(new LiteralText(met ? "✔ " : "✘ ").formatted(formatting).append(getName(player).formatted(formatting)));
+        lines.add(new LiteralText(met ? "✔ " : "✘ ").formatted(formatting).append(getName(player).shallowCopy().formatted(formatting)));
     }
 
     @Override

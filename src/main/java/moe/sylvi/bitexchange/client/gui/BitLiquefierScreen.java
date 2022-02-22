@@ -1,11 +1,22 @@
 package moe.sylvi.bitexchange.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import me.shedaniel.autoconfig.AutoConfig;
+import moe.sylvi.bitexchange.*;
 import moe.sylvi.bitexchange.bit.BitHelper;
+import moe.sylvi.bitexchange.block.entity.BitLiquefierBlockEntity;
+import moe.sylvi.bitexchange.mixin.DrawableHelperMixin;
+import moe.sylvi.bitexchange.mixin.SpriteMixin;
 import moe.sylvi.bitexchange.screen.BitFactoryScreenHandler;
 import moe.sylvi.bitexchange.screen.BitLiquefierScreenHandler;
 import moe.sylvi.bitexchange.screen.slot.SlotInput;
 import moe.sylvi.bitexchange.screen.slot.SlotStorage;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.impl.client.indigo.renderer.helper.ColorHelper;
+import net.fabricmc.fabric.impl.client.indigo.renderer.helper.TextureHelper;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,6 +28,9 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import org.apache.logging.log4j.Level;
+import org.lwjgl.opengl.GL11;
 
 public class BitLiquefierScreen extends HandledScreen<ScreenHandler> {
     //A path to the gui texture. In this example we use the texture from the dispenser
@@ -44,6 +58,8 @@ public class BitLiquefierScreen extends HandledScreen<ScreenHandler> {
         int y = (height - backgroundHeight) / 2;
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
         drawRedSlots(matrices, x, y);
+        drawFluid(matrices, x + 134, y + 15, 16, 56);
+        drawTexture(matrices, x + 134, y + 15, 178, 18, 16, 56);
         //drawTexture(matrices, x + 26, y + 17, 0, backgroundHeight, (int)Math.floor(88 * progress), 16);
     }
 
@@ -60,6 +76,7 @@ public class BitLiquefierScreen extends HandledScreen<ScreenHandler> {
         renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, delta);
         drawMouseoverTooltip(matrices, mouseX, mouseY);
+        drawFluidTooltip(matrices, mouseX, mouseY);
     }
 
     @Override
@@ -73,6 +90,108 @@ public class BitLiquefierScreen extends HandledScreen<ScreenHandler> {
 
     private BitLiquefierScreenHandler getHandler() {
         return (BitLiquefierScreenHandler)getScreenHandler();
+    }
+
+    private BitLiquefierBlockEntity getBlockEntity() {
+        return (BitLiquefierBlockEntity) MinecraftClient.getInstance().world.getBlockEntity(getHandler().getPos());
+    }
+
+    private void drawFluid(MatrixStack matrices, int x, int y, int width, int height) {
+        var be = getBlockEntity();
+        var fluid = be.getOuputFluid().getResource();
+
+        if (!fluid.isBlank()) {
+            var percent = be.getFillPercent();
+            var sprite = FluidVariantRendering.getSprite(fluid);
+
+            var color = FluidVariantRendering.getColor(fluid);
+            float r = (color >> 0x10 & 0xff) / 256f;
+            float g = (color >> 0x08 & 0xff) / 256f;
+            float b = (color & 0xff) / 256f;
+
+            RenderSystem.setShaderTexture(0, sprite.getAtlas().getId());
+            RenderSystem.setShaderColor(r, g, b, 1.0F);
+            RenderSystem.enableBlend();
+
+            var targetHeight = (int)Math.max(1, Math.floor(percent * height));
+
+            var fullCount = targetHeight / sprite.getHeight();
+            var remainder = targetHeight % sprite.getHeight();
+
+            int fy = y + height;
+            for (int i = 0; i < fullCount; i++) {
+                drawSprite(matrices, x, fy - sprite.getHeight(), getZOffset(), width, sprite.getHeight(), sprite);
+                fy -= sprite.getHeight();
+            }
+            if (remainder > 0) {
+                DrawableHelperMixin.bitexchange_drawTexturedQuad(matrices.peek().getModel(), x, x + width, fy - remainder, fy, getZOffset(), sprite.getMinU(), sprite.getMaxU(), sprite.getMinV() + (((float)(sprite.getHeight() - remainder)/sprite.getHeight()) * (sprite.getMaxV() - sprite.getMinV())), sprite.getMaxV());
+            }
+
+            RenderSystem.disableBlend();
+            RenderSystem.setShaderTexture(0, TEXTURE);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        }
+    }
+
+    private void drawFluidTooltip(MatrixStack matrices, int mouseX, int mouseY) {
+        int x = (width - backgroundWidth) / 2;
+        int y = (height - backgroundHeight) / 2;
+
+        if (mouseX >= x+134 && mouseX < x+134+16 && mouseY >= y+15 && mouseY < y+15+56) {
+            var be = getBlockEntity();
+            var resource = be.getOuputFluid().getResource();
+
+            if (!resource.isBlank()) {
+                var amount = be.getOuputFluid().getAmount();
+
+                var tooltip = FluidVariantRendering.getTooltip(resource);
+
+                if (amount < (FluidConstants.BUCKET/1000) || hasShiftDown()) {
+                    tooltip.add(new LiteralText(amount + " dp"));
+                } else {
+                    var currentMB = Math.round(((double) amount / FluidConstants.BUCKET) * 1000);
+                    var maxMB = Math.round(((double) be.getOuputFluid().getCapacity() / FluidConstants.BUCKET) * 1000);
+                    tooltip.add(new LiteralText(currentMB + " mB / " + maxMB + " mB"));
+                }
+
+                var fluid = resource.getFluid();
+                var fluidInfo = BitRegistries.FLUID.get(fluid);
+                if (fluidInfo != null) {
+                    var player = MinecraftClient.getInstance().player;
+
+                    var research = BitComponents.FLUID_KNOWLEDGE.get(player).getKnowledge(fluid);
+                    var maxResearch = fluidInfo.getResearch();
+
+                    var displayAmount = (double)amount / FluidConstants.BUCKET;
+                    var displayResearch = BitHelper.format((double)research / FluidConstants.BUCKET) + "B";
+                    var displayMax = BitHelper.format((double)maxResearch / FluidConstants.BUCKET) + "B";
+
+                    BitConfig config = AutoConfig.getConfigHolder(BitConfig.class).getConfig();
+                    var name = fluid.getDefaultState().getBlockState().getBlock().getName().shallowCopy();
+                    if (research >= maxResearch || config.showUnlearnedValues) {
+                        var text = new LiteralText("Bits: ").formatted(Formatting.LIGHT_PURPLE)
+                                .append(new LiteralText(BitHelper.format(fluidInfo.getValue() * displayAmount)).formatted(Formatting.YELLOW))
+                                .append(new LiteralText(" (").formatted(Formatting.WHITE))
+                                .append(new LiteralText(BitHelper.format(fluidInfo.getValue()) + "/B").formatted(Formatting.YELLOW))
+                                .append(new LiteralText(")").formatted(Formatting.WHITE));
+                        if (config.showUnlearnedValues) {
+                            text.append(new LiteralText(" [" + displayResearch + "/" + displayMax + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                        }
+                        tooltip.add(text);
+                        if (config.showUnlearnedValues) {
+                            BitExchangeClient.addResearchRequirementLines(true, fluidInfo, player, tooltip);
+                        }
+                    } else if (research < maxResearch) {
+                        var text = new LiteralText("Unlearned").formatted(Formatting.DARK_PURPLE);
+                        text.append(new LiteralText(" [" + displayResearch + "/" + displayMax + "]").formatted(Formatting.DARK_GRAY));
+                        tooltip.add(text);
+                        BitExchangeClient.addResearchRequirementLines(true, fluidInfo, player, tooltip);
+                    }
+                }
+
+                renderTooltip(matrices, tooltip, mouseX, mouseY);
+            }
+        }
     }
 
     private void drawRedSlots(MatrixStack matrices, int x, int y) {

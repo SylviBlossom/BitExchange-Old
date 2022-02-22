@@ -19,14 +19,15 @@ public class ItemDataRegistryBuilder extends DataRegistryBuilder<Item, ItemBitIn
     ItemBitInfo parseJson(Item resource, JsonObject json) throws Throwable {
         double value = parseJsonBits(resource, json);
         long research = JsonHelper.getLong(json, "research", 1);
+        boolean researchable = JsonHelper.getBoolean(json, "researchable", true);
         boolean automatable = JsonHelper.getBoolean(json, "automatable", true);
         List<ResearchRequirement> researchRequirements = parseResearchRequirements(json);
 
-        return BitInfo.ofItem(resource, value, research, automatable, researchRequirements);
+        return BitInfo.ofItem(resource, value, research, researchable, automatable, researchRequirements);
     }
 
     @Override
     ItemBitInfo copyResource(Item resource, ItemBitInfo source) throws Throwable {
-        return BitInfo.ofItem(resource, source.getValue(), source.getResearch(), source.isAutomatable(), source.getResearchRequirements());
+        return BitInfo.ofItem(resource, source.getValue(), source.getResearch(), source.isResearchable(), source.isAutomatable(), source.getResearchRequirements());
     }
 }

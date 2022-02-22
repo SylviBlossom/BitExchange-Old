@@ -83,7 +83,7 @@ public class RecipeRegistryBuilder implements BitRegistryBuilder<Item, ItemBitIn
             }
             if (smallestBits > 0) {
                 processedItems.put(item, smallestBits);
-                ItemBitInfo infoResult = BitInfo.ofItem(item, smallestBits, 1, isResource);
+                ItemBitInfo infoResult = BitInfo.ofItem(item, smallestBits, 1, true, isResource);
                 List<RecipeResearchRequirement> requirements = Lists.newArrayList();
                 for (Recipe<Inventory> recipe : recipes) {
                     RecipeResearchRequirement requirement = new RecipeResearchRequirement(recipe, getRecipeInfo(recipe));

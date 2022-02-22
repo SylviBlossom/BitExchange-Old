@@ -15,6 +15,8 @@ import moe.sylvi.bitexchange.block.*;
 import moe.sylvi.bitexchange.block.entity.*;
 import moe.sylvi.bitexchange.inventory.BitConsumerInventory;
 import moe.sylvi.bitexchange.item.BitArrayInventory;
+import moe.sylvi.bitexchange.item.BitDatabaseItem;
+import moe.sylvi.bitexchange.item.BitInscriptionItem;
 import moe.sylvi.bitexchange.screen.*;
 import net.fabricmc.api.ModInitializer;
 
@@ -63,6 +65,8 @@ public class BitExchange implements ModInitializer {
     public static final String MOD_NAME = "Bit Exchange";
 
     public static final Item BIT_ARRAY_ITEM;
+    public static final Item BIT_INSCRIPTION_ITEM;
+    public static final Item BIT_DATABASE_ITEM;
     public static final Item BIT_ITEM;
     public static final Item BYTE_ITEM;
     public static final Item KILOBIT_ITEM;
@@ -111,6 +115,9 @@ public class BitExchange implements ModInitializer {
 
     static {
         BIT_ARRAY_ITEM = Registry.register(Registry.ITEM, new Identifier(MOD_ID, "bit_array"), new Item(new FabricItemSettings().group(ItemGroup.MISC).maxCount(1)));
+        BIT_INSCRIPTION_ITEM = Registry.register(Registry.ITEM, new Identifier(MOD_ID, "bit_inscription"), new BitInscriptionItem());
+        BIT_DATABASE_ITEM = Registry.register(Registry.ITEM, new Identifier(MOD_ID, "bit_database"), new BitDatabaseItem());
+
         BIT_ITEM = Registry.register(Registry.ITEM, new Identifier(MOD_ID, "bit"), new Item(new FabricItemSettings().group(ItemGroup.MISC)));
         BYTE_ITEM = Registry.register(Registry.ITEM, new Identifier(MOD_ID, "byte"), new Item(new FabricItemSettings().group(ItemGroup.MISC)));
         KILOBIT_ITEM = Registry.register(Registry.ITEM, new Identifier(MOD_ID, "kilobit"), new Item(new FabricItemSettings().group(ItemGroup.MISC)));
@@ -159,7 +166,7 @@ public class BitExchange implements ModInitializer {
         BIT_CONVERTER_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(MOD_ID, "bit_converter"), BitConverterScreenHandler::new);
         BIT_RESEARCHER_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(MOD_ID, "bit_researcher"), BitResearcherScreenHandler::new);
         BIT_FACTORY_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(MOD_ID, "bit_factory"), BitFactoryScreenHandler::new);
-        BIT_LIQUEFIER_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(MOD_ID, "bit_liquefier"), BitLiquefierScreenHandler::new);
+        BIT_LIQUEFIER_SCREEN_HANDLER = ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "bit_liquefier"), BitLiquefierScreenHandler::new);
         BIT_MINER_SCREEN_HANDLER = ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "bit_miner"), BitMinerScreenHandler::new);
 
         BitStorages.ITEM.registerForItems((stack, context) -> BitStorage.of(new BitArrayInventory(Double.MAX_VALUE, context)), BIT_ARRAY_ITEM);

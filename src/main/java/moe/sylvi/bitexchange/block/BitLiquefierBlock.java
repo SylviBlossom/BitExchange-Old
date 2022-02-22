@@ -1,6 +1,8 @@
 package moe.sylvi.bitexchange.block;
 
+import moe.sylvi.bitexchange.BitComponents;
 import moe.sylvi.bitexchange.BitExchange;
+import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.block.entity.BitFactoryBlockEntity;
 import moe.sylvi.bitexchange.block.entity.BitLiquefierBlockEntity;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -83,17 +85,22 @@ public class BitLiquefierBlock extends BlockWithEntity {
                         SoundEvent soundEvent;
                         ResourceAmount resourceAmount = StorageUtil.findExtractableContent(itemStorage,transaction);
                         if (resourceAmount != null) {
-                            soundEvent = ((FluidVariant) resourceAmount.resource()).getFluid().isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_EMPTY_LAVA : SoundEvents.ITEM_BUCKET_EMPTY;
-                            var inserted = StorageUtil.move(itemStorage, ownStorage, variant -> true, resourceAmount.amount(), transaction);
+                            var variant = (FluidVariant) resourceAmount.resource();
+                            var knowledge = BitComponents.FLUID_KNOWLEDGE.get(player);
 
-                            if (inserted > 0) {
-                                if (soundEvent != null) {
-                                    player.playSound(soundEvent, SoundCategory.BLOCKS, 1f,1f);
+                            if (knowledge.hasLearned(variant.getFluid())) {
+                                soundEvent = variant.getFluid().isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_EMPTY_LAVA : SoundEvents.ITEM_BUCKET_EMPTY;
+                                var inserted = StorageUtil.move(itemStorage, ownStorage, v -> true, resourceAmount.amount(), transaction);
+
+                                if (inserted > 0) {
+                                    if (soundEvent != null) {
+                                        player.playSound(soundEvent, SoundCategory.BLOCKS, 1f, 1f);
+                                    }
+                                    transaction.commit();
+
+                                    liquefier.markDirty();
+                                    return ActionResult.SUCCESS;
                                 }
-                                transaction.commit();
-
-                                liquefier.markDirty();
-                                return ActionResult.SUCCESS;
                             }
                         }
                     }

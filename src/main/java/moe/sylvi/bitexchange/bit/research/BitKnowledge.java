@@ -2,6 +2,7 @@ package moe.sylvi.bitexchange.bit.research;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface BitKnowledge<T> {
     Map<T, Long> getKnowledgeMap();
@@ -9,6 +10,8 @@ public interface BitKnowledge<T> {
 
     long getKnowledge(T resource);
     long addKnowledge(T resource, long count);
+
+    boolean learn(T resource);
 
     boolean hasLearned(T resource);
     boolean canLearn(T resource);

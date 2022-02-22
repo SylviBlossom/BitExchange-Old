@@ -16,6 +16,7 @@ import moe.sylvi.bitexchange.transfer.FullInventoryStorage;
 import moe.sylvi.bitexchange.transfer.InventoryItemContext;
 import moe.sylvi.bitexchange.transfer.SimpleItemContext;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -35,8 +36,10 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -51,7 +54,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class BitLiquefierBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, BitLiquefierBlockInventory, SidedInventory, InventoryProvider, BlockEntityClientSerializable {
+public class BitLiquefierBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, BitLiquefierBlockInventory, SidedInventory, InventoryProvider, BlockEntityClientSerializable {
     public static final long FLUID_CAPACITY = FluidConstants.BUCKET * 8;
 
     private final DefaultedList<ItemStack> inventory;
@@ -98,6 +101,11 @@ public class BitLiquefierBlockEntity extends BlockEntity implements NamedScreenH
     @Override
     public BitFluidStorage getInputFluid() {
         return inputFluid;
+    }
+
+    @Override
+    public BitFluidStorage getOuputFluid() {
+        return outputFluid;
     }
 
     @Override
@@ -276,5 +284,10 @@ public class BitLiquefierBlockEntity extends BlockEntity implements NamedScreenH
     @Override
     public NbtCompound toClientTag(NbtCompound tag) {
         return writeFluidNBT(tag);
+    }
+
+    @Override
+    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+        buf.writeBlockPos(getPos());
     }
 }

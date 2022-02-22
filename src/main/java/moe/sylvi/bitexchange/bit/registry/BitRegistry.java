@@ -6,6 +6,8 @@ import moe.sylvi.bitexchange.bit.registry.builder.BitRegistryBuilder;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.registry.Registry;
 
+import java.util.List;
+
 public interface BitRegistry<R,I extends BitInfo<R>> extends Iterable<I> {
     static <T,O extends BitInfo<T>> BitRegistry<T,O> of(Class<O> infoType, Registry<T> resourceRegistry) {
         return new SimpleBitRegistry<>(resourceRegistry);
@@ -33,4 +35,6 @@ public interface BitRegistry<R,I extends BitInfo<R>> extends Iterable<I> {
         BitInfo<R> info = get(resource);
         return info != null ? info.getValue() : 0;
     }
+
+    List<I> getList();
 }

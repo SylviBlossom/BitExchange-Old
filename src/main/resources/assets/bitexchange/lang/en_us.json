@@ -5,6 +5,8 @@
   "block.bitexchange.bit_liquefier": "Bit Liquefier",
 
   "item.bitexchange.bit_array": "Bit Array",
+  "item.bitexchange.bit_inscription": "Bit Inscription",
+  "item.bitexchange.bit_database": "Database of Bit Knowledge",
 
   "block.bitexchange.bit_miner": "Bit Miner",
   "block.bitexchange.byte_miner": "Byte Miner",

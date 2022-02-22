@@ -5,5 +5,5 @@ import me.shedaniel.autoconfig.annotation.Config;
 
 @Config(name = "bitexchange")
 public class BitConfig implements ConfigData {
-    boolean showUnlearnedValues = false;
+    public boolean showUnlearnedValues = false;
 }

@@ -36,7 +36,7 @@ public class BitResearcherScreenHandler extends ScreenHandler {
         int m;
         int l;
         //Our inventory
-        this.addSlot(new SlotResearch(inventory, 0, 80, 35));
+        this.addSlot(new SlotResearch(inventory, playerInventory, 0, 80, 35));
         //The player inventory
         for (m = 0; m < 3; ++m) {
             for (l = 0; l < 9; ++l) {

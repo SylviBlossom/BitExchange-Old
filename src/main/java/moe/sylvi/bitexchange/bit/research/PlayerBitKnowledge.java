@@ -37,6 +37,18 @@ public interface PlayerBitKnowledge<T, R extends BitInfoResearchable<T>> extends
     }
 
     @Override
+    default boolean learn(T resource) {
+        var knowledgeMap = getKnowledgeMap();
+        var info = getBitRegistry().get(resource);
+        if (info != null && knowledgeMap.getOrDefault(resource, 0L) < info.getResearch()) {
+            knowledgeMap.put(resource, info.getResearch());
+            setKnowledgeMap(knowledgeMap);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     default boolean hasLearned(T resource) {
         var knowledgeMap = getKnowledgeMap();
         var info = getBitRegistry().get(resource);
@@ -50,6 +62,9 @@ public interface PlayerBitKnowledge<T, R extends BitInfoResearchable<T>> extends
     default boolean canLearn(T resource) {
         var info = getBitRegistry().get(resource);
         if (info != null) {
+            if (!info.isResearchable()) {
+                return false;
+            }
             var failedAny = false;
             for (var requirement : info.getResearchRequirements()) {
                 if (!requirement.isMet(getPlayer())) {

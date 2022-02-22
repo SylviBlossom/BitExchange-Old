@@ -19,13 +19,14 @@ public class FluidDataRegistryBuilder extends DataRegistryBuilder<Fluid, FluidBi
     FluidBitInfo parseJson(Fluid resource, JsonObject json) throws Throwable {
         double value = parseJsonBits(resource, json);
         long research = JsonHelper.getLong(json, "research", 1);
+        boolean researchable = JsonHelper.getBoolean(json, "researchable", true);
         List<ResearchRequirement> researchRequirements = parseResearchRequirements(json);
 
-        return BitInfo.ofFluid(resource, value, research, researchRequirements);
+        return BitInfo.ofFluid(resource, value, research, researchable, researchRequirements);
     }
 
     @Override
     FluidBitInfo copyResource(Fluid resource, FluidBitInfo source) throws Throwable {
-        return BitInfo.ofFluid(resource, source.getValue(), source.getResearch(), source.getResearchRequirements());
+        return BitInfo.ofFluid(resource, source.getValue(), source.getResearch(), source.isResearchable(), source.getResearchRequirements());
     }
 }

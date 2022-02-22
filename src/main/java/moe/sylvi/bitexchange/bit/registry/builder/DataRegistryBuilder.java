@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.gson.*;
 import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
+import moe.sylvi.bitexchange.bit.BitHelper;
+import moe.sylvi.bitexchange.bit.GenericBitResource;
 import moe.sylvi.bitexchange.bit.Recursable;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
@@ -128,15 +130,15 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
             String addStr = JsonHelper.getString(json, "value_ref");
             String[] ids = addStr.split(",");
             for (String id : ids) {
-                GenericBitResource parsed = parseResourceId(id);
+                GenericBitResource parsed = BitHelper.parseResourceId(id, registry);
 
-                Recursable<BitInfo> result = parsed.registry.getOrProcess(parsed.resource);
+                Recursable<BitInfo> result = parsed.registry().getOrProcess(parsed.resource());
                 if (result.isRecursive()) {
                     throw new Exception("Found circular reference for " + id + "");
                 }
 
                 if (result.get() != null) {
-                    value += result.get().getValue() * parsed.amount;
+                    value += result.get().getValue() * parsed.amount();
                 }
             }
         }
@@ -153,11 +155,11 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
                 if (id.isEmpty()) {
                     continue;
                 }
-                List<GenericBitResource> parsed = parseMultiResourceId(id);
+                List<GenericBitResource> parsed = BitHelper.parseMultiResourceId(id, registry);
 
                 List<ResearchRequirement> requirements = Lists.newArrayList();
                 for (GenericBitResource resource : parsed) {
-                    if (resource.registry.get(resource.resource) instanceof BitInfoResearchable researchable) {
+                    if (resource.registry().get(resource.resource()) instanceof BitInfoResearchable researchable) {
                         ResearchRequirement requirement = researchable.createResearchRequirement();
                         if (!requirements.contains(requirement)) {
                             requirements.add(requirement);
@@ -189,31 +191,6 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         return copyResource(resource, result.get());
     }
 
-    protected GenericBitResource parseResourceId(String id) throws Throwable {
-        BitRegistry registryRef = registry;
-        long count = 1;
-
-        int registryIndex = id.indexOf("$");
-        if (registryIndex >= 0) {
-            registryRef = BitRegistries.REGISTRY.get(new Identifier(id.substring(0, registryIndex)));
-            if (registryRef == null) {
-                throw new Exception("Bit registry not found: " + id.substring(0, registryIndex));
-            }
-            id = id.substring(registryIndex + 1);
-        }
-
-        int multIndex = id.indexOf("*");
-        if (multIndex >= 0) {
-            count = Integer.parseInt(id.substring(multIndex + 1));
-            id = id.substring(0, multIndex);
-        }
-
-        String finalId = id;
-        Object resourceRef = registryRef.getResourceRegistry().getOrEmpty(new Identifier(id)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
-
-        return new GenericBitResource(registryRef, resourceRef, count);
-    }
-
     protected TypedBitResource<R, I> parseTypedResourceId(String id) throws Throwable {
         long count = 1;
 
@@ -227,50 +204,6 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         Object resourceRef = registry.getResourceRegistry().getOrEmpty(new Identifier(id)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
 
         return new TypedBitResource(registry, resourceRef, count);
-    }
-
-    protected List<GenericBitResource> parseMultiResourceId(String fullId) throws Throwable {
-        List<GenericBitResource> list = Lists.newArrayList();
-
-        for (String id : fullId.split("\\|")) {
-            BitRegistry registryRef = registry;
-            long count = 1;
-
-            int registryIndex = id.indexOf("$");
-            if (registryIndex >= 0) {
-                registryRef = BitRegistries.REGISTRY.get(new Identifier(id.substring(0, registryIndex)));
-                if (registryRef == null) {
-                    throw new Exception("Bit registry not found: " + id.substring(0, registryIndex));
-                }
-                id = id.substring(registryIndex + 1);
-            }
-
-            int multIndex = id.indexOf("*");
-            if (multIndex >= 0) {
-                count = Integer.parseInt(id.substring(multIndex + 1));
-                id = id.substring(0, multIndex);
-            }
-
-            if (id.startsWith("#")) {
-                Tag tag = ServerTagManagerHolder.getTagManager().getTag(registryRef.getResourceRegistry().getKey(), new Identifier(id), t -> new JsonSyntaxException("Invalid or unsupported tag '" + t + "'"));
-
-                for (Object resourceRef : tag.values()) {
-                    GenericBitResource resource = new GenericBitResource(registryRef, resourceRef, count);
-                    if (!list.contains(resource)) {
-                        list.add(resource);
-                    }
-                }
-            } else {
-                String finalId = id;
-                Object resourceRef = registryRef.getResourceRegistry().getOrEmpty(new Identifier(id)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
-
-                if (!list.contains(resourceRef)) {
-                    list.add(new GenericBitResource(registryRef, resourceRef, count));
-                }
-            }
-        }
-
-        return list;
     }
 
     public static void loadResources(ResourceManager manager) {
@@ -299,8 +232,6 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
             }
         }
     }
-
-    public record GenericBitResource(BitRegistry registry, Object resource, long amount) {}
 
     public record TypedBitResource<R, I extends BitInfo<R>>(BitRegistry<R, I> registry, R resource, long amount) {}
 }
