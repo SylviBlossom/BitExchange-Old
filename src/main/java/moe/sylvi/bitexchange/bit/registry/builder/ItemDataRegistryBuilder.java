@@ -10,16 +10,16 @@ import net.minecraft.util.JsonHelper;
 
 import java.util.List;
 
-public class ItemDataRegistryBuilder extends DataRegistryBuilder<Item, ItemBitInfo> {
+public class ItemDataRegistryBuilder extends ResearchableDataRegistryBuilder<Item, ItemBitInfo> {
     public ItemDataRegistryBuilder(BitRegistry<Item, ItemBitInfo> registry) {
         super(registry);
     }
 
     @Override
     ItemBitInfo parseJson(Item resource, JsonObject json) throws Throwable {
-        double value = parseJsonBits(resource, json);
-        long research = JsonHelper.getLong(json, "research", 1);
-        boolean researchable = JsonHelper.getBoolean(json, "researchable", true);
+        double value = parseBitValue(resource, json);
+        long research = parseResearch(json, 1);
+        boolean researchable = parseResearchable(json, true);
         boolean automatable = JsonHelper.getBoolean(json, "automatable", true);
         List<ResearchRequirement> researchRequirements = parseResearchRequirements(json);
 
@@ -27,7 +27,13 @@ public class ItemDataRegistryBuilder extends DataRegistryBuilder<Item, ItemBitIn
     }
 
     @Override
-    ItemBitInfo copyResource(Item resource, ItemBitInfo source) throws Throwable {
-        return BitInfo.ofItem(resource, source.getValue(), source.getResearch(), source.isResearchable(), source.isAutomatable(), source.getResearchRequirements());
+    ItemBitInfo modifyResource(Item resource, ItemBitInfo info, JsonObject json) throws Throwable {
+        double value = modifyBitValue(info, json);
+        long research = parseResearch(json, info.getResearch());
+        boolean researchable = parseResearchable(json, info.isResearchable());
+        boolean automatable = JsonHelper.getBoolean(json, "automatable", info.isAutomatable());
+        List<ResearchRequirement> researchRequirements = modifyResearchRequirements(info, json);
+
+        return BitInfo.ofItem(resource, value, research, researchable, automatable, researchRequirements);
     }
 }

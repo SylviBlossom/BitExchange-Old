@@ -10,14 +10,14 @@ import net.minecraft.util.JsonHelper;
 
 import java.util.List;
 
-public class FluidDataRegistryBuilder extends DataRegistryBuilder<Fluid, FluidBitInfo> {
+public class FluidDataRegistryBuilder extends ResearchableDataRegistryBuilder<Fluid, FluidBitInfo> {
     public FluidDataRegistryBuilder(BitRegistry<Fluid, FluidBitInfo> registry) {
         super(registry);
     }
 
     @Override
     FluidBitInfo parseJson(Fluid resource, JsonObject json) throws Throwable {
-        double value = parseJsonBits(resource, json);
+        double value = parseBitValue(resource, json);
         long research = JsonHelper.getLong(json, "research", 1);
         boolean researchable = JsonHelper.getBoolean(json, "researchable", true);
         List<ResearchRequirement> researchRequirements = parseResearchRequirements(json);
@@ -26,7 +26,12 @@ public class FluidDataRegistryBuilder extends DataRegistryBuilder<Fluid, FluidBi
     }
 
     @Override
-    FluidBitInfo copyResource(Fluid resource, FluidBitInfo source) throws Throwable {
-        return BitInfo.ofFluid(resource, source.getValue(), source.getResearch(), source.isResearchable(), source.getResearchRequirements());
+    FluidBitInfo modifyResource(Fluid resource, FluidBitInfo info, JsonObject json) throws Throwable {
+        double value = modifyBitValue(info, json);
+        long research = parseResearch(json, info.getResearch());
+        boolean researchable = parseResearchable(json, info.isResearchable());
+        List<ResearchRequirement> researchRequirements = modifyResearchRequirements(info, json);
+
+        return BitInfo.ofFluid(resource, value, research, researchable, researchRequirements);
     }
 }

@@ -1,0 +1,102 @@
+{
+  "type": "bitexchange:item",
+  "override": false,
+  "values": [
+    {
+      "id":        "minecraft:white_concrete",
+      "value_ref": "minecraft:white_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:orange_concrete",
+      "value_ref": "minecraft:orange_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:magenta_concrete",
+      "value_ref": "minecraft:magenta_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:light_blue_concrete",
+      "value_ref": "minecraft:light_blue_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:yellow_concrete",
+      "value_ref": "minecraft:yellow_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:lime_concrete",
+      "value_ref": "minecraft:lime_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:pink_concrete",
+      "value_ref": "minecraft:pink_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:gray_concrete",
+      "value_ref": "minecraft:gray_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:light_gray_concrete",
+      "value_ref": "minecraft:light_gray_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:cyan_concrete",
+      "value_ref": "minecraft:cyan_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:purple_concrete",
+      "value_ref": "minecraft:purple_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:blue_concrete",
+      "value_ref": "minecraft:blue_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:brown_concrete",
+      "value_ref": "minecraft:brown_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:green_concrete",
+      "value_ref": "minecraft:green_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:red_concrete",
+      "value_ref": "minecraft:red_concrete_powder",
+      "research": 1,
+      "automatable": false
+    },
+    {
+      "id":        "minecraft:black_concrete",
+      "value_ref": "minecraft:black_concrete_powder",
+      "research": 1,
+      "automatable": false
+    }
+  ]
+}

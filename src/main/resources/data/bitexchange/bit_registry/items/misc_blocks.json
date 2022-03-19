@@ -1,5 +1,6 @@
 {
   "type": "bitexchange:item",
+  "override": false,
   "values": [
     {
       "id": "minecraft:obsidian",
@@ -9,13 +10,9 @@
     {
       "ids": [
         "minecraft:melon",
-        "minecraft:pumpkin"
+        "minecraft:pumpkin",
+        "minecraft:carved_pumpkin"
       ],
-      "value": 144,
-      "research": 8
-    },
-    {
-      "id": "minecraft:carved_pumpkin",
       "value": 144,
       "research": 8
     },
@@ -34,29 +31,6 @@
       "id": "minecraft:sculk_sensor",
       "value": 1536,
       "research": 4
-    },
-    {
-      "ids": [
-        "minecraft:white_shulker_box",
-        "minecraft:orange_shulker_box",
-        "minecraft:magenta_shulker_box",
-        "minecraft:light_blue_shulker_box",
-        "minecraft:yellow_shulker_box",
-        "minecraft:lime_shulker_box",
-        "minecraft:pink_shulker_box",
-        "minecraft:gray_shulker_box",
-        "minecraft:light_gray_shulker_box",
-        "minecraft:cyan_shulker_box",
-        "minecraft:purple_shulker_box",
-        "minecraft:blue_shulker_box",
-        "minecraft:brown_shulker_box",
-        "minecraft:green_shulker_box",
-        "minecraft:red_shulker_box",
-        "minecraft:black_shulker_box"
-      ],
-      "value_ref": "minecraft:shulker_box",
-      "research": 1,
-      "automatable": false
     }
   ]
 }

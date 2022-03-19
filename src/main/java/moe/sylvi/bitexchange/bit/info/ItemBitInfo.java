@@ -69,12 +69,6 @@ public class ItemBitInfo implements BitInfoResearchable<Item> {
     public boolean isAutomatable() {
         return automatable;
     }
-
-    @Override
-    public ItemBitInfo copy() {
-        return new ItemBitInfo(item, value, research, researchable, automatable, researchRequirements);
-    }
-
     @Override
     public Text getDisplayName() {
         return item.getName();
@@ -83,5 +77,10 @@ public class ItemBitInfo implements BitInfoResearchable<Item> {
     @Override
     public void showResearchMessage(PlayerEntity player) {
         player.sendMessage(new LiteralText("Researched item: ").formatted(Formatting.LIGHT_PURPLE).append(item.getDefaultStack().toHoverableText()), false);
+    }
+
+    @Override
+    public ItemBitInfo withResource(Item resource) {
+        return new ItemBitInfo(item, value, research, researchable, automatable, researchRequirements);
     }
 }

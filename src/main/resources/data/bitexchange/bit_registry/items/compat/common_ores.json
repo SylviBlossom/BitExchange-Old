@@ -1,0 +1,70 @@
+{
+  "type": "bitexchange:item",
+  "override": false,
+  "values": [
+    {
+      "ids": [
+        "#c:raw_tin_ores",
+        "#c:tin_ingots"
+      ],
+      "value": 256,
+      "research": 16
+    },
+    {
+      "ids": [
+        "#c:raw_lead_ores",
+        "#c:lead_ingots"
+      ],
+      "value": 256,
+      "research": 16
+    },
+    {
+      "ids": [
+        "#c:raw_nickel_ores",
+        "#c:nickel_ingots"
+      ],
+      "value": 512,
+      "research": 16
+    },
+    {
+      "ids": [
+        "#c:raw_silver_ores",
+        "#c:silver_ingots"
+      ],
+      "value": 512,
+      "research": 16
+    },
+    {
+      "ids": [
+        "#c:raw_uranium_ores",
+        "#c:uranium_ingots"
+      ],
+      "value": 1024,
+      "research": 16
+    },
+    {
+      "ids": [
+        "#c:raw_tungsten_ores",
+        "#c:tungsten_ingots"
+      ],
+      "value": 1024,
+      "research": 16
+    },
+    {
+      "ids": [
+        "#c:raw_iridium_ores",
+        "#c:iridium_ingots"
+      ],
+      "value": 2048,
+      "research": 16
+    },
+    {
+      "ids": [
+        "#c:raw_platinum_ores",
+        "#c:platinum_ingots"
+      ],
+      "value": 2048,
+      "research": 16
+    }
+  ]
+}

@@ -1,33 +1,30 @@
 {
   "type": "bitexchange:item",
+  "override": false,
   "values": [
+    {
+      "id": "minecraft:coal",
+      "value": 32,
+      "research": 16
+    },
     {
       "id": "minecraft:redstone",
       "value": 64,
       "research": 16
     },
     {
-      "id": "minecraft:coal",
+      "ids": [
+        "#c:raw_copper_ores",
+        "#c:copper_ingots"
+      ],
       "value": 128,
       "research": 16
     },
     {
-      "id": "minecraft:raw_iron",
-      "value": 256,
-      "research": 16
-    },
-    {
-      "id": "minecraft:iron_ingot",
-      "value": 256,
-      "research": 16
-    },
-    {
-      "id": "minecraft:raw_copper",
-      "value": 256,
-      "research": 16
-    },
-    {
-      "id": "minecraft:copper_ingot",
+      "ids": [
+        "#c:raw_iron_ores",
+        "#c:iron_ingots"
+      ],
       "value": 256,
       "research": 16
     },
@@ -47,18 +44,16 @@
       "research": 16
     },
     {
-      "id": "minecraft:raw_gold",
-      "value": 2048,
-      "research": 16
-    },
-    {
-      "id": "minecraft:gold_ingot",
+      "ids": [
+        "#c:raw_gold_ores",
+        "#c:gold_ingots"
+      ],
       "value": 2048,
       "research": 16
     },
     {
       "id": "minecraft:emerald",
-      "value": 4096,
+      "value": 8192,
       "research": 8
     },
     {

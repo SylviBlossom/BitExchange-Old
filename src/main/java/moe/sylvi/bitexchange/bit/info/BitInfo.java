@@ -30,5 +30,9 @@ public interface BitInfo<T> {
 
     Text getDisplayName();
 
-    <I extends BitInfo<T>> I copy();
+    <I extends BitInfo<T>> I withResource(T resource);
+
+    default <I extends BitInfo<T>> I copy() {
+        return withResource(getResource());
+    }
 }

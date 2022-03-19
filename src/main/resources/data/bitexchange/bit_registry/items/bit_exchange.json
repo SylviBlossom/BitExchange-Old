@@ -1,5 +1,6 @@
 {
   "type": "bitexchange:item",
+  "override": false,
   "values": [
     {
       "id": "bitexchange:bit",

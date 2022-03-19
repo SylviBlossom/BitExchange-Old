@@ -12,18 +12,20 @@ import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import moe.sylvi.bitexchange.bit.research.CombinedResearchRequirement;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
+import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tag.ServerTagManagerHolder;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
     private static final HashMap<BitRegistry<?,?>, List<JsonObject>> JSON_OBJECTS = new HashMap<>();
     private static final HashMap<JsonObject, Identifier> JSON_IDS = new HashMap<>();
     protected final HashMap<R, JsonObject> processing = new HashMap<>();
+    protected final HashMap<R, List<JsonObject>> modifying = new HashMap<>();
     protected final HashMap<JsonObject, Double> calculated = new HashMap<>();
 
     protected final int priority;
@@ -58,12 +61,13 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         for (JsonObject json : JSON_OBJECTS.get(registry)) {
             try {
                 boolean override = JsonHelper.getBoolean(json, "override", true);
+                boolean modify = JsonHelper.getBoolean(json, "modify", false);
                 if (json.has("id")) {
                     String id = JsonHelper.getString(json, "id");
-                    registerID(id, json, override);
+                    registerID(id, json, override, modify);
                 } else if (json.has("ids")) {
                     for (JsonElement elem : JsonHelper.getArray(json, "ids")) {
-                        registerID(elem.getAsString(), json, override);
+                        registerID(elem.getAsString(), json, override, modify);
                     }
                 }
             } catch (Exception e) {
@@ -74,35 +78,49 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
 
     @Override
     public I process(R resource) {
-        if (!processing.containsKey(resource)) {
-            return null;
-        }
-        JsonObject json = processing.get(resource);
-        try {
-            if (json.has("copy")) {
-                return parseCopyResource(resource, json);
-            } else {
-                return parseJson(resource, json);
+        I result = null;
+        if (processing.containsKey(resource)) {
+            JsonObject json = processing.get(resource);
+            try {
+                if (json.has("copy")) {
+                    result = parseCopyResource(resource, json);
+                } else {
+                    result = parseJson(resource, json);
+                }
+            } catch (Throwable throwable) {
+                BitExchange.error("Error occured while processing resource " + JSON_IDS.get(json).toString(), throwable);
+                return null;
             }
-        } catch (Throwable throwable) {
-            BitExchange.error("Error occured while processing resource " + JSON_IDS.get(json).toString(), throwable);
-            return null;
         }
+        if (modifying.containsKey(resource)) {
+            for (JsonObject json : modifying.get(resource)) {
+                try {
+                    result = parseModifyResource(resource, json, result);
+                } catch (Throwable throwable) {
+                    BitExchange.error("Error occured while modifying resource " + JSON_IDS.get(json).toString(), throwable);
+                }
+            }
+        }
+        return result;
     }
 
     @Override
     public void postProcess() {
         processing.clear();
+        modifying.clear();
         calculated.clear();
     }
 
-    protected void registerID(String id, JsonObject json, boolean override) {
+    protected void registerID(String id, JsonObject json, boolean override, boolean modify) {
         Registry<R> resourceRegistry = registry.getResourceRegistry();
         if (id.startsWith("#")) {
             id = id.substring(1);
-            Tag<R> tag = ServerTagManagerHolder.getTagManager().getTag(resourceRegistry.getKey(), new Identifier(id), t -> new JsonSyntaxException("Invalid or unsupported tag '" + t + "'"));
+            Tag<R> tag = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(resourceRegistry.getKey()).getTagOrEmpty(new Identifier(id));
             for (R resource : tag.values()) {
-                if (override || !processing.containsKey(resource)) {
+                if (modify) {
+                    modifying.computeIfAbsent(resource, k -> new ArrayList<>()).add(json);
+                    registry.prepareResource(resource, this);
+                } else if (override || !processing.containsKey(resource)) {
                     processing.put(resource, json);
                     registry.prepareResource(resource, this);
                 }
@@ -119,9 +137,9 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
 
     abstract I parseJson(R resource, JsonObject json) throws Throwable;
 
-    abstract I copyResource(R resource, I source) throws Throwable;
+    abstract I modifyResource(R resource, I info, JsonObject json) throws Throwable;
 
-    protected double parseJsonBits(R resource, JsonObject json) throws Throwable {
+    protected double parseBitValue(R resource, JsonObject json) throws Throwable {
         if (calculated.containsKey(json)) {
             return calculated.get(json);
         }
@@ -146,33 +164,29 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         return value;
     }
 
-    protected List<ResearchRequirement> parseResearchRequirements(JsonObject json) throws Throwable {
-        List<ResearchRequirement> result = Lists.newArrayList();
-        String field = json.has("required_research") ? "required_research" : (json.has("value_ref") ? "value_ref" : null);
-        if (field != null) {
-            String[] ids = JsonHelper.getString(json, field).split(",");
+    protected double modifyBitValue(I info, JsonObject json) throws Throwable {
+        boolean hasValue = json.has("value");
+        double value = JsonHelper.getDouble(json, "value", info.getValue());
+        if (json.has("value_ref")) {
+            if (!hasValue) {
+                value = 0;
+            }
+            String addStr = JsonHelper.getString(json, "value_ref");
+            String[] ids = addStr.split(",");
             for (String id : ids) {
-                if (id.isEmpty()) {
-                    continue;
-                }
-                List<GenericBitResource> parsed = BitHelper.parseMultiResourceId(id, registry);
+                GenericBitResource parsed = BitHelper.parseResourceId(id, registry);
 
-                List<ResearchRequirement> requirements = Lists.newArrayList();
-                for (GenericBitResource resource : parsed) {
-                    if (resource.registry().get(resource.resource()) instanceof BitInfoResearchable researchable) {
-                        ResearchRequirement requirement = researchable.createResearchRequirement();
-                        if (!requirements.contains(requirement)) {
-                            requirements.add(requirement);
-                        }
-                    }
+                Recursable<BitInfo> result = parsed.registry().getOrProcess(parsed.resource());
+                if (result.isRecursive()) {
+                    throw new Exception("Found circular reference for " + id + "");
                 }
 
-                if (!requirements.isEmpty()) {
-                    result.add(CombinedResearchRequirement.of(requirements));
+                if (result.get() != null) {
+                    value += result.get().getValue() * parsed.amount();
                 }
             }
         }
-        return result;
+        return value;
     }
 
     protected I parseCopyResource(R resource, JsonObject json) throws Throwable {
@@ -188,7 +202,21 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
             throw new Exception("Copy failed, could not find " + id + "");
         }
 
-        return copyResource(resource, result.get());
+        return modifyResource(resource, result.get().withResource(resource), json);
+    }
+
+    protected I parseModifyResource(R resource, JsonObject json, @Nullable I overrideSource) throws Throwable {
+        if (overrideSource == null) {
+            Recursable<I> source = registry.getOrProcess(resource, true);
+
+            if (source.isRecursive()) {
+                throw new Exception("Circular 'modify' call");
+            }
+
+            return modifyResource(resource, source.get(), json);
+        } else {
+            return modifyResource(resource, overrideSource, json);
+        }
     }
 
     protected TypedBitResource<R, I> parseTypedResourceId(String id) throws Throwable {
@@ -210,22 +238,35 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         JSON_OBJECTS.clear();
         JSON_IDS.clear();
         for (Identifier id : manager.findResources("bit_registry", path -> path.endsWith(".json"))) {
-            try (InputStream stream = manager.getResource(id).getInputStream()) {
-                Reader reader = new BufferedReader(new InputStreamReader(stream));
-                JsonObject root = JsonHelper.deserialize(GSON, reader, JsonObject.class);
+            try {
+                for (Resource resource : manager.getAllResources(id)) {
+                    InputStream stream = resource.getInputStream();
 
-                String registryType = JsonHelper.getString(root, "type");
-                BitRegistry<?,?> registry = BitRegistries.REGISTRY.get(new Identifier(registryType));
-                List<JsonObject> objectList = JSON_OBJECTS.computeIfAbsent(registry, (j) -> Lists.newArrayList());
+                    Reader reader = new BufferedReader(new InputStreamReader(stream));
+                    JsonObject root = JsonHelper.deserialize(GSON, reader, JsonObject.class);
 
-                JsonArray array = root.getAsJsonArray("values");
-                for (JsonElement elem : array) {
-                    JsonObject object = elem.getAsJsonObject();
-                    if (!object.has("id") && !object.has("ids")) {
-                        throw new JsonSyntaxException("Json must have an 'id' or 'ids' field");
+                    String registryType = JsonHelper.getString(root, "type");
+                    BitRegistry<?,?> registry = BitRegistries.REGISTRY.get(new Identifier(registryType));
+                    List<JsonObject> objectList = JSON_OBJECTS.computeIfAbsent(registry, (j) -> Lists.newArrayList());
+
+                    boolean defaultOverride = JsonHelper.getBoolean(root, "override", true);
+                    boolean defaultModify = JsonHelper.getBoolean(root, "modify", false);
+
+                    JsonArray array = root.getAsJsonArray("values");
+                    for (JsonElement elem : array) {
+                        JsonObject object = elem.getAsJsonObject();
+                        if (!object.has("id") && !object.has("ids")) {
+                            throw new JsonSyntaxException("Json must have an 'id' or 'ids' field");
+                        }
+                        if (!object.has("override")) {
+                            object.addProperty("override", defaultOverride);
+                        }
+                        if (!object.has("modify")) {
+                            object.addProperty("modify", defaultModify);
+                        }
+                        objectList.add(object);
+                        JSON_IDS.put(object, id);
                     }
-                    objectList.add(object);
-                    JSON_IDS.put(object, id);
                 }
             } catch (Exception e) {
                 BitExchange.error("Error occured while loading resource " + id.toString(), e);
