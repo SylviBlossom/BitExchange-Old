@@ -3,8 +3,7 @@ package moe.sylvi.bitexchange.bit.registry.builder;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import moe.sylvi.bitexchange.bit.BitHelper;
-import moe.sylvi.bitexchange.bit.GenericBitResource;
-import moe.sylvi.bitexchange.bit.info.BitInfo;
+import moe.sylvi.bitexchange.bit.BitResource;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import moe.sylvi.bitexchange.bit.research.CombinedResearchRequirement;
@@ -38,10 +37,10 @@ public abstract class ResearchableDataRegistryBuilder<R, I extends BitInfoResear
                 if (id.isEmpty()) {
                     continue;
                 }
-                List<GenericBitResource> parsed = BitHelper.parseMultiResourceId(id, registry);
+                List<BitResource> parsed = BitHelper.parseMultiResourceId(id, registry);
 
                 List<ResearchRequirement> requirements = Lists.newArrayList();
-                for (GenericBitResource resource : parsed) {
+                for (BitResource resource : parsed) {
                     if (resource.registry().get(resource.resource()) instanceof BitInfoResearchable researchable) {
                         ResearchRequirement requirement = researchable.createResearchRequirement();
                         if (!requirements.contains(requirement)) {

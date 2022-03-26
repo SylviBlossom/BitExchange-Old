@@ -251,6 +251,23 @@ public class BitExchange implements ModInitializer {
                                 })
                             )
                         )
+                    ).then(literal("remove")
+                        .then(argument("item", ItemStackArgumentType.itemStack())
+                            .executes((ctx) -> {
+                                ItemStackArgument itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
+                                BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).removeKnowledge(itemArg.getItem());
+                                return 1;
+                            })
+                        ).then(argument("fluid", StringArgumentType.string())
+                            .executes((ctx) -> {
+                                var fluidStr = StringArgumentType.getString(ctx, "fluid");
+                                var fluid = Registry.FLUID.getOrEmpty(new Identifier(fluidStr));
+                                if (!fluid.isEmpty()) {
+                                    BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayer()).removeKnowledge(fluid.get());
+                                }
+                                return 1;
+                            })
+                        )
                     ).then(literal("complete")
                         .executes((ctx) -> {
                             completeKnowledge(BitRegistries.ITEM, ctx.getSource().getPlayer());
@@ -303,8 +320,12 @@ public class BitExchange implements ModInitializer {
         LOGGER.log(level, message);
     }
 
-    public static void error(String message, Object o) {
-        LOGGER.error(message, o);
+    public static void error(String message) {
+        LOGGER.error(message);
+    }
+
+    public static void error(String message, Throwable e) {
+        LOGGER.error(message + "\n" + e.getMessage());
     }
 
     private static String[] IGNORE_TESTING = new String[] {

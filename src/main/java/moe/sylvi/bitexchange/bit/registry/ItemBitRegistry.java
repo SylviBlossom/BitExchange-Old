@@ -1,14 +1,16 @@
 package moe.sylvi.bitexchange.bit.registry;
 
 import moe.sylvi.bitexchange.BitComponents;
+import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.research.BitKnowledge;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.util.registry.Registry;
 
 public class ItemBitRegistry extends SimpleBitRegistry<Item, ItemBitInfo> implements ResearchableBitRegistry<Item, ItemBitInfo> {
     public ItemBitRegistry(Registry<Item> resourceRegistry) {
-        super(resourceRegistry);
+        super(resourceRegistry, BitInfo.ofItem(Items.AIR, 1, 1, true, false));
     }
 
     @Override

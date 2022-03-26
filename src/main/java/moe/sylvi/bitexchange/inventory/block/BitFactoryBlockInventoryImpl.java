@@ -10,7 +10,7 @@ public class BitFactoryBlockInventoryImpl implements BitFactoryBlockInventory {
     private final BitFluidStorage inputFluid = new BitFluidStorage();
 
     @Override
-    public World getWorld() {
+    public World getConsumerWorld() {
         return null;
     }
 

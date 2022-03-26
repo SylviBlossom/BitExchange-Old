@@ -1,0 +1,28 @@
+{
+  "type": "bitexchange:item",
+  "override": false,
+  "values": [
+    {
+      "id": "ae2:certus_quartz_dust",
+      "value": 64,
+      "research": 16
+    },
+    {
+      "id": "ae2:certus_quartz_crystal",
+      "value_ref": "ae2:certus_quartz_dust",
+      "research": 16,
+      "automatable": false
+    },
+    {
+      "id": "ae2:charged_certus_quartz_crystal",
+      "value": 64,
+      "research": 16,
+      "automatable": false
+    },
+    {
+      "id": "ae2:sky_stone_block",
+      "value": 1,
+      "research": 16
+    }
+  ]
+}

@@ -37,6 +37,11 @@ public class BitConverterBlockEntity extends BlockEntity implements NamedScreenH
     }
 
     @Override
+    public World getConsumerWorld() {
+        return this.world;
+    }
+
+    @Override
     public BitFluidStorage getInputFluid() {
         return inputFluid;
     }

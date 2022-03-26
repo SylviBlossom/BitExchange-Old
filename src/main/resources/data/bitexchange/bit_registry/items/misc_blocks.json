@@ -8,6 +8,11 @@
       "research": 8
     },
     {
+      "id": "minecraft:clay",
+      "value_ref": "minecraft:clay_ball*4",
+      "automatable": false
+    },
+    {
       "ids": [
         "minecraft:melon",
         "minecraft:pumpkin",

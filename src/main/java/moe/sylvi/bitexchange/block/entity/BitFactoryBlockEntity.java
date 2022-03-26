@@ -33,6 +33,11 @@ public class BitFactoryBlockEntity extends BlockEntity implements NamedScreenHan
     }
 
     @Override
+    public World getConsumerWorld() {
+        return this.world;
+    }
+
+    @Override
     public BitFluidStorage getInputFluid() {
         return inputFluid;
     }

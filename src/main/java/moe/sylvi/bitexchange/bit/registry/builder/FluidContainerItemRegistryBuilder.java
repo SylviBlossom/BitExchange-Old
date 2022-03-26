@@ -76,8 +76,6 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
         ContainerItemContext context = pair.getLeft();
         Storage<FluidVariant> storage = pair.getRight();
 
-        BitExchange.log(Level.INFO, "Processing fluid container: " + item.getName().getString());
-
         boolean success = true;
         double bits = 0.0;
         List<ResearchRequirement> requirements = Lists.newArrayList();
@@ -102,7 +100,6 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
                     requirements.add(requirement);
                 }
             }
-            BitExchange.log(Level.INFO, "Stage 1: " + (success ? "Passed" : "Failed"));
             if (success) {
                 if (storage.supportsExtraction()) {
                     for (SingleSlotStorage<ItemVariant> slot : context.getAdditionalSlots()) {
@@ -111,7 +108,6 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
                         }
                         Recursable<ItemBitInfo> result = registry.getOrProcess(slot.getResource().getItem());
                         if (!result.notNullOrRecursive()) {
-                            BitExchange.log(Level.INFO, "Stage 2 [Extraction]: Null or recursive result for " + slot.getResource().getItem().getName().getString());
                             success = false;
                             break;
                         }

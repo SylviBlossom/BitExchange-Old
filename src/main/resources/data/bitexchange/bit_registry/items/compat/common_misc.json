@@ -1,0 +1,14 @@
+{
+  "type": "bitexchange:item",
+  "override": false,
+  "values": [
+    {
+      "ids": [
+        "#c:salts",
+        "#c:salt_dusts"
+      ],
+      "value": 16,
+      "research": 16
+    }
+  ]
+}

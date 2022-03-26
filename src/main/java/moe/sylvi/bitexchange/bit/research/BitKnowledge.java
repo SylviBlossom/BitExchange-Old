@@ -10,6 +10,7 @@ public interface BitKnowledge<T> {
 
     long getKnowledge(T resource);
     long addKnowledge(T resource, long count);
+    void removeKnowledge(T resource);
 
     boolean learn(T resource);
 

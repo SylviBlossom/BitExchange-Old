@@ -72,6 +72,11 @@ public class BitLiquefierBlockEntity extends SyncingBlockEntity implements Exten
         this.combinedStorage = new CombinedStorage<>(Arrays.asList(this.inputFluid, this.outputFluid));
     }
 
+    @Override
+    public World getConsumerWorld() {
+        return this.world;
+    }
+
     public FluidVariant getStoredVariant() {
         return this.outputFluid.getResource();
     }

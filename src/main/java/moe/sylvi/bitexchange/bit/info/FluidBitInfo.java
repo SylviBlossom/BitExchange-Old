@@ -23,13 +23,15 @@ public class FluidBitInfo implements BitInfoResearchable<Fluid> {
     protected final Fluid fluid;
     protected final double value;
     protected final long research;
+    protected final long ratio;
     protected final boolean researchable;
     protected final List<ResearchRequirement> researchRequirements;
 
-    public FluidBitInfo(Fluid fluid, double value, long research, boolean researchable, List<ResearchRequirement> researchRequirements) {
+    public FluidBitInfo(Fluid fluid, double value, long research, long ratio, boolean researchable, List<ResearchRequirement> researchRequirements) {
         this.fluid = fluid;
         this.value = value;
         this.research = research;
+        this.ratio = ratio;
         this.researchable = researchable;
         this.researchRequirements = researchRequirements;
     }
@@ -47,6 +49,11 @@ public class FluidBitInfo implements BitInfoResearchable<Fluid> {
     @Override
     public long getResearch() {
         return research;
+    }
+
+    @Override
+    public long getRatio() {
+        return ratio;
     }
 
     @Override
@@ -84,6 +91,6 @@ public class FluidBitInfo implements BitInfoResearchable<Fluid> {
 
     @Override
     public FluidBitInfo withResource(Fluid resource) {
-        return new FluidBitInfo(resource, value, research, researchable, researchRequirements);
+        return new FluidBitInfo(resource, value, research, ratio, researchable, researchRequirements);
     }
 }

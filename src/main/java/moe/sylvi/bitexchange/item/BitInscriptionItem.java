@@ -1,17 +1,12 @@
 package moe.sylvi.bitexchange.item;
 
-import moe.sylvi.bitexchange.BitComponents;
-import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.BitHelper;
-import moe.sylvi.bitexchange.bit.GenericBitResource;
+import moe.sylvi.bitexchange.bit.BitResource;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
-import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.registry.ResearchableBitRegistry;
-import moe.sylvi.bitexchange.bit.research.BitKnowledge;
 import moe.sylvi.bitexchange.bit.research.ResearchableItem;
-import moe.sylvi.bitexchange.component.BitKnowledgeComponent;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
@@ -23,14 +18,11 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -39,9 +31,9 @@ public class BitInscriptionItem extends Item implements ResearchableItem {
         super(new FabricItemSettings().group(ItemGroup.MISC).rarity(Rarity.UNCOMMON));
     }
 
-    public static List<GenericBitResource> getResearch(ItemStack stack) {
+    public static List<BitResource> getResearch(ItemStack stack) {
         var tag = stack.getNbt();
-        List<GenericBitResource> result = new ArrayList<>();
+        List<BitResource> result = new ArrayList<>();
         if (tag != null && tag.contains("Research")) {
             List<String> ids = new ArrayList<>();
             if (tag.contains("Research", NbtElement.STRING_TYPE)) {
@@ -61,15 +53,15 @@ public class BitInscriptionItem extends Item implements ResearchableItem {
         return result;
     }
 
-    public static GenericBitResource getRandomUnlearned(PlayerEntity player) {
-        var list = new ArrayList<GenericBitResource>();
+    public static BitResource getRandomUnlearned(PlayerEntity player) {
+        var list = new ArrayList<BitResource>();
         for (var registry : BitRegistries.REGISTRY) {
             if (registry instanceof ResearchableBitRegistry researchRegistry) {
                 var knowledge = researchRegistry.getKnowledge(player);
                 for (var info : registry) {
                     var resource = ((BitInfo)info).getResource();
                     if (!knowledge.hasLearned(resource)) {
-                        list.add(new GenericBitResource(registry, resource, 1));
+                        list.add(BitResource.of(registry, resource, 1));
                     }
                 }
             }
@@ -92,8 +84,8 @@ public class BitInscriptionItem extends Item implements ResearchableItem {
             return false;
         }
         for (var research : researchList) {
-            var knowledge = ((ResearchableBitRegistry)research.registry()).getKnowledge(player);
-            if (!knowledge.hasLearned(research.resource())) {
+            var knowledge = ((ResearchableBitRegistry)research.getRegistry()).getKnowledge(player);
+            if (!knowledge.hasLearned(research.getResource())) {
                 return false;
             }
         }
@@ -108,20 +100,20 @@ public class BitInscriptionItem extends Item implements ResearchableItem {
             var research = getRandomUnlearned(player);
 
             if (research != null) {
-                var registry = (ResearchableBitRegistry)research.registry();
+                var registry = (ResearchableBitRegistry)research.getRegistry();
                 var knowledge = registry.getKnowledge(player);
-                if (knowledge.learn(research.resource())) {
+                if (knowledge.learn(research.getResource())) {
                     learnedAny = true;
-                    ((BitInfoResearchable)registry.get(research.resource())).showResearchMessage(player);
+                    ((BitInfoResearchable)registry.get(research.getResource())).showResearchMessage(player);
                 }
             }
         } else {
             for (var research : researchList) {
-                var registry = (ResearchableBitRegistry)research.registry();
+                var registry = (ResearchableBitRegistry)research.getRegistry();
                 var knowledge = registry.getKnowledge(player);
-                if (knowledge.learn(research.resource())) {
+                if (knowledge.learn(research.getResource())) {
                     learnedAny = true;
-                    ((BitInfoResearchable)registry.get(research.resource())).showResearchMessage(player);
+                    ((BitInfoResearchable)registry.get(research.getResource())).showResearchMessage(player);
                 }
             }
         }
@@ -147,20 +139,20 @@ public class BitInscriptionItem extends Item implements ResearchableItem {
             tooltip.add(new LiteralText("haven't learned.").formatted(Formatting.GRAY));
         } else if (researchList.size() == 1) {
             var research = researchList.get(0);
-            var registry = (ResearchableBitRegistry)research.registry();
-            var learned = player != null && registry.getKnowledge(player).hasLearned(research.resource());
+            var registry = (ResearchableBitRegistry)research.getRegistry();
+            var learned = player != null && registry.getKnowledge(player).hasLearned(research.getResource());
             tooltip.add(new LiteralText("Contains the bit sequence").formatted(Formatting.GRAY));
             tooltip.add(new LiteralText("for a ").formatted(Formatting.GRAY)
-                    .append(registry.get(research.resource()).getDisplayName().shallowCopy().formatted(learned ? Formatting.DARK_GRAY : Formatting.LIGHT_PURPLE))
+                    .append(registry.get(research.getResource()).getDisplayName().shallowCopy().formatted(learned ? Formatting.DARK_GRAY : Formatting.LIGHT_PURPLE))
                     .append(new LiteralText(".").formatted(Formatting.GRAY)));
         } else {
             tooltip.add(new LiteralText("Contains a series of").formatted(Formatting.GRAY));
             tooltip.add(new LiteralText("bit sequences for:").formatted(Formatting.GRAY));
             for (var research : researchList) {
-                var registry = (ResearchableBitRegistry)research.registry();
-                var learned = player != null && registry.getKnowledge(player).hasLearned(research.resource());
+                var registry = (ResearchableBitRegistry)research.getRegistry();
+                var learned = player != null && registry.getKnowledge(player).hasLearned(research.getResource());
                 tooltip.add(new LiteralText("- ").formatted(Formatting.GRAY)
-                        .append(registry.get(research.resource()).getDisplayName().shallowCopy().formatted(learned ? Formatting.DARK_GRAY : Formatting.LIGHT_PURPLE)));
+                        .append(registry.get(research.getResource()).getDisplayName().shallowCopy().formatted(learned ? Formatting.DARK_GRAY : Formatting.LIGHT_PURPLE)));
             }
         }
 

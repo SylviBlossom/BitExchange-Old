@@ -17,16 +17,24 @@ public interface BitInfo<T> {
         return ofItem(item, value, research, researchable, automatable, new ArrayList<>());
     }
 
-    static FluidBitInfo ofFluid(Fluid fluid, double value, long research, boolean researchable, List<ResearchRequirement> requirements) {
-        return new FluidBitInfo(fluid, value, research, researchable, requirements);
+    static FluidBitInfo ofFluid(Fluid fluid, double value, long research, long ratio, boolean researchable, List<ResearchRequirement> requirements) {
+        return new FluidBitInfo(fluid, value, research, ratio, researchable, requirements);
     }
-    static FluidBitInfo ofFluid(Fluid fluid, double value, long research, boolean researchable) {
-        return ofFluid(fluid, value, research, researchable, new ArrayList<>());
+    static FluidBitInfo ofFluid(Fluid fluid, double value, long research, long ratio, boolean researchable) {
+        return ofFluid(fluid, value, research, ratio, researchable, new ArrayList<>());
     }
 
     T getResource();
 
     double getValue();
+
+    default double getValue(double amount) {
+        return getValue() * ((double)amount / getRatio());
+    }
+
+    default long getRatio() {
+        return 1;
+    }
 
     Text getDisplayName();
 

@@ -13,18 +13,12 @@
       "research": 16
     },
     {
-      "ids": [
-        "#c:raw_copper_ores",
-        "#c:copper_ingots"
-      ],
+      "id": "#c:copper_ingots",
       "value": 128,
       "research": 16
     },
     {
-      "ids": [
-        "#c:raw_iron_ores",
-        "#c:iron_ingots"
-      ],
+      "id": "#c:iron_ingots",
       "value": 256,
       "research": 16
     },
@@ -44,10 +38,7 @@
       "research": 16
     },
     {
-      "ids": [
-        "#c:raw_gold_ores",
-        "#c:gold_ingots"
-      ],
+      "id": "#c:gold_ingots",
       "value": 2048,
       "research": 16
     },

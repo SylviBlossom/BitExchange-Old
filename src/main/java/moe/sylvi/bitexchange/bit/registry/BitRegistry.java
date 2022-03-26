@@ -9,14 +9,15 @@ import net.minecraft.util.registry.Registry;
 import java.util.List;
 
 public interface BitRegistry<R,I extends BitInfo<R>> extends Iterable<I> {
-    static <T,O extends BitInfo<T>> BitRegistry<T,O> of(Class<O> infoType, Registry<T> resourceRegistry) {
-        return new SimpleBitRegistry<>(resourceRegistry);
+    static <T,O extends BitInfo<T>> BitRegistry<T,O> of(Registry<T> resourceRegistry, O defaultInfo) {
+        return new SimpleBitRegistry<>(resourceRegistry, defaultInfo);
     }
 
     void registerBuilder(BitRegistryBuilder<R,I> builder);
     void prepareResource(R resource, BitRegistryBuilder<R,I> builder);
 
     Registry<R> getResourceRegistry();
+    I getEmpty();
 
     void preBuild(MinecraftServer server);
     void build();
@@ -32,8 +33,12 @@ public interface BitRegistry<R,I extends BitInfo<R>> extends Iterable<I> {
     }
 
     default double getValue(R resource) {
-        BitInfo<R> info = get(resource);
+        I info = get(resource);
         return info != null ? info.getValue() : 0;
+    }
+    default double getValue(R resource, double amount) {
+        I info = get(resource);
+        return info != null ? info.getValue(amount) : 0;
     }
 
     List<I> getList();

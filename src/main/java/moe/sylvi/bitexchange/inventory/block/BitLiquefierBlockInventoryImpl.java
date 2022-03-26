@@ -13,7 +13,7 @@ public class BitLiquefierBlockInventoryImpl implements BitLiquefierBlockInventor
     private final BitFluidStorage outputFluid = new BitFluidStorage(FLUID_CAPACITY, false, true);
 
     @Override
-    public World getWorld() {
+    public World getConsumerWorld() {
         return null;
     }
 

@@ -59,11 +59,11 @@ public class BitHelper {
         return fixBitRounding(a, b) >= fixBitRounding(b, a);
     }
 
-    public static GenericBitResource parseResourceId(String id) throws Throwable {
+    public static BitResource parseResourceId(String id) throws Throwable {
         return parseResourceId(id, BitRegistries.ITEM);
     }
 
-    public static GenericBitResource parseResourceId(String id, @Nullable BitRegistry defaultRegistry) throws Throwable {
+    public static BitResource parseResourceId(String id, @Nullable BitRegistry defaultRegistry) throws Throwable {
         BitRegistry registryRef = defaultRegistry;
         long count = 1;
 
@@ -85,15 +85,15 @@ public class BitHelper {
         String finalId = id;
         Object resourceRef = registryRef.getResourceRegistry().getOrEmpty(new Identifier(id)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
 
-        return new GenericBitResource(registryRef, resourceRef, count);
+        return BitResource.of(registryRef, resourceRef, count);
     }
 
-    public static List<GenericBitResource> parseMultiResourceId(String id) throws Throwable {
+    public static List<BitResource> parseMultiResourceId(String id) throws Throwable {
         return parseMultiResourceId(id, BitRegistries.ITEM);
     }
 
-    public static List<GenericBitResource> parseMultiResourceId(String id, @Nullable BitRegistry defaultRegistry) throws Throwable {
-        List<GenericBitResource> list = Lists.newArrayList();
+    public static List<BitResource> parseMultiResourceId(String id, @Nullable BitRegistry defaultRegistry) throws Throwable {
+        List<BitResource> list = Lists.newArrayList();
 
         for (String subId : id.split("\\|")) {
             BitRegistry registryRef = defaultRegistry;
@@ -118,7 +118,7 @@ public class BitHelper {
                 Tag tag = ServerTagManagerHolder.getTagManager().getTag(registryRef.getResourceRegistry().getKey(), new Identifier(subId), t -> new JsonSyntaxException("Invalid or unsupported tag '" + t + "'"));
 
                 for (Object resourceRef : tag.values()) {
-                    GenericBitResource resource = new GenericBitResource(registryRef, resourceRef, count);
+                    BitResource resource = BitResource.of(registryRef, resourceRef, count);
                     if (!list.contains(resource)) {
                         list.add(resource);
                     }
@@ -128,7 +128,7 @@ public class BitHelper {
                 Object resourceRef = registryRef.getResourceRegistry().getOrEmpty(new Identifier(subId)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
 
                 if (!list.contains(resourceRef)) {
-                    list.add(new GenericBitResource(registryRef, resourceRef, count));
+                    list.add(BitResource.of(registryRef, resourceRef, count));
                 }
             }
         }

@@ -37,6 +37,13 @@ public interface PlayerBitKnowledge<T, R extends BitInfoResearchable<T>> extends
     }
 
     @Override
+    default void removeKnowledge(T resource) {
+        var knowledgeMap = getKnowledgeMap();
+        knowledgeMap.remove(resource);
+        setKnowledgeMap(knowledgeMap);
+    }
+
+    @Override
     default boolean learn(T resource) {
         var knowledgeMap = getKnowledgeMap();
         var info = getBitRegistry().get(resource);

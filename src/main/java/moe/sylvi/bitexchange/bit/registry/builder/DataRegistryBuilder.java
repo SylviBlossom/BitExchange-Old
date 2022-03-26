@@ -5,13 +5,10 @@ import com.google.gson.*;
 import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.BitHelper;
-import moe.sylvi.bitexchange.bit.GenericBitResource;
+import moe.sylvi.bitexchange.bit.BitResource;
 import moe.sylvi.bitexchange.bit.Recursable;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
-import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
-import moe.sylvi.bitexchange.bit.research.CombinedResearchRequirement;
-import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
@@ -126,9 +123,8 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
                 }
             }
         } else {
-            String finalId = id;
-            R resource = resourceRegistry.getOrEmpty(new Identifier(id)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
-            if (override || !processing.containsKey(resource)) {
+            R resource = resourceRegistry.get(new Identifier(id));
+            if (resource != null && (override || !processing.containsKey(resource))) {
                 processing.put(resource, json);
                 registry.prepareResource(resource, this);
             }
@@ -148,15 +144,15 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
             String addStr = JsonHelper.getString(json, "value_ref");
             String[] ids = addStr.split(",");
             for (String id : ids) {
-                GenericBitResource parsed = BitHelper.parseResourceId(id, registry);
+                BitResource parsed = BitHelper.parseResourceId(id, registry);
 
-                Recursable<BitInfo> result = parsed.registry().getOrProcess(parsed.resource());
+                Recursable<BitInfo> result = parsed.getRegistry().getOrProcess(parsed.getResource());
                 if (result.isRecursive()) {
                     throw new Exception("Found circular reference for " + id + "");
                 }
 
                 if (result.get() != null) {
-                    value += result.get().getValue() * parsed.amount();
+                    value += result.get().getValue() * parsed.getAmount();
                 }
             }
         }
@@ -174,15 +170,15 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
             String addStr = JsonHelper.getString(json, "value_ref");
             String[] ids = addStr.split(",");
             for (String id : ids) {
-                GenericBitResource parsed = BitHelper.parseResourceId(id, registry);
+                BitResource parsed = BitHelper.parseResourceId(id, registry);
 
-                Recursable<BitInfo> result = parsed.registry().getOrProcess(parsed.resource());
+                Recursable<BitInfo> result = parsed.getRegistry().getOrProcess(parsed.getResource());
                 if (result.isRecursive()) {
                     throw new Exception("Found circular reference for " + id + "");
                 }
 
                 if (result.get() != null) {
-                    value += result.get().getValue() * parsed.amount();
+                    value += result.get().getValue() * parsed.getAmount();
                 }
             }
         }
@@ -191,9 +187,9 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
 
     protected I parseCopyResource(R resource, JsonObject json) throws Throwable {
         String id = JsonHelper.getString(json, "copy");
-        TypedBitResource<R, I> parsed = parseTypedResourceId(id);
+        BitResource<R, I> parsed = parseTypedResourceId(id);
 
-        Recursable<I> result = parsed.registry.getOrProcess(parsed.resource);
+        Recursable<I> result = parsed.getRegistry().getOrProcess(parsed.getResource());
 
         if (result.isRecursive()) {
             throw new Exception("Found circular reference for " + id + "");
@@ -219,7 +215,7 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         }
     }
 
-    protected TypedBitResource<R, I> parseTypedResourceId(String id) throws Throwable {
+    protected BitResource<R, I> parseTypedResourceId(String id) throws Throwable {
         long count = 1;
 
         int multIndex = id.indexOf("*");
@@ -229,9 +225,9 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
         }
 
         String finalId = id;
-        Object resourceRef = registry.getResourceRegistry().getOrEmpty(new Identifier(id)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
+        R resourceRef = registry.getResourceRegistry().getOrEmpty(new Identifier(id)).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported id '" + finalId + "'"));
 
-        return new TypedBitResource(registry, resourceRef, count);
+        return BitResource.of(registry, resourceRef, count);
     }
 
     public static void loadResources(ResourceManager manager) {
@@ -273,6 +269,4 @@ public abstract class DataRegistryBuilder<R, I extends BitInfo<R>> implements Bi
             }
         }
     }
-
-    public record TypedBitResource<R, I extends BitInfo<R>>(BitRegistry<R, I> registry, R resource, long amount) {}
 }

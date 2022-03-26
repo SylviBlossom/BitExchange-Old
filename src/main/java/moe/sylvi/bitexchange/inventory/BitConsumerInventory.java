@@ -19,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public interface BitConsumerInventory extends ImplementedInventory {
-    World getWorld();
+    World getConsumerWorld();
 
     int getStorageSlot();
     int getInputSlot();
@@ -29,7 +29,7 @@ public interface BitConsumerInventory extends ImplementedInventory {
         ItemStack stack = getStack(getStorageSlot());
         if (!stack.isEmpty()) {
             InventoryStorage inventoryStorage = FullInventoryStorage.of(this);
-            InventoryItemContext context = new InventoryItemContext(inventoryStorage, getStorageSlot(), getWorld());
+            InventoryItemContext context = new InventoryItemContext(inventoryStorage, getStorageSlot(), getConsumerWorld());
             return context.find(BitStorages.ITEM);
         }
         return null;
@@ -38,7 +38,7 @@ public interface BitConsumerInventory extends ImplementedInventory {
     default ItemStack createStack(ItemStack stack, int count) {
         if (!stack.isEmpty()) {
             InventoryStorage inventoryStorage = FullInventoryStorage.of(this);
-            InventoryItemContext context = new InventoryItemContext(inventoryStorage, getStorageSlot(), getWorld());
+            InventoryItemContext context = new InventoryItemContext(inventoryStorage, getStorageSlot(), getConsumerWorld());
             BitStorage storage = context.find(BitStorages.ITEM);
 
             ItemBitInfo info = BitRegistries.ITEM.get(stack.getItem());
@@ -72,7 +72,7 @@ public interface BitConsumerInventory extends ImplementedInventory {
         if (!stack.isEmpty()) {
             InventoryStorage inventoryStorage = FullInventoryStorage.of(this);
             InventoryStorage resultStorage = FullInventoryStorage.ofSlice(this, slotIndex, slotCount);
-            InventoryItemContext context = new InventoryItemContext(resultStorage, inventoryStorage.getSlots().get(getStorageSlot()), getWorld());
+            InventoryItemContext context = new InventoryItemContext(resultStorage, inventoryStorage.getSlots().get(getStorageSlot()), getConsumerWorld());
             BitStorage storage = context.find(BitStorages.ITEM);
 
             ItemBitInfo info = BitRegistries.ITEM.get(stack.getItem());
@@ -106,7 +106,7 @@ public interface BitConsumerInventory extends ImplementedInventory {
         ItemStack inputStack = getStack(getInputSlot());
         if (!inputStack.isEmpty()) {
             InventoryStorage inventoryStorage = FullInventoryStorage.of(this);
-            InventoryItemContext inputContext = new InventoryItemContext(inventoryStorage, getInputSlot(), getWorld());
+            InventoryItemContext inputContext = new InventoryItemContext(inventoryStorage, getInputSlot(), getConsumerWorld());
             BitStorage storage = getStorage();
             if (storage != null) {
                 try (Transaction transaction = Transaction.openOuter()) {

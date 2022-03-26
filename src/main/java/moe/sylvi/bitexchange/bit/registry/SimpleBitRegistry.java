@@ -1,6 +1,7 @@
 package moe.sylvi.bitexchange.bit.registry;
 
 import com.google.common.collect.Lists;
+import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.registry.builder.BitRegistryBuilder;
 import moe.sylvi.bitexchange.bit.Recursable;
@@ -17,19 +18,21 @@ import java.util.*;
 public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,I> {
     private final Logger logger;
     private final Registry<R> resourceRegistry;
+    private final I emptyInfo;
 
     private final HashMap<R, I> infoMap = new HashMap<>();
     private final List<I> infoList = Lists.newArrayList();
 
     private final List<BitRegistryBuilder<R,I>> builders = Lists.newArrayList();
     private final HashMap<R, List<BitRegistryBuilder<R,I>>> resourceProcessors = new HashMap<>();
-    private final HashSet<Pair<R, BitRegistryBuilder<R,I>>> recursiveCheck = new HashSet<>();
+    private final HashSet<RecursivePair<R,I>> recursiveCheck = new HashSet<>();
 
     private BitRegistryBuilder<R,I> currentProcessor;
     private boolean processing;
 
-    public SimpleBitRegistry(Registry<R> resourceRegistry) {
+    public SimpleBitRegistry(Registry<R> resourceRegistry, I emptyInfo) {
         this.resourceRegistry = resourceRegistry;
+        this.emptyInfo = emptyInfo;
         this.logger = LogManager.getLogger();
     }
 
@@ -53,7 +56,13 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
     }
 
     @Override
+    public I getEmpty() {
+        return emptyInfo;
+    }
+
+    @Override
     public void preBuild(MinecraftServer server) {
+        logger.log(Level.INFO, "Preparing bit registry builders");
         processing = true;
         infoMap.clear();
         infoList.clear();
@@ -68,6 +77,7 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
 
     @Override
     public void build() {
+        logger.log(Level.INFO, "Building bit values");
         for (R resource : resourceProcessors.keySet()) {
             try {
                 if (!infoMap.containsKey(resource)) {
@@ -109,7 +119,7 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
         if (resourceProcessors.containsKey(resource) && !resourceProcessors.get(resource).isEmpty()) {
             boolean recursedAll = true;
             for (BitRegistryBuilder<R,I> builder : resourceProcessors.get(resource)) {
-                Pair<R, BitRegistryBuilder<R, I>> recursivePair = new Pair<>(resource, builder);
+                RecursivePair<R,I> recursivePair = new RecursivePair<>(resource, builder);
                 if (recursiveCheck.contains(recursivePair)) {
                     if (!allowFallback) {
                         return Recursable.of(null, true);
@@ -167,4 +177,6 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
 
     @Override
     public List<I> getList() { return infoList; }
+
+    protected record RecursivePair<R,I extends BitInfo<R>>(R resource, BitRegistryBuilder<R, I> builder) {}
 }

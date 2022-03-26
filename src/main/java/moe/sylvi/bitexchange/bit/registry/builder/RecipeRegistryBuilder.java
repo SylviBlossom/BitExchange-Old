@@ -1,46 +1,50 @@
 package moe.sylvi.bitexchange.bit.registry.builder;
 
 import com.google.common.collect.Lists;
+import moe.sylvi.bitexchange.bit.BitResource;
 import moe.sylvi.bitexchange.bit.Recursable;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
-import moe.sylvi.bitexchange.bit.registry.builder.recipe.RecipeInfo;
-import moe.sylvi.bitexchange.bit.registry.builder.recipe.SmithingRecipeInfo;
+import moe.sylvi.bitexchange.bit.registry.builder.recipe.IRecipeHandler;
+import moe.sylvi.bitexchange.bit.registry.builder.recipe.SimpleRecipeHandler;
+import moe.sylvi.bitexchange.bit.registry.builder.recipe.SmithingRecipeHandler;
 import moe.sylvi.bitexchange.bit.research.CombinedResearchRequirement;
 import moe.sylvi.bitexchange.bit.research.RecipeResearchRequirement;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.*;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class RecipeRegistryBuilder implements BitRegistryBuilder<Item, ItemBitInfo> {
-    public static final RecipeInfo DEFAULT_INFO = new RecipeInfo();
-    private static final HashSet<Recipe<Inventory>> processedRecipes = new HashSet<>();
-    private static final HashMap<Item, Double> processedItems = new HashMap<>();
-    private static final HashMap<Item, List<Recipe<Inventory>>> recipeMap = new HashMap<>();
-    private static final HashMap<RecipeType<?>, RecipeInfo> recipeInfo = new HashMap<>();
+public abstract class RecipeRegistryBuilder<R, I extends BitInfo<R>> implements BitRegistryBuilder<R, I> {
+    public static final IRecipeHandler<?,?> DEFAULT_HANDLER = new SimpleRecipeHandler();
+    private static final HashMap<RecipeType<?>, IRecipeHandler<?,?>> recipeHandlers = new HashMap<>();
 
     static {
-        setRecipeInfo(RecipeType.SMITHING, new SmithingRecipeInfo());
+        registerHandler(RecipeType.SMITHING, new SmithingRecipeHandler());
     }
 
-    public static void setRecipeInfo(RecipeType<?> recipeType, RecipeInfo info) {
-        recipeInfo.put(recipeType, info);
+    public static void registerHandler(RecipeType<?> recipeType, IRecipeHandler<?,?> handler) {
+        recipeHandlers.put(recipeType, handler);
     }
 
-    public static RecipeInfo getRecipeInfo(Recipe<Inventory> recipe) {
-        return recipeInfo.getOrDefault(recipe.getType(), DEFAULT_INFO);
+    public static IRecipeHandler<?,?> getRecipeHandler(Recipe<?> recipe) {
+        return recipeHandlers.getOrDefault(recipe.getType(), DEFAULT_HANDLER);
     }
 
-    private final BitRegistry<Item, ItemBitInfo> registry;
+    private final HashMap<Recipe<?>, Double> processedRecipes = new HashMap<>();
+    private final HashMap<R, Double> processedItems = new HashMap<>();
+    private final HashMap<R, List<Recipe<?>>> recipeMap = new HashMap<>();
 
-    public RecipeRegistryBuilder(BitRegistry<Item, ItemBitInfo> registry) {
+    private final BitRegistry<R, I> registry;
+
+    public RecipeRegistryBuilder(BitRegistry<R, I> registry) {
         this.registry = registry;
     }
 
@@ -61,23 +65,18 @@ public class RecipeRegistryBuilder implements BitRegistryBuilder<Item, ItemBitIn
         if (recipeMap.containsKey(item)) {
             double smallestBits = -1;
             boolean isResource = true;
-            List<Recipe<Inventory>> recipes = Lists.newArrayList();
-            for (Recipe<Inventory> recipe : recipeMap.get(item)) {
-                if (processedRecipes.contains(recipe)) {
-                    continue;
-                }
-                processedRecipes.add(recipe);
-                RecipeInfo recipeInfo = getRecipeInfo(recipe);
+            List<Recipe<?>> recipes = Lists.newArrayList();
+            for (Recipe<?> recipe : recipeMap.get(item)) {
+                IRecipeHandler recipeHandler = getRecipeHandler(recipe);
                 Recursable<Double> processed = processItemRecipe(recipe);
                 if (processed.isRecursive()) {
-                    processedRecipes.remove(recipe);
                     continue;
                 }
-                if (!recipeInfo.isAutomatable(recipe)) {
-                    isResource = false;
-                }
-                if (smallestBits < 0 || processed.get() < smallestBits) {
-                    smallestBits = processed.get();
+                //processedRecipes.put(recipe, processed.get());
+                double value = processed.get();
+                if (smallestBits < 0 || (value > 0 && value < smallestBits)) {
+                    smallestBits = value;
+                    isResource = recipeHandler.isAutomatable(recipe);
                 }
                 recipes.add(recipe);
             }
@@ -86,7 +85,7 @@ public class RecipeRegistryBuilder implements BitRegistryBuilder<Item, ItemBitIn
                 ItemBitInfo infoResult = BitInfo.ofItem(item, smallestBits, 1, true, isResource);
                 List<RecipeResearchRequirement> requirements = Lists.newArrayList();
                 for (Recipe<Inventory> recipe : recipes) {
-                    RecipeResearchRequirement requirement = new RecipeResearchRequirement(recipe, getRecipeInfo(recipe));
+                    RecipeResearchRequirement requirement = new RecipeResearchRequirement(recipe, getRecipeHandler(recipe));
                     if (!requirements.contains(requirement)) {
                         requirements.add(requirement);
                     }
@@ -102,6 +101,7 @@ public class RecipeRegistryBuilder implements BitRegistryBuilder<Item, ItemBitIn
 
     @Override
     public void postProcess() {
+        //processingRecipes.clear();
         processedRecipes.clear();
         processedItems.clear();
         recipeMap.clear();
@@ -112,52 +112,47 @@ public class RecipeRegistryBuilder implements BitRegistryBuilder<Item, ItemBitIn
         for (Recipe recipe : list) {
             Item item = recipe.getOutput().getItem();
             if (!recipeMap.containsKey(item)) {
-                recipeMap.put(item, Lists.newArrayList((Recipe<Inventory>)recipe));
+                recipeMap.put(item, Lists.newArrayList((Recipe<?>)recipe));
                 registry.prepareResource(item, this);
             } else {
-                recipeMap.get(item).add((Recipe<Inventory>)recipe);
+                recipeMap.get(item).add((Recipe<?>)recipe);
             }
         }
     }
 
-    private Recursable<Double> processItemRecipe(Recipe<Inventory> recipe) {
+    private Recursable<Double> processItemRecipe(Recipe<?> recipe) {
         double finalBits = 0;
         boolean failed = false;
-        RecipeInfo info = getRecipeInfo(recipe);
-        List<Ingredient> ingredients = info.getIngredients(recipe);
+        IRecipeHandler handler = getRecipeHandler(recipe);
+        List<List<BitResource>> ingredients = handler.getIngredients(recipe);
         AtomicBoolean recursed = new AtomicBoolean(false);
-        for (Ingredient ingredient : ingredients) {
-            if (!ingredient.isEmpty()) {
-                ItemStack[] stacks = ingredient.getMatchingStacks();
-                if (stacks != null && stacks.length > 0) {
-                    double smallestBits = 0;
-                    for (ItemStack itemStack : stacks) {
-                        Item item = itemStack.getItem();
-                        double newBits = getExactValue(item).consumeRecursive(() -> recursed.set(true));
-                        if (item.hasRecipeRemainder()) {
-                            newBits = Math.max(0, newBits - Math.max(0, getExactValue(item.getRecipeRemainder())
-                                    .consumeRecursive(() -> recursed.set(true))));
-                        }
-                        if (recursed.get()) {
-                            break;
-                        }
-                        if (smallestBits == 0) {
-                            smallestBits = newBits;
-                        } else if (newBits > 0) {
-                            smallestBits = Math.min(smallestBits, newBits);
-                        }
-                    }
-                    if (recursed.get()) {
-                        failed = true;
-                        break;
-                    }
-                    if (smallestBits == 0) {
-                        failed = true;
-                        break;
-                    }
-                    finalBits += smallestBits;
+        for (var options : ingredients) {
+            double smallestBits = 0;
+            for (var resource : options) {
+                Item item = itemStack.getItem();
+                double newBits = getExactValue(item).consumeRecursive(() -> recursed.set(true)) * itemStack.getCount();
+                if (item.hasRecipeRemainder()) {
+                    newBits = Math.max(0, newBits - Math.max(0, getExactValue(item.getRecipeRemainder())
+                            .consumeRecursive(() -> recursed.set(true)) * itemStack.getCount()));
+                }
+                if (recursed.get()) {
+                    break;
+                }
+                if (smallestBits == 0) {
+                    smallestBits = newBits;
+                } else if (newBits > 0) {
+                    smallestBits = Math.min(smallestBits, newBits);
                 }
             }
+            if (recursed.get()) {
+                failed = true;
+                break;
+            }
+            if (smallestBits == 0) {
+                failed = true;
+                break;
+            }
+            finalBits += smallestBits;
         }
         if (!failed && finalBits > 0) {
             int count = recipe.getOutput().getCount();
