@@ -1,0 +1,2043 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "automatable": false,
+      "id": "minecraft:white_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:white_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:orange_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:orange_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:magenta_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:magenta_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:light_blue_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:light_blue_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:yellow_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:yellow_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:lime_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:lime_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:pink_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:pink_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:gray_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:gray_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:light_gray_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:light_gray_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:cyan_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:cyan_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:purple_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:purple_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:blue_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:blue_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:brown_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:brown_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:green_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:green_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:red_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:red_concrete_powder*1"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:black_concrete",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:black_concrete_powder*1"
+    },
+    {
+      "copy": "minecraft:copper_block",
+      "id": "minecraft:exposed_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:copper_block",
+      "id": "minecraft:weathered_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:copper_block",
+      "id": "minecraft:oxidized_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_copper_block",
+      "id": "minecraft:waxed_exposed_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_copper_block",
+      "id": "minecraft:waxed_weathered_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_copper_block",
+      "id": "minecraft:waxed_oxidized_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:cut_copper",
+      "id": "minecraft:exposed_cut_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:cut_copper",
+      "id": "minecraft:weathered_cut_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:cut_copper",
+      "id": "minecraft:oxidized_cut_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_cut_copper",
+      "id": "minecraft:waxed_exposed_cut_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_cut_copper",
+      "id": "minecraft:waxed_weathered_cut_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_cut_copper",
+      "id": "minecraft:waxed_oxidized_cut_copper",
+      "override": false
+    },
+    {
+      "copy": "minecraft:cut_copper_stairs",
+      "id": "minecraft:exposed_cut_copper_stairs",
+      "override": false
+    },
+    {
+      "copy": "minecraft:cut_copper_stairs",
+      "id": "minecraft:weathered_cut_copper_stairs",
+      "override": false
+    },
+    {
+      "copy": "minecraft:cut_copper_stairs",
+      "id": "minecraft:oxidized_cut_copper_stairs",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_cut_copper_stairs",
+      "id": "minecraft:waxed_exposed_cut_copper_stairs",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_cut_copper_stairs",
+      "id": "minecraft:waxed_weathered_cut_copper_stairs",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_cut_copper_stairs",
+      "id": "minecraft:waxed_oxidized_cut_copper_stairs",
+      "override": false
+    },
+    {
+      "copy": "minecraft:cut_copper_slab",
+      "id": "minecraft:exposed_cut_copper_slab",
+      "override": false
+    },
+    {
+      "copy": "minecraft:cut_copper_slab",
+      "id": "minecraft:weathered_cut_copper_slab",
+      "override": false
+    },
+    {
+      "copy": "minecraft:cut_copper_slab",
+      "id": "minecraft:oxidized_cut_copper_slab",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_cut_copper_slab",
+      "id": "minecraft:waxed_exposed_cut_copper_slab",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_cut_copper_slab",
+      "id": "minecraft:waxed_weathered_cut_copper_slab",
+      "override": false
+    },
+    {
+      "copy": "minecraft:waxed_cut_copper_slab",
+      "id": "minecraft:waxed_oxidized_cut_copper_slab",
+      "override": false
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:end_stone",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:chorus_plant",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:chorus_flower",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 96.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:chorus_fruit",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 192.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:elytra",
+      "override": false,
+      "research": 2,
+      "researchable": true,
+      "value": 131072.0
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:clay",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:clay_ball*4"
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:bell",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:gold_ingot*7"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:obsidian",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:melon",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 144.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:pumpkin",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 144.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:carved_pumpkin",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 144.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:cobweb",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 12.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:milk_bucket",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 64.0,
+      "value_ref": "minecraft:bucket*1"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:powder_snow_bucket",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 1.0,
+      "value_ref": "minecraft:bucket*1"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:pufferfish_bucket",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:water_bucket*1,minecraft:pufferfish*1"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:salmon_bucket",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:water_bucket*1,minecraft:salmon*1"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:cod_bucket",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:water_bucket*1,minecraft:cod*1"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:tropical_fish_bucket",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:water_bucket*1,minecraft:tropical_fish*1"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:axolotl_bucket",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 64.0,
+      "value_ref": "minecraft:water_bucket*1"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:tadpole_bucket",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 64.0,
+      "value_ref": "minecraft:water_bucket*1"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:honey_bottle",
+      "override": false,
+      "required_research": "minecraft:glass_bottle",
+      "research": 8,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:sugar*3,minecraft:glass_bottle*1"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:iron_horse_armor",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:iron_ingot*8"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:golden_horse_armor",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:gold_ingot*8"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:diamond_horse_armor",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:diamond*8"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:flint",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:apple",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 128.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:wheat_seeds",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:melon_seeds",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:pumpkin_seeds",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:beetroot_seeds",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:wheat",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 24.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:beetroot",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 24.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:carrot",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 24.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:potato",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 24.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:poisonous_potato",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 24.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:melon_slice",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sweet_berries",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:glow_berries",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:cocoa_beans",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:clay_ball",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:enchanted_golden_apple",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 131072.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:saddle",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 192.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:name_tag",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 192.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:honeycomb",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dragon_breath",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 2.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:experience_bottle",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 384.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:echo_shard",
+      "override": false,
+      "research": 12,
+      "researchable": true,
+      "value": 864.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:disc_fragment_5",
+      "override": false,
+      "required_research": "",
+      "research": 12,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:music_disc_5/9"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:goat_horn",
+      "override": false,
+      "research": 2,
+      "researchable": true,
+      "value": 1536.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:beef",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:chicken",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:mutton",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:porkchop",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:rabbit",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:cod",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:salmon",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:pufferfish",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:tropical_fish",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:leather",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:rabbit_hide",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:rabbit_foot",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 128.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:white_wool",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 48.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:feather",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 48.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:egg",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:slime_ball",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:ink_sac",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:glow_ink_sac",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:scute",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 96.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:turtle_egg",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 192.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:ochre_froglight",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 512.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:pearlescent_froglight",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 512.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:verdant_froglight",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 512.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:spider_eye",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 128.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:string",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 12.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:rotten_flesh",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:bone",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 144.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:gunpowder",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 192.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:phantom_membrane",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 192.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:ender_pearl",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 1024.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:nautilus_shell",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 1024.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:blaze_rod",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 1536.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:shulker_shell",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 2048.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:ghast_tear",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 4096.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:nether_star",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 131072.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:totem_of_undying",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 131072.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dragon_egg",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 262144.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:skeleton_skull",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:zombie_head",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:creeper_head",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:trident",
+      "override": false,
+      "research": 2,
+      "researchable": true,
+      "value": 16384.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:warped_wart_block",
+      "override": false,
+      "required_research": "",
+      "research": 8,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:nether_wart*9"
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:netherrack",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:crimson_nylium",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:warped_nylium",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:crimson_roots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:warped_roots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:nether_sprouts",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:crimson_fungus",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:warped_fungus",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:weeping_vines",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 8.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:twisting_vines",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 8.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:soul_sand",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:soul_soil",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:glowstone_dust",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 384.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:basalt",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:blackstone",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:crying_obsidian",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 768.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:gilded_blackstone",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 800.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:nether_wart",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 24.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:shroomlight",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:coal",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:redstone",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:copper_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 128.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:iron_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:quartz",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:lapis_lazuli",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 864.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:amethyst_shard",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 864.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:gold_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 2048.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:emerald",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 8192.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:diamond",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 8192.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:netherite_scrap",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 32768.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dirt",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dirt_path",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:rooted_dirt",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:grass_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:podzol",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:mycelium",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:mud",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sand",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:red_sand",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:vine",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 8.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:mangrove_roots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:lily_pad",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:red_mushroom",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:brown_mushroom",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:red_mushroom_block",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:brown_mushroom_block",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:mushroom_stem",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:cactus",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sugar_cane",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:bamboo",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:grass",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:tall_grass",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:fern",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:large_fern",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_bush",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:snow",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:snowball",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:ice",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "#minecraft:logs",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "#minecraft:saplings",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "#minecraft:leaves",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": false,
+      "id": "#minecraft:planks",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 8.0
+    },
+    {
+      "automatable": true,
+      "id": "#minecraft:wool",
+      "override": false,
+      "required_research": "",
+      "research": 16,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:white_wool*1"
+    },
+    {
+      "automatable": false,
+      "id": "#c:shulker_boxes",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:shulker_box*1"
+    },
+    {
+      "automatable": true,
+      "id": "#minecraft:tall_flowers",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "#minecraft:small_flowers",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "#minecraft:music_discs",
+      "override": false,
+      "research": 2,
+      "researchable": true,
+      "value": 2048.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:cobblestone",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:cobbled_deepslate",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:stone",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": false,
+      "id": "minecraft:deepslate",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:granite",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:diorite",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:andesite",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:tuff",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dripstone_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:gravel",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:moss_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:calcite",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:spore_blossom",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:big_dripleaf",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:small_dripleaf",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:hanging_roots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:glow_lichen",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:pointed_dripstone",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sculk",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 48.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sculk_vein",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sculk_sensor",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sculk_shrieker",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 512.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sculk_catalyst",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 2048.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:prismarine_shard",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:prismarine_crystals",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 512.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:heart_of_the_sea",
+      "override": false,
+      "research": 4,
+      "researchable": true,
+      "value": 32768.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:seagrass",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:kelp",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sponge",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 128.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:wet_sponge",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 128.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:sea_pickle",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:tube_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:brain_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:bubble_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:fire_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:horn_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:tube_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:brain_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:bubble_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:fire_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:horn_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:tube_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:brain_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:bubble_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:fire_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:horn_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_tube_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_brain_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_bubble_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_fire_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_horn_coral",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_tube_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_brain_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_bubble_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_fire_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_horn_coral_fan",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_tube_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_brain_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_bubble_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_fire_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    },
+    {
+      "automatable": true,
+      "id": "minecraft:dead_horn_coral_block",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4.0
+    }
+  ]
+}

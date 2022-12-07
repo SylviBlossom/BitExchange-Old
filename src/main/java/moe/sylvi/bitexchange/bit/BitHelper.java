@@ -3,22 +3,25 @@ package moe.sylvi.bitexchange.bit;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonSyntaxException;
 import moe.sylvi.bitexchange.BitRegistries;
+import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
-import moe.sylvi.bitexchange.bit.registry.builder.DataRegistryBuilder;
-import moe.sylvi.bitexchange.bit.storage.BitStorage;
+import moe.sylvi.bitexchange.bit.storage.IBitStorage;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.item.Item;
-import net.minecraft.tag.ServerTagManagerHolder;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.util.registry.RegistryEntryList;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.List;
 
 public class BitHelper {
+    public static String DEBUG_ITEM = null;
+
     public static String format(double bits) {
         return new DecimalFormat("#,##0.##").format(bits);
     }
@@ -26,7 +29,7 @@ public class BitHelper {
     public static double convertToBits(double maxAmount, ContainerItemContext context, Transaction transaction) {
         Item item = context.getItemVariant().getItem();
 
-        BitStorage storage = context.find(BitStorages.ITEM);
+        IBitStorage storage = context.find(BitStorages.ITEM);
         if (storage != null) {
             try (Transaction storageTransaction = (transaction == null ? Transaction.openOuter() : transaction.openNested())) {
                 double extracted = storage.extract(maxAmount, storageTransaction);
@@ -65,7 +68,6 @@ public class BitHelper {
 
     public static BitResource parseResourceId(String id, @Nullable BitRegistry defaultRegistry) throws Throwable {
         BitRegistry registryRef = defaultRegistry;
-        long count = 1;
 
         int registryIndex = id.indexOf("$");
         if (registryIndex >= 0) {
@@ -76,10 +78,20 @@ public class BitHelper {
             id = id.substring(registryIndex + 1);
         }
 
+        double count = registryRef.getEmpty().getRatio();
+
         int multIndex = id.indexOf("*");
         if (multIndex >= 0) {
-            count = Integer.parseInt(id.substring(multIndex + 1));
+            count *= Double.parseDouble(id.substring(multIndex + 1));
             id = id.substring(0, multIndex);
+        }
+
+        int divIndex = id.lastIndexOf("/");
+        if (divIndex >= 0) {
+            try {
+                count /= Double.parseDouble(id.substring(divIndex + 1));
+                id = id.substring(0, divIndex);
+            } catch (Exception ignored) { }
         }
 
         String finalId = id;
@@ -97,7 +109,6 @@ public class BitHelper {
 
         for (String subId : id.split("\\|")) {
             BitRegistry registryRef = defaultRegistry;
-            long count = 1;
 
             int registryIndex = subId.indexOf("$");
             if (registryIndex >= 0) {
@@ -108,17 +119,31 @@ public class BitHelper {
                 subId = subId.substring(registryIndex + 1);
             }
 
+            double count = registryRef.getEmpty().getRatio();
+
             int multIndex = subId.indexOf("*");
             if (multIndex >= 0) {
-                count = Integer.parseInt(subId.substring(multIndex + 1));
+                count *= Double.parseDouble(subId.substring(multIndex + 1));
                 subId = subId.substring(0, multIndex);
             }
 
-            if (subId.startsWith("#")) {
-                Tag tag = ServerTagManagerHolder.getTagManager().getTag(registryRef.getResourceRegistry().getKey(), new Identifier(subId), t -> new JsonSyntaxException("Invalid or unsupported tag '" + t + "'"));
+            int divIndex = subId.lastIndexOf("/");
+            if (divIndex >= 0) {
+                try {
+                    count /= Double.parseDouble(subId.substring(divIndex + 1));
+                    subId = subId.substring(0, divIndex);
+                } catch (Exception ignored) { }
+            }
 
-                for (Object resourceRef : tag.values()) {
-                    BitResource resource = BitResource.of(registryRef, resourceRef, count);
+            if (subId.startsWith("#")) {
+
+                var tag = TagKey.of(registryRef.getResourceRegistry().getKey(), new Identifier(subId));
+
+                String finalSubId = subId;
+                var tagValues = (RegistryEntryList.Named)(registryRef.getResourceRegistry().getEntryList(tag).orElseThrow(() -> new JsonSyntaxException("Invalid or unsupported tag '" + finalSubId + "'")));
+
+                for (Object entry : tagValues) {
+                    BitResource resource = BitResource.of(registryRef, ((RegistryEntry)entry).value(), count);
                     if (!list.contains(resource)) {
                         list.add(resource);
                     }
@@ -134,5 +159,20 @@ public class BitHelper {
         }
 
         return list;
+    }
+
+    public static <R, I extends BitInfo<R>> boolean isDebugging(R resource, BitRegistry<R, I> registry) {
+        if (DEBUG_ITEM == null) {
+            return false;
+        }
+        var id = registry.getResourceRegistry().getId(resource);
+        if (id == null) {
+            return false;
+        }
+        return id.toString().equals(DEBUG_ITEM);
+    }
+
+    public static <R, I extends BitInfo<R>> String getItemId(R resource, BitRegistry<R, I> registry) {
+        return registry.getResourceRegistry().getId(resource).toString();
     }
 }

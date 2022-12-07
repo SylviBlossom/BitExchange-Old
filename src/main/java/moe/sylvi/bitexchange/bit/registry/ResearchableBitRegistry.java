@@ -1,11 +1,8 @@
 package moe.sylvi.bitexchange.bit.registry;
 
-import com.google.common.collect.Lists;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
-import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.research.BitKnowledge;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
-import net.minecraft.item.Item;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,8 +4,6 @@ import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -36,7 +34,7 @@ public class BitResearchRequirement<T> implements ResearchRequirement {
     @Override
     public void createTooltip(PlayerEntity player, List<Text> lines, Formatting failColor, Formatting metColor, boolean met) {
         Formatting formatting = met ? metColor : failColor;
-        lines.add(new LiteralText(met ? "✔ " : "✘ ").formatted(formatting).append(getName(player).shallowCopy().formatted(formatting)));
+        lines.add(Text.literal(met ? "✔ " : "✘ ").formatted(formatting).append(getName(player).copy().formatted(formatting)));
     }
 
     @Override

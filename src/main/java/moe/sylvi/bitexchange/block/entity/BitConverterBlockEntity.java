@@ -2,9 +2,9 @@ package moe.sylvi.bitexchange.block.entity;
 
 import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
-import moe.sylvi.bitexchange.bit.storage.BitStorage;
+import moe.sylvi.bitexchange.bit.storage.IBitStorage;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
-import moe.sylvi.bitexchange.inventory.block.BitConverterBlockInventory;
+import moe.sylvi.bitexchange.inventory.block.IBitConverterBlockInventory;
 import moe.sylvi.bitexchange.screen.BitConverterScreenHandler;
 import moe.sylvi.bitexchange.transfer.BitFluidStorage;
 import moe.sylvi.bitexchange.transfer.SimpleItemContext;
@@ -20,7 +20,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -28,7 +28,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
-public class BitConverterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, BitConverterBlockInventory, SidedInventory, InventoryProvider {
+public class BitConverterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, IBitConverterBlockInventory, SidedInventory, InventoryProvider {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(getDefaultInventorySize(), ItemStack.EMPTY);
     private final BitFluidStorage inputFluid = new BitFluidStorage();
 
@@ -58,7 +58,7 @@ public class BitConverterBlockEntity extends BlockEntity implements NamedScreenH
 
     @Override
     public Text getDisplayName() {
-        return new TranslatableText(getCachedState().getBlock().getTranslationKey());
+        return Text.translatable(getCachedState().getBlock().getTranslationKey());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class BitConverterBlockEntity extends BlockEntity implements NamedScreenH
     @Override
     public boolean isValid(int slot, ItemStack stack) {
         SimpleItemContext context = new SimpleItemContext(stack);
-        BitStorage storage = context.find(BitStorages.ITEM);
+        IBitStorage storage = context.find(BitStorages.ITEM);
 
         if (slot == 0) {
             return storage != null;

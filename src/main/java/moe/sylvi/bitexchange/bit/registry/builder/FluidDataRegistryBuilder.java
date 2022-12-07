@@ -11,7 +11,7 @@ import net.minecraft.util.JsonHelper;
 
 import java.util.List;
 
-public class FluidDataRegistryBuilder extends ResearchableDataRegistryBuilder<Fluid, FluidBitInfo> {
+public class FluidDataRegistryBuilder extends AbstractResearchableDataRegistryBuilder<Fluid, FluidBitInfo> {
     public FluidDataRegistryBuilder(BitRegistry<Fluid, FluidBitInfo> registry) {
         super(registry);
     }
@@ -20,11 +20,11 @@ public class FluidDataRegistryBuilder extends ResearchableDataRegistryBuilder<Fl
     FluidBitInfo parseJson(Fluid resource, JsonObject json) throws Throwable {
         double value = parseBitValue(resource, json);
         long ratio = JsonHelper.getLong(json, "ratio", FluidConstants.BUCKET);
-        long research = JsonHelper.getLong(json, "research", 1);
+        double research = JsonHelper.getDouble(json, "research", 1);
         boolean researchable = JsonHelper.getBoolean(json, "researchable", true);
         List<ResearchRequirement> researchRequirements = parseResearchRequirements(json);
 
-        return BitInfo.ofFluid(resource, value, research, ratio, researchable, researchRequirements);
+        return BitInfo.ofFluid(resource, value, (long)Math.floor(research * ratio), ratio, researchable, researchRequirements);
     }
 
     @Override

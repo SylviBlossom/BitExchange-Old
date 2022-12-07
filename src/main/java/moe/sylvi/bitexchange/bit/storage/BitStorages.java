@@ -8,9 +8,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
 public class BitStorages {
-    public static final BlockApiLookup<BitStorage, Direction> SIDED =
-            BlockApiLookup.get(new Identifier(BitExchange.MOD_ID, "sided_bit_storage"), BitStorage.class, Direction.class);
+    public static final BlockApiLookup<IBitStorage, Direction> SIDED =
+            BlockApiLookup.get(new Identifier(BitExchange.MOD_ID, "sided_bit_storage"), IBitStorage.class, Direction.class);
 
-    public static final ItemApiLookup<BitStorage, ContainerItemContext> ITEM =
-            ItemApiLookup.get(new Identifier(BitExchange.MOD_ID, "bit_storage"), BitStorage.class, ContainerItemContext.class);
+    public static final ItemApiLookup<IBitStorage, ContainerItemContext> ITEM =
+            ItemApiLookup.get(new Identifier(BitExchange.MOD_ID, "bit_storage"), IBitStorage.class, ContainerItemContext.class);
 }

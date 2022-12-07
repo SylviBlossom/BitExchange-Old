@@ -23,8 +23,14 @@
       "moe.sylvi.bitexchange.BitExchangeClient"
     ],
     "server": [],
+    "fabric-datagen": [
+      "moe.sylvi.bitexchange.BitExchangeDataGen"
+    ],
     "cardinal-components": [
       "moe.sylvi.bitexchange.BitComponents"
+    ],
+    "modmenu": [
+      "moe.sylvi.bitexchange.BitExchangeModMenu"
     ]
   },
   "mixins": [
@@ -39,9 +45,9 @@
   },
 
   "depends": {
-    "fabricloader": ">=0.13.0",
+    "fabricloader": ">=0.14.0",
     "fabric": "*",
-    "minecraft": "1.18.x",
+    "minecraft": "1.19.x",
     "java": ">=17"
   }
 }

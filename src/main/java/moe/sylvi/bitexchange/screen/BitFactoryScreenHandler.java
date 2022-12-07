@@ -2,9 +2,9 @@ package moe.sylvi.bitexchange.screen;
 
 import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
-import moe.sylvi.bitexchange.bit.storage.BitStorage;
-import moe.sylvi.bitexchange.inventory.BitConsumerInventory;
-import moe.sylvi.bitexchange.inventory.block.BitFactoryBlockInventory;
+import moe.sylvi.bitexchange.bit.storage.IBitStorage;
+import moe.sylvi.bitexchange.inventory.IBitConsumerInventory;
+import moe.sylvi.bitexchange.inventory.block.IBitFactoryBlockInventory;
 import moe.sylvi.bitexchange.screen.slot.SlotInput;
 import moe.sylvi.bitexchange.screen.slot.SlotOutput;
 import moe.sylvi.bitexchange.screen.slot.SlotResource;
@@ -18,18 +18,18 @@ import net.minecraft.screen.slot.Slot;
 public class BitFactoryScreenHandler extends ScreenHandler {
     public static final int PLAYER_SLOT = 12;
     private final PlayerInventory playerInventory;
-    private final BitConsumerInventory inventory;
+    private final IBitConsumerInventory inventory;
 
     //This constructor gets called on the client when the server wants it to open the screenHandler,
     //The client will call the other constructor with an empty Inventory and the screenHandler will automatically
     //sync this empty inventory with the inventory on the server.
     public BitFactoryScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, BitFactoryBlockInventory.blank());
+        this(syncId, playerInventory, IBitFactoryBlockInventory.blank());
     }
 
     //This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container
     //and can therefore directly provide it as an argument. This inventory will then be synced to the client.
-    public BitFactoryScreenHandler(int syncId, PlayerInventory playerInventory, BitConsumerInventory inventory) {
+    public BitFactoryScreenHandler(int syncId, PlayerInventory playerInventory, IBitConsumerInventory inventory) {
         super(BitExchange.BIT_FACTORY_SCREEN_HANDLER, syncId);
         checkSize(inventory, 12);
         this.playerInventory = playerInventory;
@@ -68,7 +68,7 @@ public class BitFactoryScreenHandler extends ScreenHandler {
     }
 
     public double getBits() {
-        BitStorage storage = inventory.getStorage();
+        IBitStorage storage = inventory.getStorage();
         return storage != null ? storage.getBits() : -1.0;
     }
 

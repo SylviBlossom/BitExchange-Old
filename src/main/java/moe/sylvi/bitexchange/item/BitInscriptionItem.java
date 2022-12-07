@@ -15,13 +15,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -125,7 +123,7 @@ public class BitInscriptionItem extends Item implements ResearchableItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(new LiteralText("Research Item").formatted(Formatting.DARK_PURPLE));
+        tooltip.add(Text.literal("Research Item").formatted(Formatting.DARK_PURPLE));
 
         PlayerEntity player = null;
         if (world != null && world.isClient()) {
@@ -134,25 +132,25 @@ public class BitInscriptionItem extends Item implements ResearchableItem {
 
         var researchList = getResearch(stack);
         if (researchList.isEmpty()) {
-            tooltip.add(new LiteralText("Contains the bit sequence").formatted(Formatting.GRAY));
-            tooltip.add(new LiteralText("for a random item you").formatted(Formatting.GRAY));
-            tooltip.add(new LiteralText("haven't learned.").formatted(Formatting.GRAY));
+            tooltip.add(Text.literal("Contains the bit sequence").formatted(Formatting.GRAY));
+            tooltip.add(Text.literal("for a random item you").formatted(Formatting.GRAY));
+            tooltip.add(Text.literal("haven't learned.").formatted(Formatting.GRAY));
         } else if (researchList.size() == 1) {
             var research = researchList.get(0);
             var registry = (ResearchableBitRegistry)research.getRegistry();
             var learned = player != null && registry.getKnowledge(player).hasLearned(research.getResource());
-            tooltip.add(new LiteralText("Contains the bit sequence").formatted(Formatting.GRAY));
-            tooltip.add(new LiteralText("for a ").formatted(Formatting.GRAY)
-                    .append(registry.get(research.getResource()).getDisplayName().shallowCopy().formatted(learned ? Formatting.DARK_GRAY : Formatting.LIGHT_PURPLE))
-                    .append(new LiteralText(".").formatted(Formatting.GRAY)));
+            tooltip.add(Text.literal("Contains the bit sequence").formatted(Formatting.GRAY));
+            tooltip.add(Text.literal("for a ").formatted(Formatting.GRAY)
+                    .append(registry.get(research.getResource()).getDisplayName().copy().formatted(learned ? Formatting.DARK_GRAY : Formatting.LIGHT_PURPLE))
+                    .append(Text.literal(".").formatted(Formatting.GRAY)));
         } else {
-            tooltip.add(new LiteralText("Contains a series of").formatted(Formatting.GRAY));
-            tooltip.add(new LiteralText("bit sequences for:").formatted(Formatting.GRAY));
+            tooltip.add(Text.literal("Contains a series of").formatted(Formatting.GRAY));
+            tooltip.add(Text.literal("bit sequences for:").formatted(Formatting.GRAY));
             for (var research : researchList) {
                 var registry = (ResearchableBitRegistry)research.getRegistry();
                 var learned = player != null && registry.getKnowledge(player).hasLearned(research.getResource());
-                tooltip.add(new LiteralText("- ").formatted(Formatting.GRAY)
-                        .append(registry.get(research.getResource()).getDisplayName().shallowCopy().formatted(learned ? Formatting.DARK_GRAY : Formatting.LIGHT_PURPLE)));
+                tooltip.add(Text.literal("- ").formatted(Formatting.GRAY)
+                        .append(registry.get(research.getResource()).getDisplayName().copy().formatted(learned ? Formatting.DARK_GRAY : Formatting.LIGHT_PURPLE)));
             }
         }
 

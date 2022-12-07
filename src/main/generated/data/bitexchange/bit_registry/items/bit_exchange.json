@@ -1,0 +1,77 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "automatable": true,
+      "id": "bitexchange:bit",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "automatable": true,
+      "id": "bitexchange:byte",
+      "override": false,
+      "research": 64,
+      "researchable": true,
+      "value": 8.0
+    },
+    {
+      "automatable": true,
+      "id": "bitexchange:kilobit",
+      "override": false,
+      "research": 64,
+      "researchable": true,
+      "value": 64.0
+    },
+    {
+      "automatable": true,
+      "id": "bitexchange:megabit",
+      "override": false,
+      "research": 64,
+      "researchable": true,
+      "value": 512.0
+    },
+    {
+      "automatable": true,
+      "id": "bitexchange:gigabit",
+      "override": false,
+      "research": 64,
+      "researchable": true,
+      "value": 4096.0
+    },
+    {
+      "automatable": true,
+      "id": "bitexchange:terabit",
+      "override": false,
+      "research": 64,
+      "researchable": true,
+      "value": 32768.0
+    },
+    {
+      "automatable": true,
+      "id": "bitexchange:petabit",
+      "override": false,
+      "research": 64,
+      "researchable": true,
+      "value": 262144.0
+    },
+    {
+      "automatable": true,
+      "id": "bitexchange:exabit",
+      "override": false,
+      "research": 64,
+      "researchable": true,
+      "value": 2097152.0
+    },
+    {
+      "automatable": true,
+      "id": "bitexchange:itty_bit",
+      "override": false,
+      "research": 1000,
+      "researchable": true,
+      "value": 0.01
+    }
+  ]
+}

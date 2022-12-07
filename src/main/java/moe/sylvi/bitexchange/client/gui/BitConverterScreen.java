@@ -17,9 +17,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -36,7 +36,7 @@ public class BitConverterScreen extends HandledScreen<ScreenHandler> {
     private boolean scrolling;
 
     public BitConverterScreen(ScreenHandler handler, PlayerInventory inventory, Text title) {
-        super(handler, inventory, LiteralText.EMPTY);
+        super(handler, inventory, Text.empty());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class BitConverterScreen extends HandledScreen<ScreenHandler> {
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
 
-        searchBox = new TextFieldWidget(client.textRenderer, x + 9, y + 9, 142, 9, new TranslatableText("itemGroup.search"));
+        searchBox = new TextFieldWidget(client.textRenderer, x + 9, y + 9, 142, 9, Text.translatable("itemGroup.search"));
         searchBox.setMaxLength(50);
         searchBox.setDrawsBackground(false);
         searchBox.setVisible(true);
@@ -245,9 +245,9 @@ public class BitConverterScreen extends HandledScreen<ScreenHandler> {
     public void updateBitText() {
         double bits = getHandler().getBits();
         if (bits >= 0) {
-            bitText = new LiteralText("Bits: " + BitHelper.format(bits)).formatted(Formatting.DARK_PURPLE);
+            bitText = Text.literal("Bits: " + BitHelper.format(bits)).formatted(Formatting.DARK_PURPLE);
         } else {
-            bitText = new LiteralText("Insert Bit Array").formatted(Formatting.RED);
+            bitText = Text.literal("Insert Bit Array").formatted(Formatting.RED);
         }
     }
 

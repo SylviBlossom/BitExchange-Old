@@ -5,10 +5,12 @@ import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.block.entity.BitFactoryBlockEntity;
 import moe.sylvi.bitexchange.block.entity.BitLiquefierBlockEntity;
+import moe.sylvi.bitexchange.component.IBitKnowledgeComponent;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
@@ -21,6 +23,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.SoundCategory;
@@ -39,7 +42,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
-
+import java.util.List;
 import java.util.Optional;
 
 public class BitLiquefierBlock extends BlockWithEntity {
@@ -89,7 +92,7 @@ public class BitLiquefierBlock extends BlockWithEntity {
                             var knowledge = BitComponents.FLUID_KNOWLEDGE.get(player);
 
                             if (knowledge.hasLearned(variant.getFluid())) {
-                                soundEvent = variant.getFluid().isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_EMPTY_LAVA : SoundEvents.ITEM_BUCKET_EMPTY;
+                                soundEvent = FluidVariantAttributes.getEmptySound(variant);
                                 var inserted = StorageUtil.move(itemStorage, ownStorage, v -> true, resourceAmount.amount(), transaction);
 
                                 if (inserted > 0) {

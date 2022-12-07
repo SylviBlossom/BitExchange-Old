@@ -21,9 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +29,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.UUID;
 
 public class BitResearcherBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, SidedInventory, ImplementedInventory {
@@ -54,7 +51,7 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
 
     @Override
     public Text getDisplayName() {
-        return new TranslatableText(getCachedState().getBlock().getTranslationKey());
+        return Text.translatable(getCachedState().getBlock().getTranslationKey());
     }
 
     @Override
@@ -86,7 +83,7 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
                     var fluidComponent = BitComponents.FLUID_KNOWLEDGE.get(player);
                     try (Transaction transaction = Transaction.openOuter()) {
                         var success = false;
-                        for (var view : fluidStorage.iterable(transaction)) {
+                        for (var view : fluidStorage) {
                             if (view.isResourceBlank()) {
                                 continue;
                             }
@@ -106,7 +103,7 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
                                         view.extract(view.getResource(), added, transaction);
                                         if (fluidComponent.hasLearned(fluid)) {
                                             var hover = fluid.getDefaultState().getBlockState().getBlock().getName().formatted(Formatting.WHITE);
-                                            player.sendMessage(new LiteralText("Researched fluid: ").formatted(Formatting.LIGHT_PURPLE).append(hover), false);
+                                            player.sendMessage(Text.literal("Researched fluid: ").formatted(Formatting.LIGHT_PURPLE).append(hover), false);
                                         }
                                         success = true;
                                     }
@@ -135,7 +132,7 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
                             int count = (int) component.addKnowledge(item, input.getCount());
                             input.decrement(count);
                             if (component.hasLearned(item)) {
-                                player.sendMessage(new LiteralText("Researched item: ").formatted(Formatting.LIGHT_PURPLE).append(item.getDefaultStack().toHoverableText()), false);
+                                player.sendMessage(Text.literal("Researched item: ").formatted(Formatting.LIGHT_PURPLE).append(item.getDefaultStack().toHoverableText()), false);
                             }
                             entity.setStack(0, input);
                             entity.markDirty();

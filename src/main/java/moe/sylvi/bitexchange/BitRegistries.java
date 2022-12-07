@@ -1,12 +1,9 @@
 package moe.sylvi.bitexchange;
 
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
-import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
 import moe.sylvi.bitexchange.bit.registry.FluidBitRegistry;
 import moe.sylvi.bitexchange.bit.registry.ItemBitRegistry;
-import moe.sylvi.bitexchange.bit.registry.ResearchableBitRegistry;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;

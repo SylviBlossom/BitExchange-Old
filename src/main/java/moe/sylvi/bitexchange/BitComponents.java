@@ -9,17 +9,17 @@ import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.component.BitFluidKnowledgeComponent;
 import moe.sylvi.bitexchange.component.BitItemKnowledgeComponent;
-import moe.sylvi.bitexchange.component.BitKnowledgeComponent;
+import moe.sylvi.bitexchange.component.IBitKnowledgeComponent;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 
 public class BitComponents implements EntityComponentInitializer {
-    public static final ComponentKey<BitKnowledgeComponent<Item, ItemBitInfo>> ITEM_KNOWLEDGE =
-            ComponentRegistry.getOrCreate(new Identifier(BitExchange.MOD_ID, "item_knowledge"), BitKnowledgeComponent.asClass());
+    public static final ComponentKey<IBitKnowledgeComponent<Item, ItemBitInfo>> ITEM_KNOWLEDGE =
+            ComponentRegistry.getOrCreate(new Identifier(BitExchange.MOD_ID, "item_knowledge"), IBitKnowledgeComponent.asClass());
 
-    public static final ComponentKey<BitKnowledgeComponent<Fluid, FluidBitInfo>> FLUID_KNOWLEDGE =
-            ComponentRegistry.getOrCreate(new Identifier(BitExchange.MOD_ID, "fluid_knowledge"), BitKnowledgeComponent.asClass());
+    public static final ComponentKey<IBitKnowledgeComponent<Fluid, FluidBitInfo>> FLUID_KNOWLEDGE =
+            ComponentRegistry.getOrCreate(new Identifier(BitExchange.MOD_ID, "fluid_knowledge"), IBitKnowledgeComponent.asClass());
 
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {

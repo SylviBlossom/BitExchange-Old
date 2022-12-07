@@ -4,10 +4,10 @@ import moe.sylvi.bitexchange.bit.BitHelper;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
 
-public class BitInventoryStorage extends SnapshotParticipant<Double> implements BitStorage {
-    private final BitInventory inventory;
+public class BitInventoryStorage extends SnapshotParticipant<Double> implements IBitStorage {
+    private final IBitInventory inventory;
 
-    public BitInventoryStorage(BitInventory inventory) {
+    public BitInventoryStorage(IBitInventory inventory) {
         this.inventory = inventory;
     }
 

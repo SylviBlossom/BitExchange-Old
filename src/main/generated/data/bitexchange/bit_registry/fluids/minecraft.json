@@ -1,0 +1,21 @@
+{
+  "type": "bitexchange:fluid",
+  "values": [
+    {
+      "id": "minecraft:water",
+      "override": false,
+      "ratio": 81000,
+      "research": 2,
+      "researchable": true,
+      "value": 1.0
+    },
+    {
+      "id": "minecraft:lava",
+      "override": false,
+      "ratio": 81000,
+      "research": 8,
+      "researchable": true,
+      "value": 64.0
+    }
+  ]
+}

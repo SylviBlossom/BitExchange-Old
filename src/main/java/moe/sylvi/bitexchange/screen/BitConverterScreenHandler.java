@@ -5,10 +5,10 @@ import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.BitHelper;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
-import moe.sylvi.bitexchange.bit.storage.BitStorage;
+import moe.sylvi.bitexchange.bit.storage.IBitStorage;
 import moe.sylvi.bitexchange.client.gui.BitConverterScreen;
-import moe.sylvi.bitexchange.inventory.BitConsumerInventory;
-import moe.sylvi.bitexchange.inventory.block.BitConverterBlockInventory;
+import moe.sylvi.bitexchange.inventory.IBitConsumerInventory;
+import moe.sylvi.bitexchange.inventory.block.IBitConverterBlockInventory;
 import moe.sylvi.bitexchange.screen.slot.SlotInput;
 import moe.sylvi.bitexchange.screen.slot.SlotConvert;
 import moe.sylvi.bitexchange.screen.slot.SlotStorage;
@@ -27,7 +27,7 @@ import java.util.List;
 public class BitConverterScreenHandler extends ScreenHandler {
     public static final int CONVERSION_SLOT = 2;
     public static final int PLAYER_SLOT = 34;
-    private final BitConsumerInventory inventory;
+    private final IBitConsumerInventory inventory;
     private final PlayerInventory playerInventory;
     private final PlayerEntity player;
     public final DefaultedList<ItemStack> itemList = DefaultedList.of();
@@ -37,12 +37,12 @@ public class BitConverterScreenHandler extends ScreenHandler {
     //The client will call the other constructor with an empty Inventory and the screenHandler will automatically
     //sync this empty inventory with the inventory on the server.
     public BitConverterScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, BitConverterBlockInventory.blank());
+        this(syncId, playerInventory, IBitConverterBlockInventory.blank());
     }
 
     //This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container
     //and can therefore directly provide it as an argument. This inventory will then be synced to the client.
-    public BitConverterScreenHandler(int syncId, PlayerInventory playerInventory, BitConsumerInventory inventory) {
+    public BitConverterScreenHandler(int syncId, PlayerInventory playerInventory, IBitConsumerInventory inventory) {
         super(BitExchange.BIT_CONVERTER_SCREEN_HANDLER, syncId);
         checkSize(inventory, 2);
         this.inventory = inventory;
@@ -95,7 +95,7 @@ public class BitConverterScreenHandler extends ScreenHandler {
     }
 
     public double getBits() {
-        BitStorage storage = inventory.getStorage();
+        IBitStorage storage = inventory.getStorage();
         return storage != null ? storage.getBits() : -1.0;
     }
 

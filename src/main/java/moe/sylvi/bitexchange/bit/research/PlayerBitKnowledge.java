@@ -1,17 +1,10 @@
 package moe.sylvi.bitexchange.bit.research;
 
-import com.google.common.collect.Lists;
-import moe.sylvi.bitexchange.BitRegistries;
-import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
-import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public interface PlayerBitKnowledge<T, R extends BitInfoResearchable<T>> extends BitKnowledge<T> {
     PlayerEntity getPlayer();

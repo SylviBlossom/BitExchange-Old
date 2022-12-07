@@ -12,7 +12,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -117,9 +117,9 @@ public class BitFactoryScreen extends HandledScreen<ScreenHandler> {
     private void updateBitText() {
         double bits = getHandler().getBits();
         if (bits >= 0) {
-            bitText = new LiteralText("Bits: " + BitHelper.format(bits)).formatted(Formatting.DARK_PURPLE);
+            bitText = Text.literal("Bits: " + BitHelper.format(bits)).formatted(Formatting.DARK_PURPLE);
         } else {
-            bitText = new LiteralText("Insert Bit Array").formatted(Formatting.RED);
+            bitText = Text.literal("Insert Bit Array").formatted(Formatting.RED);
         }
     }
 

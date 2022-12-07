@@ -17,7 +17,8 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
+import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -71,7 +72,7 @@ public class BitResearcherBlock extends BlockWithEntity {
                     player.openHandledScreen(screenHandlerFactory);
                 }
             } else {
-                player.sendMessage(new LiteralText("This Bit Researcher is not yours"), true);
+                player.sendMessage(Text.literal("This Bit Researcher is not yours ('-'@_@"), true);
             }
         }
 

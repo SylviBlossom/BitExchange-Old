@@ -1,9 +1,11 @@
 package moe.sylvi.bitexchange.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.util.List;
 import me.shedaniel.autoconfig.AutoConfig;
 import moe.sylvi.bitexchange.*;
 import moe.sylvi.bitexchange.bit.BitHelper;
+import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
 import moe.sylvi.bitexchange.block.entity.BitLiquefierBlockEntity;
 import moe.sylvi.bitexchange.mixin.DrawableHelperMixin;
 import moe.sylvi.bitexchange.mixin.SpriteMixin;
@@ -13,18 +15,22 @@ import moe.sylvi.bitexchange.screen.slot.SlotInput;
 import moe.sylvi.bitexchange.screen.slot.SlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.impl.client.indigo.renderer.helper.ColorHelper;
 import net.fabricmc.fabric.impl.client.indigo.renderer.helper.TextureHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -147,11 +153,11 @@ public class BitLiquefierScreen extends HandledScreen<ScreenHandler> {
                 var tooltip = FluidVariantRendering.getTooltip(resource);
 
                 if (amount < (FluidConstants.BUCKET/1000) || hasShiftDown()) {
-                    tooltip.add(new LiteralText(amount + " dp"));
+                    tooltip.add(Text.literal(amount + " dp"));
                 } else {
                     var currentMB = Math.round(((double) amount / FluidConstants.BUCKET) * 1000);
                     var maxMB = Math.round(((double) be.getOuputFluid().getCapacity() / FluidConstants.BUCKET) * 1000);
-                    tooltip.add(new LiteralText(currentMB + " mB / " + maxMB + " mB"));
+                    tooltip.add(Text.literal(currentMB + " mB / " + maxMB + " mB"));
                 }
 
                 var fluid = resource.getFluid();
@@ -167,23 +173,23 @@ public class BitLiquefierScreen extends HandledScreen<ScreenHandler> {
                     var displayMax = BitHelper.format((double)maxResearch / FluidConstants.BUCKET) + "B";
 
                     BitConfig config = AutoConfig.getConfigHolder(BitConfig.class).getConfig();
-                    var name = fluid.getDefaultState().getBlockState().getBlock().getName().shallowCopy();
+                    var name = fluid.getDefaultState().getBlockState().getBlock().getName().copy();
                     if (research >= maxResearch || config.showUnlearnedValues) {
-                        var text = new LiteralText("Bits: ").formatted(Formatting.LIGHT_PURPLE)
-                                .append(new LiteralText(BitHelper.format(fluidInfo.getValue() * displayAmount)).formatted(Formatting.YELLOW))
-                                .append(new LiteralText(" (").formatted(Formatting.WHITE))
-                                .append(new LiteralText(BitHelper.format(fluidInfo.getValue()) + "/B").formatted(Formatting.YELLOW))
-                                .append(new LiteralText(")").formatted(Formatting.WHITE));
+                        var text = Text.literal("Bits: ").formatted(Formatting.LIGHT_PURPLE)
+                                .append(Text.literal(BitHelper.format(fluidInfo.getValue() * displayAmount)).formatted(Formatting.YELLOW))
+                                .append(Text.literal(" (").formatted(Formatting.WHITE))
+                                .append(Text.literal(BitHelper.format(fluidInfo.getValue()) + "/B").formatted(Formatting.YELLOW))
+                                .append(Text.literal(")").formatted(Formatting.WHITE));
                         if (config.showUnlearnedValues) {
-                            text.append(new LiteralText(" [" + displayResearch + "/" + displayMax + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                            text.append(Text.literal(" [" + displayResearch + "/" + displayMax + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
                         }
                         tooltip.add(text);
                         if (config.showUnlearnedValues) {
                             BitExchangeClient.addResearchRequirementLines(true, fluidInfo, player, tooltip);
                         }
                     } else if (research < maxResearch) {
-                        var text = new LiteralText("Unlearned").formatted(Formatting.DARK_PURPLE);
-                        text.append(new LiteralText(" [" + displayResearch + "/" + displayMax + "]").formatted(Formatting.DARK_GRAY));
+                        var text = Text.literal("Unlearned").formatted(Formatting.DARK_PURPLE);
+                        text.append(Text.literal(" [" + displayResearch + "/" + displayMax + "]").formatted(Formatting.DARK_GRAY));
                         tooltip.add(text);
                         BitExchangeClient.addResearchRequirementLines(true, fluidInfo, player, tooltip);
                     }
@@ -237,9 +243,9 @@ public class BitLiquefierScreen extends HandledScreen<ScreenHandler> {
     private void updateBitText() {
         double bits = getHandler().getBits();
         if (bits >= 0) {
-            bitText = new LiteralText("Bits: " + BitHelper.format(bits)).formatted(Formatting.DARK_PURPLE);
+            bitText = Text.literal("Bits: " + BitHelper.format(bits)).formatted(Formatting.DARK_PURPLE);
         } else {
-            bitText = new LiteralText("Insert Bit Array").formatted(Formatting.RED);
+            bitText = Text.literal("Insert Bit Array").formatted(Formatting.RED);
         }
     }
 

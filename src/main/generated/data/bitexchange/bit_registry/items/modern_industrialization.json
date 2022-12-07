@@ -1,0 +1,29 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "automatable": true,
+      "id": "#c:lignite_coal",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 32.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:antimony_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:mozanite_dusts",
+      "override": false,
+      "research": 8,
+      "researchable": true,
+      "value": 8192.0
+    }
+  ]
+}

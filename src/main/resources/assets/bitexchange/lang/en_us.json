@@ -25,5 +25,15 @@
   "item.bitexchange.terabit": "Terabit",
   "item.bitexchange.petabit": "Petabit",
   "item.bitexchange.exabit": "Exabit",
-  "item.bitexchange.itty_bit": "Itty Bit"
+  "item.bitexchange.itty_bit": "Itty Bit",
+
+  "text.autoconfig.bitexchange.title":                                  "Bit Exchange Config",
+  "text.autoconfig.bitexchange.option.showUnlearnedValues":             "Show Unlearned Values",
+  "text.autoconfig.bitexchange.option.showUnlearnedValues.@Tooltip":    "Whether to show bit values of items not yet researched",
+  "text.autoconfig.bitexchange.option.blacklistedItems":                "Blacklisted Items",
+  "text.autoconfig.bitexchange.option.blacklistedItems.@Tooltip":       "List of item IDs to blacklist from having bit values",
+  "text.autoconfig.bitexchange.option.blacklistedRecipeTypes":          "Blacklisted Recipe Types",
+  "text.autoconfig.bitexchange.option.blacklistedRecipeTypes.@Tooltip": "List of recipe type IDs to ignore when calculating bit values",
+  "text.autoconfig.bitexchange.option.blacklistedRecipes":              "Blacklisted Recipes",
+  "text.autoconfig.bitexchange.option.blacklistedRecipes.@Tooltip":     "List of individual recipe IDs to ignore when calculating bit values"
 }

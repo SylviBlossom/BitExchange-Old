@@ -1,6 +1,6 @@
 package moe.sylvi.bitexchange.item;
 
-import moe.sylvi.bitexchange.bit.storage.BitInventory;
+import moe.sylvi.bitexchange.bit.storage.IBitInventory;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 
-public class BitArrayInventory implements BitInventory {
+public class BitArrayInventory implements IBitInventory {
     private final ContainerItemContext context;
     private final double capacity;
 

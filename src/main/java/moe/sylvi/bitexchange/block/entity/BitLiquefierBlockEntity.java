@@ -2,14 +2,11 @@ package moe.sylvi.bitexchange.block.entity;
 
 import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
-import moe.sylvi.bitexchange.bit.BitHelper;
 import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
-import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
-import moe.sylvi.bitexchange.bit.storage.BitStorage;
+import moe.sylvi.bitexchange.bit.storage.IBitStorage;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
 import moe.sylvi.bitexchange.block.BitLiquefierBlock;
-import moe.sylvi.bitexchange.inventory.block.BitLiquefierBlockInventory;
-import moe.sylvi.bitexchange.screen.BitConverterScreenHandler;
+import moe.sylvi.bitexchange.inventory.block.IBitLiquefierBlockInventory;
 import moe.sylvi.bitexchange.screen.BitLiquefierScreenHandler;
 import moe.sylvi.bitexchange.transfer.BitFluidStorage;
 import moe.sylvi.bitexchange.transfer.FullInventoryStorage;
@@ -20,30 +17,23 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.InventoryProvider;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -51,12 +41,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Arrays;
 
-public class BitLiquefierBlockEntity extends SyncingBlockEntity implements ExtendedScreenHandlerFactory, BitLiquefierBlockInventory, SidedInventory, InventoryProvider {
+public class BitLiquefierBlockEntity extends SyncingBlockEntity implements ExtendedScreenHandlerFactory, IBitLiquefierBlockInventory, SidedInventory, InventoryProvider {
     public static final long FLUID_CAPACITY = FluidConstants.BUCKET * 8;
 
     private final DefaultedList<ItemStack> inventory;
@@ -127,20 +115,20 @@ public class BitLiquefierBlockEntity extends SyncingBlockEntity implements Exten
 
     @Override
     public Text getDisplayName() {
-        return new TranslatableText(getCachedState().getBlock().getTranslationKey());
+        return Text.translatable(getCachedState().getBlock().getTranslationKey());
     }
 
     @Override
     public boolean isValid(int slot, ItemStack stack) {
         SimpleItemContext context = new SimpleItemContext(stack);
-        BitStorage storage = context.find(BitStorages.ITEM);
+        IBitStorage storage = context.find(BitStorages.ITEM);
 
         if (slot == 0) {
             return storage != null;
         } else if (slot == 1) {
             var fluidStorage = context.find(FluidStorage.ITEM);
             if (fluidStorage != null) {
-                var resource = StorageUtil.findStoredResource(fluidStorage, null);
+                var resource = StorageUtil.findStoredResource(fluidStorage);
                 return resource != null && !resource.isBlank() && BitRegistries.FLUID.get(resource.getFluid()) != null;
             }
             return false;
@@ -159,11 +147,11 @@ public class BitLiquefierBlockEntity extends SyncingBlockEntity implements Exten
     }
 
     public void createFluid() {
-        BitStorage bitStorage = this.getStorage();
+        IBitStorage bitStorage = this.getStorage();
         Storage<FluidVariant> fluidStorage = this.getFluidResource();
 
         if (bitStorage != null) {
-            var fluidVariant = StorageUtil.findStoredResource(fluidStorage, null);
+            var fluidVariant = StorageUtil.findStoredResource(fluidStorage);
 
             if (fluidVariant == null && !this.outputFluid.isResourceBlank()) {
                 consumeFluid(this.outputFluid, true);

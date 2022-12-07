@@ -1,0 +1,136 @@
+{
+  "type": "bitexchange:item",
+  "values": [
+    {
+      "automatable": true,
+      "id": "#c:bauxite_dusts",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 128.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:tin_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:lead_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:aluminum_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 256.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:nickel_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 512.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:silver_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 512.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:uranium_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1024.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:tungsten_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 1024.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:iridium_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 2048.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:titanium_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4096.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:platinum_ingots",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 4096.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:salts",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:salt_dusts",
+      "override": false,
+      "research": 16,
+      "researchable": true,
+      "value": 16.0
+    },
+    {
+      "automatable": true,
+      "id": "#c:copper_dusts",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:copper_ingot*1"
+    },
+    {
+      "automatable": true,
+      "id": "#c:iron_dusts",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:iron_ingot*1"
+    },
+    {
+      "automatable": true,
+      "id": "#c:gold_dusts",
+      "override": false,
+      "research": 1,
+      "researchable": true,
+      "value": 0.0,
+      "value_ref": "minecraft:gold_ingot*1"
+    }
+  ]
+}

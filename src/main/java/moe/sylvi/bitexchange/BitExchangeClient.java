@@ -5,7 +5,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import moe.sylvi.bitexchange.bit.BitHelper;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
-import moe.sylvi.bitexchange.bit.storage.BitStorage;
+import moe.sylvi.bitexchange.bit.storage.IBitStorage;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
 import moe.sylvi.bitexchange.client.gui.*;
 import moe.sylvi.bitexchange.mixin.SpriteMixin;
@@ -14,36 +14,23 @@ import moe.sylvi.bitexchange.transfer.SimpleItemContext;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.fabricmc.fabric.api.client.model.ExtraModelProvider;
-import net.fabricmc.fabric.api.client.model.ModelAppender;
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
-import net.fabricmc.fabric.api.client.model.ModelResourceProvider;
-import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.impl.client.indigo.renderer.helper.ColorHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 
-import java.text.Format;
 import java.util.List;
 
 public class BitExchangeClient implements ClientModInitializer {
@@ -65,13 +52,13 @@ public class BitExchangeClient implements ClientModInitializer {
             }
             Item item = stack.getItem();
             SimpleItemContext storageContext = new SimpleItemContext(stack);
-            BitStorage storage = storageContext.find(BitStorages.ITEM);
+            IBitStorage storage = storageContext.find(BitStorages.ITEM);
             if (storage != null) {
                 String countText = BitHelper.format(storage.getBits());
                 if (storage.getMaxBits() != Double.MAX_VALUE) {
                     countText += " / " + BitHelper.format(storage.getMaxBits());
                 }
-                lines.add(new LiteralText("Stored: ").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText(countText).formatted(Formatting.WHITE)));
+                lines.add(Text.literal("Stored: ").formatted(Formatting.LIGHT_PURPLE).append(Text.literal(countText).formatted(Formatting.WHITE)));
             }
             Screen screen = MinecraftClient.getInstance().currentScreen;
             boolean bitScreen = (screen instanceof BitConverterScreen) ||
@@ -84,32 +71,32 @@ public class BitExchangeClient implements ClientModInitializer {
                 long research = BitComponents.ITEM_KNOWLEDGE.get(player).getKnowledge(item);
                 long maxResearch = itemInfo.getResearch();
                 if ((research >= maxResearch || config.showUnlearnedValues) && (storage == null || Screen.hasShiftDown())) {
-                    MutableText text = new LiteralText("Bits: ").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText(BitHelper.format(itemInfo.getValue())).formatted(Formatting.YELLOW));
+                    MutableText text = Text.literal("Bits: ").formatted(Formatting.LIGHT_PURPLE).append(Text.literal(BitHelper.format(itemInfo.getValue())).formatted(Formatting.YELLOW));
                     if (config.showUnlearnedValues) {
                         if (!itemInfo.isResearchable()) {
-                            text.append(new LiteralText(" [" + (research < maxResearch ? "???" : "⭐") + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                            text.append(Text.literal(" [" + (research < maxResearch ? "???" : "⭐") + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
                         } else {
-                            text.append(new LiteralText(" [" + research + "/" + maxResearch + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                            text.append(Text.literal(" [" + research + "/" + maxResearch + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
                         }
                     }
                     lines.add(text);
                     if (Screen.hasShiftDown() || bitScreen) {
                         if (stack.getCount() > 1) {
-                            lines.add(new LiteralText("- Stack: ").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText(BitHelper.format(itemInfo.getValue() * stack.getCount())).formatted(Formatting.YELLOW)));
+                            lines.add(Text.literal("- Stack: ").formatted(Formatting.LIGHT_PURPLE).append(Text.literal(BitHelper.format(itemInfo.getValue() * stack.getCount())).formatted(Formatting.YELLOW)));
                         }
                         if (itemInfo.isAutomatable()) {
-                            lines.add(new LiteralText("- ").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("Automatable").formatted(Formatting.DARK_PURPLE)));
+                            lines.add(Text.literal("- ").formatted(Formatting.LIGHT_PURPLE).append(Text.literal("Automatable").formatted(Formatting.DARK_PURPLE)));
                         }
                         if (config.showUnlearnedValues && itemInfo.isResearchable()) {
                             addResearchRequirementLines(true, itemInfo, player, lines);
                         }
                     }
                 } else if (research < maxResearch) {
-                    MutableText text = new LiteralText("Unlearned").formatted(Formatting.DARK_PURPLE);
+                    MutableText text = Text.literal("Unlearned").formatted(Formatting.DARK_PURPLE);
                     if (!itemInfo.isResearchable()) {
-                        text.append(new LiteralText(" ⭐").formatted(Formatting.DARK_PURPLE));
+                        text.append(Text.literal(" ⭐").formatted(Formatting.DARK_PURPLE));
                     } else if (Screen.hasShiftDown() || bitScreen) {
-                        text.append(new LiteralText(" [" + research + "/" + maxResearch + "]").formatted(Formatting.DARK_GRAY));
+                        text.append(Text.literal(" [" + research + "/" + maxResearch + "]").formatted(Formatting.DARK_GRAY));
                     }
                     lines.add(text);
                     if (itemInfo.isResearchable() && (Screen.hasShiftDown() || bitScreen)) {
@@ -119,7 +106,7 @@ public class BitExchangeClient implements ClientModInitializer {
             }
             var fluidStorage = storageContext.find(FluidStorage.ITEM);
             if (fluidStorage != null) {
-                var resourceAmount = getStoredResourceAmount(fluidStorage, null);
+                var resourceAmount = getStoredResourceAmount(fluidStorage);
                 if (resourceAmount != null && !resourceAmount.resource().isBlank()) {
                     var resource = resourceAmount.resource();
                     var amount = resourceAmount.amount();
@@ -134,22 +121,22 @@ public class BitExchangeClient implements ClientModInitializer {
                         var displayResearch = BitHelper.format((double)research / FluidConstants.BUCKET) + "B";
                         var displayMax = BitHelper.format((double)maxResearch / FluidConstants.BUCKET) + "B";
 
-                        var name = fluidInfo.getDisplayName().shallowCopy();
+                        var name = fluidInfo.getDisplayName().copy();
                         var fluidSpriteColor = ColorHelper.swapRedBlueIfNeeded(((SpriteMixin)FluidVariantRendering.getSprite(resource)).bitexchange_getImages()[0].getColor(0, 0));
                         var fluidColor = ColorHelper.multiplyColor(fluidSpriteColor, FluidVariantRendering.getColor(resource));
                         var fluidText = name.formatted(getClosestFormatting(fluidColor));
                         if (research >= maxResearch || config.showUnlearnedValues) {
-                            var text = new LiteralText("Bits | ").formatted(Formatting.LIGHT_PURPLE).append(fluidText.shallowCopy())
-                                    .append(new LiteralText(": ").formatted(Formatting.LIGHT_PURPLE))
-                                    .append(new LiteralText(BitHelper.format(fluidInfo.getValue() * displayAmount)).formatted(Formatting.YELLOW))
-                                    .append(new LiteralText(" (").formatted(Formatting.WHITE))
-                                    .append(new LiteralText(BitHelper.format(fluidInfo.getValue()) + "/B").formatted(Formatting.YELLOW))
-                                    .append(new LiteralText(")").formatted(Formatting.WHITE));
+                            var text = Text.literal("Bits | ").formatted(Formatting.LIGHT_PURPLE).append(fluidText.copy())
+                                    .append(Text.literal(": ").formatted(Formatting.LIGHT_PURPLE))
+                                    .append(Text.literal(BitHelper.format(fluidInfo.getValue() * displayAmount)).formatted(Formatting.YELLOW))
+                                    .append(Text.literal(" (").formatted(Formatting.WHITE))
+                                    .append(Text.literal(BitHelper.format(fluidInfo.getValue()) + "/B").formatted(Formatting.YELLOW))
+                                    .append(Text.literal(")").formatted(Formatting.WHITE));
                             if (config.showUnlearnedValues) {
                                 if (!fluidInfo.isResearchable()) {
-                                    text.append(new LiteralText(" [" + (research < maxResearch ? "???" : "⭐") + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                                    text.append(Text.literal(" [" + (research < maxResearch ? "???" : "⭐") + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
                                 } else {
-                                    text.append(new LiteralText(" [" + displayResearch + "/" + displayMax + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
+                                    text.append(Text.literal(" [" + displayResearch + "/" + displayMax + "]").formatted((research < maxResearch) ? Formatting.DARK_GRAY : Formatting.DARK_PURPLE));
                                 }
                             }
                             lines.add(text);
@@ -157,11 +144,11 @@ public class BitExchangeClient implements ClientModInitializer {
                                 addResearchRequirementLines(true, fluidInfo, player, lines);
                             }
                         } else if (research < maxResearch) {
-                            var text = new LiteralText("Unlearned | ").formatted(Formatting.DARK_PURPLE).append(fluidText.shallowCopy());
+                            var text = Text.literal("Unlearned | ").formatted(Formatting.DARK_PURPLE).append(fluidText.copy());
                             if (!fluidInfo.isResearchable()) {
-                                text.append(new LiteralText(" ⭐").formatted(Formatting.DARK_PURPLE));
+                                text.append(Text.literal(" ⭐").formatted(Formatting.DARK_PURPLE));
                             } else if (Screen.hasShiftDown() || bitScreen) {
-                                text.append(new LiteralText(" [" + displayResearch + "/" + displayMax + "]").formatted(Formatting.DARK_GRAY));
+                                text.append(Text.literal(" [" + displayResearch + "/" + displayMax + "]").formatted(Formatting.DARK_GRAY));
                             }
                             lines.add(text);
                             if (fluidInfo.isResearchable() && (Screen.hasShiftDown() || bitScreen)) {
@@ -188,20 +175,18 @@ public class BitExchangeClient implements ClientModInitializer {
         }
         if (!newLines.isEmpty()) {
             if (anyFailed) {
-                lines.add(new LiteralText("Requirements:").formatted(Formatting.LIGHT_PURPLE));
+                lines.add(Text.literal("Requirements:").formatted(Formatting.LIGHT_PURPLE));
                 lines.addAll(newLines);
             } else {
-                lines.add(new LiteralText("Requirements: ").formatted(Formatting.LIGHT_PURPLE).append(new LiteralText("✔").formatted(Formatting.GREEN)));
+                lines.add(Text.literal("Requirements: ").formatted(Formatting.LIGHT_PURPLE).append(Text.literal("✔").formatted(Formatting.GREEN)));
             }
         }
     }
 
-    private <T> ResourceAmount<T> getStoredResourceAmount(Storage<T> storage, @Nullable TransactionContext transaction) {
-        try (Transaction innerTransaction = Transaction.openNested(transaction)) {
-            for (var view : storage.iterable(innerTransaction)) {
-                if (!view.isResourceBlank()) {
-                    return new ResourceAmount<>(view.getResource(), view.getAmount());
-                }
+    private <T> ResourceAmount<T> getStoredResourceAmount(Storage<T> storage) {
+        for (var view : storage) {
+            if (!view.isResourceBlank()) {
+                return new ResourceAmount<>(view.getResource(), view.getAmount());
             }
         }
         return null;

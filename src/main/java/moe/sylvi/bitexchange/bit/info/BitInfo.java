@@ -1,6 +1,5 @@
 package moe.sylvi.bitexchange.bit.info;
 
-import com.google.common.collect.Lists;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
@@ -29,7 +28,7 @@ public interface BitInfo<T> {
     double getValue();
 
     default double getValue(double amount) {
-        return getValue() * ((double)amount / getRatio());
+        return getValue() * (amount / getRatio());
     }
 
     default long getRatio() {

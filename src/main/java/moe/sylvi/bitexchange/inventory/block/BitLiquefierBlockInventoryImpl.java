@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 
 import static moe.sylvi.bitexchange.block.entity.BitLiquefierBlockEntity.FLUID_CAPACITY;
 
-public class BitLiquefierBlockInventoryImpl implements BitLiquefierBlockInventory {
+public class BitLiquefierBlockInventoryImpl implements IBitLiquefierBlockInventory {
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(getDefaultInventorySize(), ItemStack.EMPTY);
     private final BitFluidStorage inputFluid = new BitFluidStorage();
     private final BitFluidStorage outputFluid = new BitFluidStorage(FLUID_CAPACITY, false, true);

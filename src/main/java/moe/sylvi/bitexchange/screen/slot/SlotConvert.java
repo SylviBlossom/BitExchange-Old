@@ -1,14 +1,14 @@
 package moe.sylvi.bitexchange.screen.slot;
 
-import moe.sylvi.bitexchange.inventory.BitConsumerInventory;
+import moe.sylvi.bitexchange.inventory.IBitConsumerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
 public class SlotConvert extends Slot {
-    private BitConsumerInventory bcInventory;
+    private IBitConsumerInventory bcInventory;
 
-    public SlotConvert(Inventory inventory, int index, int x, int y, BitConsumerInventory bcInventory) {
+    public SlotConvert(Inventory inventory, int index, int x, int y, IBitConsumerInventory bcInventory) {
         super(inventory, index, x, y);
         this.bcInventory = bcInventory;
     }

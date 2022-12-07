@@ -2,11 +2,11 @@ package moe.sylvi.bitexchange.bit.registry;
 
 import com.google.common.collect.Lists;
 import moe.sylvi.bitexchange.BitExchange;
+import moe.sylvi.bitexchange.bit.BitHelper;
+import moe.sylvi.bitexchange.bit.Recursable;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.registry.builder.BitRegistryBuilder;
-import moe.sylvi.bitexchange.bit.Recursable;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,I> {
+    public static boolean DEBUGGING = false;
+
     private final Logger logger;
     private final Registry<R> resourceRegistry;
     private final I emptyInfo;
@@ -70,7 +72,7 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
             try {
                 builder.prepare(server);
             } catch (Exception e) {
-                logger.error("Error in preparing " + builder.getClass().getSimpleName(), e);
+                logger.warn("Error in preparing " + builder.getClass().getSimpleName(), e);
             }
         }
     }
@@ -89,10 +91,10 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
                     errorMessage += " [" + currentProcessor.getClass().getSimpleName() + "]";
                     currentProcessor = null;
                 }
-                logger.error(errorMessage, e);
+                logger.warn(errorMessage, e);
             }
             recursiveCheck.clear();
-            recursiveCheck.clear();
+            DEBUGGING = false;
         }
     }
 
@@ -102,7 +104,7 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
             try {
                 builder.postProcess();
             } catch (Exception e) {
-                logger.error("Error in post-processing " + builder.getClass().getSimpleName(), e);
+                logger.warn("Error in post-processing " + builder.getClass().getSimpleName(), e);
             }
         }
         for (I info : infoMap.values()) {
@@ -116,14 +118,30 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
     }
 
     private Recursable<I> process(R resource, boolean allowFallback) {
+        var itemId = BitHelper.getItemId(resource, this);
+        var wasDebugging = DEBUGGING;
+        if (!wasDebugging && BitHelper.isDebugging(resource, this)) {
+            BitExchange.log(Level.INFO, "[DEBUG] Begin processing " + BitHelper.DEBUG_ITEM);
+            DEBUGGING = true;
+        }
         if (resourceProcessors.containsKey(resource) && !resourceProcessors.get(resource).isEmpty()) {
             boolean recursedAll = true;
             for (BitRegistryBuilder<R,I> builder : resourceProcessors.get(resource)) {
+                if (DEBUGGING) {
+                    BitExchange.log(Level.INFO, "[DEBUG] Processing " + itemId + " with " + builder.getClass().getSimpleName());
+                }
                 RecursivePair<R,I> recursivePair = new RecursivePair<>(resource, builder);
                 if (recursiveCheck.contains(recursivePair)) {
                     if (!allowFallback) {
+                        if (DEBUGGING) {
+                            BitExchange.log(Level.INFO, "[DEBUG] Recursive check failed, stopping");
+                            DEBUGGING = wasDebugging;
+                        }
                         return Recursable.of(null, true);
                     } else {
+                        if (DEBUGGING) {
+                            BitExchange.log(Level.INFO, "[DEBUG] Found recursion, falling back");
+                        }
                         continue;
                     }
                 } else {
@@ -135,6 +153,10 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
                 I result = builder.process(resource);
                 currentProcessor = topProcessor ? null : currentProcessor;
                 if (result != null) {
+                    if (DEBUGGING) {
+                        BitExchange.log(Level.INFO, "[DEBUG] Successfully processed " + itemId + " (value: " + result.getValue() + ")");
+                        DEBUGGING = wasDebugging;
+                    }
                     add(result);
                     recursiveCheck.remove(recursivePair);
                     return Recursable.of(result, false);
@@ -142,8 +164,16 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
                 recursiveCheck.remove(recursivePair);
             }
             if (recursedAll) {
+                if (DEBUGGING) {
+                    BitExchange.log(Level.INFO, "[DEBUG] Recursed through all available processors, stopping");
+                    DEBUGGING = wasDebugging;
+                }
                 return Recursable.of(null, true);
             }
+        }
+        if (DEBUGGING) {
+            BitExchange.log(Level.INFO, "[DEBUG] No value found for " + itemId);
+            DEBUGGING = wasDebugging;
         }
         return Recursable.of(null, false);
     }

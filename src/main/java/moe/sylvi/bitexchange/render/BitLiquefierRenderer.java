@@ -7,9 +7,10 @@ import net.fabricmc.fabric.api.client.model.BakedModelManagerHelper;
 import net.fabricmc.fabric.api.client.model.ExtraModelProvider;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.model.ModelResourceProvider;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
@@ -17,8 +18,11 @@ import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRenderHandler;
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributeHandler;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.fabric.impl.client.indigo.renderer.helper.ColorHelper;
 import net.fabricmc.fabric.impl.client.indigo.renderer.render.ItemRenderContext;
 import net.fabricmc.fabric.impl.client.model.ModelLoadingRegistryImpl;
@@ -76,9 +80,11 @@ public class BitLiquefierRenderer implements BlockEntityRenderer<BitLiquefierBlo
         matrices.push();
 
         var handler = FluidVariantRendering.getHandlerOrDefault(variant.getFluid());
+        var attribHandler = FluidVariantAttributes.getHandlerOrDefault(variant.getFluid());
+
         var sprite = handler.getSprites(variant)[0];
         var color = handler.getColor(variant, view, pos);
-        var flipped = handler.fillsFromTop(variant);
+        var flipped = attribHandler.isLighterThanAir(variant);
         var luminance = variant.getFluid().getDefaultState().getBlockState().getLuminance();
 
         var renderer = RendererAccessImpl.INSTANCE.getRenderer();

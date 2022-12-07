@@ -1,0 +1,4 @@
+tiny	2	0	intermediary	named
+c	aztech/modern_industrialization/inventory/HackySlot	aztech/modern_industrialization/inventory/HackySlot
+	m	(Lnet/minecraft/class_1799;)V	setStack	hackySetStack
+	m	()Lnet/minecraft/class_1799;	getStack	hackyGetStack

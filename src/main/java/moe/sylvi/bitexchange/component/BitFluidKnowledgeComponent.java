@@ -4,16 +4,14 @@ import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import moe.sylvi.bitexchange.BitComponents;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
-import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class BitFluidKnowledgeComponent implements BitKnowledgeComponent<Fluid, FluidBitInfo>, AutoSyncedComponent {
+public class BitFluidKnowledgeComponent implements IBitKnowledgeComponent<Fluid, FluidBitInfo>, AutoSyncedComponent {
     private Map<Fluid, Long> knowledge = new HashMap<>();
     private final Object provider;
 

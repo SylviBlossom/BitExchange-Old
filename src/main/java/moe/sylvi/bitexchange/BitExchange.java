@@ -5,22 +5,24 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
+import moe.sylvi.bitexchange.bit.BitHelper;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.registry.ResearchableBitRegistry;
 import moe.sylvi.bitexchange.bit.registry.builder.*;
-import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
-import moe.sylvi.bitexchange.bit.storage.BitStorage;
+import moe.sylvi.bitexchange.bit.storage.IBitStorage;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
 import moe.sylvi.bitexchange.block.*;
 import moe.sylvi.bitexchange.block.entity.*;
-import moe.sylvi.bitexchange.inventory.BitConsumerInventory;
+import moe.sylvi.bitexchange.compat.indrev.IRCompat;
+import moe.sylvi.bitexchange.compat.modern_industrialization.MICompat;
+import moe.sylvi.bitexchange.inventory.IBitConsumerInventory;
 import moe.sylvi.bitexchange.item.BitArrayInventory;
 import moe.sylvi.bitexchange.item.BitDatabaseItem;
 import moe.sylvi.bitexchange.item.BitInscriptionItem;
 import moe.sylvi.bitexchange.screen.*;
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -28,10 +30,10 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +41,7 @@ import net.minecraft.item.*;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -169,17 +171,18 @@ public class BitExchange implements ModInitializer {
         BIT_LIQUEFIER_SCREEN_HANDLER = ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "bit_liquefier"), BitLiquefierScreenHandler::new);
         BIT_MINER_SCREEN_HANDLER = ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "bit_miner"), BitMinerScreenHandler::new);
 
-        BitStorages.ITEM.registerForItems((stack, context) -> BitStorage.of(new BitArrayInventory(Double.MAX_VALUE, context)), BIT_ARRAY_ITEM);
+        BitStorages.ITEM.registerForItems((stack, context) -> IBitStorage.of(new BitArrayInventory(Double.MAX_VALUE, context)), BIT_ARRAY_ITEM);
 
         BitRegistries.ITEM.registerBuilder(new ItemDataRegistryBuilder(BitRegistries.ITEM));
-        BitRegistries.ITEM.registerBuilder(new RecipeRegistryBuilder(BitRegistries.ITEM));
+        BitRegistries.ITEM.registerBuilder(new ItemRecipeRegistryBuilder(BitRegistries.ITEM));
         BitRegistries.ITEM.registerBuilder(new FluidContainerItemRegistryBuilder(BitRegistries.ITEM));
 
         BitRegistries.FLUID.registerBuilder(new FluidDataRegistryBuilder(BitRegistries.FLUID));
+        BitRegistries.FLUID.registerBuilder(new FluidRecipeRegistryBuilder(BitRegistries.FLUID));
 
         FluidStorage.SIDED.registerForBlockEntity((be, side) -> be.combinedStorage, BIT_LIQUEFIER_BLOCK_ENTITY);
         FluidStorage.SIDED.registerFallback((world, pos, state, blockEntity, side) -> {
-            if (blockEntity instanceof BitConsumerInventory inventory) {
+            if (blockEntity instanceof IBitConsumerInventory inventory) {
                 return inventory.getInputFluid();
             }
             return null;
@@ -189,6 +192,13 @@ public class BitExchange implements ModInitializer {
     @Override
     public void onInitialize() {
         log(Level.INFO, "Initializing");
+
+        if (FabricLoader.getInstance().isModLoaded("modern_industrialization")) {
+            MICompat.load();
+        }
+        if (FabricLoader.getInstance().isModLoaded("indrev")) {
+            IRCompat.load();
+        }
 
         AutoConfig.register(BitConfig.class, GsonConfigSerializer::new);
 
@@ -200,18 +210,18 @@ public class BitExchange implements ModInitializer {
 
             @Override
             public void reload(ResourceManager manager) {
-                DataRegistryBuilder.loadResources(manager);
+                AbstractDataRegistryBuilder.loadResources(manager);
             }
         });
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(literal("bit")
                 .then(literal("knowledge")
                     .then(literal("add")
-                        .then(argument("item", ItemStackArgumentType.itemStack())
+                        .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
                             .executes((ctx) -> {
                                 ItemStackArgument itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
-                                BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).addKnowledge(itemArg.getItem(), Integer.MAX_VALUE);
+                                BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).addKnowledge(itemArg.getItem(), Integer.MAX_VALUE);
                                 return 1;
                             })
                         ).then(argument("fluid", StringArgumentType.string())
@@ -219,17 +229,17 @@ public class BitExchange implements ModInitializer {
                                 var fluidStr = StringArgumentType.getString(ctx, "fluid");
                                 var fluid = Registry.FLUID.getOrEmpty(new Identifier(fluidStr));
                                 if (!fluid.isEmpty()) {
-                                    BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayer()).addKnowledge(fluid.get(), Long.MAX_VALUE);
+                                    BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).addKnowledge(fluid.get(), Long.MAX_VALUE);
                                 }
                                 return 1;
                             })
                         )
                     ).then(literal("set")
-                        .then(argument("item", ItemStackArgumentType.itemStack())
+                        .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
                             .then(argument("count", IntegerArgumentType.integer(0))
                                 .executes((ctx) -> {
                                     ItemStackArgument itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
-                                    var knowledge = BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer());
+                                    var knowledge = BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow());
                                     var knowledgeMap = knowledge.getKnowledgeMap();
                                     knowledgeMap.put(itemArg.getItem(), Math.min(LongArgumentType.getLong(ctx, "count"), BitRegistries.ITEM.getResearch(itemArg.getItem())));
                                     knowledge.setKnowledgeMap(knowledgeMap);
@@ -242,7 +252,7 @@ public class BitExchange implements ModInitializer {
                                     var fluidStr = StringArgumentType.getString(ctx, "fluid");
                                     var fluid = Registry.FLUID.getOrEmpty(new Identifier(fluidStr));
                                     if (!fluid.isEmpty()) {
-                                        var knowledge = BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayer());
+                                        var knowledge = BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow());
                                         var knowledgeMap = knowledge.getKnowledgeMap();
                                         knowledgeMap.put(fluid.get(), Math.min(LongArgumentType.getLong(ctx, "count"), BitRegistries.FLUID.getResearch(fluid.get())));
                                         knowledge.setKnowledgeMap(knowledgeMap);
@@ -252,10 +262,10 @@ public class BitExchange implements ModInitializer {
                             )
                         )
                     ).then(literal("remove")
-                        .then(argument("item", ItemStackArgumentType.itemStack())
+                        .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
                             .executes((ctx) -> {
                                 ItemStackArgument itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
-                                BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).removeKnowledge(itemArg.getItem());
+                                BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).removeKnowledge(itemArg.getItem());
                                 return 1;
                             })
                         ).then(argument("fluid", StringArgumentType.string())
@@ -263,21 +273,21 @@ public class BitExchange implements ModInitializer {
                                 var fluidStr = StringArgumentType.getString(ctx, "fluid");
                                 var fluid = Registry.FLUID.getOrEmpty(new Identifier(fluidStr));
                                 if (!fluid.isEmpty()) {
-                                    BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayer()).removeKnowledge(fluid.get());
+                                    BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).removeKnowledge(fluid.get());
                                 }
                                 return 1;
                             })
                         )
                     ).then(literal("complete")
                         .executes((ctx) -> {
-                            completeKnowledge(BitRegistries.ITEM, ctx.getSource().getPlayer());
-                            completeKnowledge(BitRegistries.FLUID, ctx.getSource().getPlayer());
+                            completeKnowledge(BitRegistries.ITEM, ctx.getSource().getPlayerOrThrow());
+                            completeKnowledge(BitRegistries.FLUID, ctx.getSource().getPlayerOrThrow());
                             return 1;
                         })
                     ).then(literal("clear")
                         .executes((ctx) -> {
-                            BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayer()).setKnowledgeMap(new HashMap<>());
-                            BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayer()).setKnowledgeMap(new HashMap<>());
+                            BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).setKnowledgeMap(new HashMap<>());
+                            BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).setKnowledgeMap(new HashMap<>());
                             return 1;
                         })
                     )
@@ -289,11 +299,11 @@ public class BitExchange implements ModInitializer {
                         })
                     )
                     .executes((ctx) -> {
-                        ctx.getSource().getPlayer().sendMessage(new LiteralText("Unregistered:").formatted(Formatting.DARK_PURPLE), false);
+                        ctx.getSource().getPlayerOrThrow().sendMessage(Text.literal("Unregistered:").formatted(Formatting.DARK_PURPLE), false);
                         int count = 0;
                         for (Item item : Registry.ITEM) {
                             if (BitRegistries.ITEM.get(item) == null && !tested.contains(item) && !IGNORE_TESTING_SET.contains(Registry.ITEM.getId(item).toString())) {
-                                ctx.getSource().getPlayer().sendMessage(item.getDefaultStack().toHoverableText(), false);
+                                ctx.getSource().getPlayerOrThrow().sendMessage(item.getDefaultStack().toHoverableText(), false);
                                 tested.add(item);
                                 count++;
                             }
@@ -303,6 +313,21 @@ public class BitExchange implements ModInitializer {
                         }
                         return 1;
                     })
+                ).then(literal("debug")
+                    .then(literal("clear")
+                        .executes(ctx -> {
+                            BitHelper.DEBUG_ITEM = null;
+                            return 1;
+                        })
+                    ).then(literal("set")
+                        .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
+                            .executes(ctx -> {
+                                var itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
+                                BitHelper.DEBUG_ITEM = Registry.ITEM.getId(itemArg.getItem()).toString();
+                                return 1;
+                            })
+                        )
+                    )
                 )
             );
         });
@@ -326,6 +351,14 @@ public class BitExchange implements ModInitializer {
 
     public static void error(String message, Throwable e) {
         LOGGER.error(message + "\n" + e.getMessage());
+    }
+
+    public static void warn(String message) {
+        LOGGER.warn(message);
+    }
+
+    public static void warn(String message, Throwable e) {
+        LOGGER.warn(message + "\n" + e.getMessage());
     }
 
     private static String[] IGNORE_TESTING = new String[] {
@@ -398,6 +431,9 @@ public class BitExchange implements ModInitializer {
             "minecraft:medium_amethyst_bud",
             "minecraft:large_amethyst_bud",
             "minecraft:amethyst_cluster",
+            "minecraft:reinforced_deepslate",
+            "minecraft:frogspawn",
+            "minecraft:chorus_plant"
     };
     private static HashSet<String> IGNORE_TESTING_SET = new HashSet<>(Arrays.asList(IGNORE_TESTING));
 }

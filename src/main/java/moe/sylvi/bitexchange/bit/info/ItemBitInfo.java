@@ -7,7 +7,6 @@ import moe.sylvi.bitexchange.bit.research.BitResearchRequirement;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -76,7 +75,7 @@ public class ItemBitInfo implements BitInfoResearchable<Item> {
 
     @Override
     public void showResearchMessage(PlayerEntity player) {
-        player.sendMessage(new LiteralText("Researched item: ").formatted(Formatting.LIGHT_PURPLE).append(item.getDefaultStack().toHoverableText()), false);
+        player.sendMessage(Text.literal("Researched item: ").formatted(Formatting.LIGHT_PURPLE).append(item.getDefaultStack().toHoverableText()), false);
     }
 
     @Override

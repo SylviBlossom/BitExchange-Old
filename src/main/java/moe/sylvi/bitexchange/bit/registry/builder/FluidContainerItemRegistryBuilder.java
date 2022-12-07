@@ -1,7 +1,8 @@
 package moe.sylvi.bitexchange.bit.registry.builder;
 
 import com.google.common.collect.Lists;
-import moe.sylvi.bitexchange.BitExchange;
+import me.shedaniel.autoconfig.AutoConfig;
+import moe.sylvi.bitexchange.BitConfig;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.Recursable;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
@@ -26,7 +27,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import org.apache.logging.log4j.Level;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +46,8 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
 
     @Override
     public void prepare(MinecraftServer server) {
+        var config = AutoConfig.getConfigHolder(BitConfig.class).getConfig();
+
         for (Item item : Registry.ITEM) {
             ItemStack stack = item.getDefaultStack();
 
@@ -53,6 +55,12 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
                 continue;
             }
 
+            // Dont process fluid containers that are blacklisted in the config
+            if (config.blacklistedItems.contains(Registry.ITEM.getId(item).toString())) {
+                continue;
+            }
+
+            // Attempt to get the fluid storage for the item
             ContainerItemContext context = new PreviewContainerItemContext(stack, server.getWorld(World.OVERWORLD));
             Storage<FluidVariant> storage = FluidStorage.ITEM.find(item.getDefaultStack(), context);
 
@@ -60,8 +68,9 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
                 continue;
             }
 
-            FluidVariant resource = StorageUtil.findStoredResource(storage, null);
+            FluidVariant resource = StorageUtil.findStoredResource(storage);
 
+            // If fluid exists, mark it for processing
             if (resource != null && !resource.isBlank()) {
                 fluidStorages.put(item, new Pair<>(context, storage));
                 registry.prepareResource(item, this);
@@ -80,7 +89,7 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
         double bits = 0.0;
         List<ResearchRequirement> requirements = Lists.newArrayList();
         try (Transaction transaction = Transaction.openOuter()) {
-            for (StorageView<FluidVariant> view : storage.iterable(transaction)) {
+            for (StorageView<FluidVariant> view : storage) {
                 FluidVariant resource = view.getResource();
                 if (resource == null || resource.isBlank()) {
                     continue;

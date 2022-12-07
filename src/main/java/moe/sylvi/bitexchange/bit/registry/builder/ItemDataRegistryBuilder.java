@@ -10,7 +10,7 @@ import net.minecraft.util.JsonHelper;
 
 import java.util.List;
 
-public class ItemDataRegistryBuilder extends ResearchableDataRegistryBuilder<Item, ItemBitInfo> {
+public class ItemDataRegistryBuilder extends AbstractResearchableDataRegistryBuilder<Item, ItemBitInfo> {
     public ItemDataRegistryBuilder(BitRegistry<Item, ItemBitInfo> registry) {
         super(registry);
     }

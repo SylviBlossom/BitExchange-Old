@@ -2,10 +2,8 @@ package moe.sylvi.bitexchange.screen;
 
 import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
-import moe.sylvi.bitexchange.bit.storage.BitStorage;
-import moe.sylvi.bitexchange.inventory.BitConsumerInventory;
-import moe.sylvi.bitexchange.inventory.block.BitFactoryBlockInventory;
-import moe.sylvi.bitexchange.inventory.block.BitLiquefierBlockInventory;
+import moe.sylvi.bitexchange.bit.storage.IBitStorage;
+import moe.sylvi.bitexchange.inventory.block.IBitLiquefierBlockInventory;
 import moe.sylvi.bitexchange.screen.slot.*;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,20 +17,20 @@ import net.minecraft.util.math.BlockPos;
 public class BitLiquefierScreenHandler extends ScreenHandler {
     public static final int PLAYER_SLOT = 3;
     private final PlayerInventory playerInventory;
-    private final BitLiquefierBlockInventory inventory;
+    private final IBitLiquefierBlockInventory inventory;
     private BlockPos pos;
 
     //This constructor gets called on the client when the server wants it to open the screenHandler,
     //The client will call the other constructor with an empty Inventory and the screenHandler will automatically
     //sync this empty inventory with the inventory on the server.
     public BitLiquefierScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-        this(syncId, playerInventory, BitLiquefierBlockInventory.blank());
+        this(syncId, playerInventory, IBitLiquefierBlockInventory.blank());
         pos = buf.readBlockPos();
     }
 
     //This constructor gets called from the BlockEntity on the server without calling the other constructor first, the server knows the inventory of the container
     //and can therefore directly provide it as an argument. This inventory will then be synced to the client.
-    public BitLiquefierScreenHandler(int syncId, PlayerInventory playerInventory, BitLiquefierBlockInventory inventory) {
+    public BitLiquefierScreenHandler(int syncId, PlayerInventory playerInventory, IBitLiquefierBlockInventory inventory) {
         super(BitExchange.BIT_LIQUEFIER_SCREEN_HANDLER, syncId);
         checkSize(inventory, 3);
         this.playerInventory = playerInventory;
@@ -67,7 +65,7 @@ public class BitLiquefierScreenHandler extends ScreenHandler {
     }
 
     public double getBits() {
-        BitStorage storage = inventory.getStorage();
+        IBitStorage storage = inventory.getStorage();
         return storage != null ? storage.getBits() : -1.0;
     }
 

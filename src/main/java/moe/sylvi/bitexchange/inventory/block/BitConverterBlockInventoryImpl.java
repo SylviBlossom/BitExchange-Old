@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
-public class BitConverterBlockInventoryImpl implements BitConverterBlockInventory {
+public class BitConverterBlockInventoryImpl implements IBitConverterBlockInventory {
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(getDefaultInventorySize(), ItemStack.EMPTY);
     private final BitFluidStorage inputFluid = new BitFluidStorage();
 

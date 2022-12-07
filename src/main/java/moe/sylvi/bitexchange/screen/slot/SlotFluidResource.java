@@ -5,6 +5,8 @@ import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
 import moe.sylvi.bitexchange.transfer.SimpleItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -26,7 +28,7 @@ public class SlotFluidResource extends Slot {
         var fluidStorage = context.find(FluidStorage.ITEM);
 
         if (fluidStorage != null) {
-            var fluidVariant = StorageUtil.findStoredResource(fluidStorage, null);
+            var fluidVariant = StorageUtil.findStoredResource(fluidStorage);
             return fluidVariant != null && !fluidVariant.isBlank() && BitComponents.FLUID_KNOWLEDGE.get(playerInventory.player).hasLearned(fluidVariant.getFluid());
         }
 
