@@ -9,24 +9,29 @@ import moe.sylvi.bitexchange.bit.storage.IBitStorage;
 import moe.sylvi.bitexchange.client.gui.BitConverterScreen;
 import moe.sylvi.bitexchange.inventory.IBitConsumerInventory;
 import moe.sylvi.bitexchange.inventory.block.IBitConverterBlockInventory;
+import moe.sylvi.bitexchange.networking.BitConverterPurchaseC2SPacket;
 import moe.sylvi.bitexchange.screen.slot.SlotInput;
 import moe.sylvi.bitexchange.screen.slot.SlotConvert;
 import moe.sylvi.bitexchange.screen.slot.SlotStorage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.collection.DefaultedList;
+import org.apache.logging.log4j.Level;
 
 import java.util.List;
 
 public class BitConverterScreenHandler extends ScreenHandler {
     public static final int CONVERSION_SLOT = 2;
     public static final int PLAYER_SLOT = 34;
+    public static final SimpleInventory INVENTORY = new SimpleInventory(32);
+
     private final IBitConsumerInventory inventory;
     private final PlayerInventory playerInventory;
     private final PlayerEntity player;
@@ -61,7 +66,7 @@ public class BitConverterScreenHandler extends ScreenHandler {
         //Bit conversion inventory
         for (m = 0; m < 4; ++m) {
             for (l = 0; l < 8; ++l) {
-                this.addSlot(new SlotConvert(BitConverterScreen.INVENTORY,l + m * 8, 8 + l * 18, 24 + m * 18, inventory));
+                this.addSlot(new SlotConvert(INVENTORY,l + m * 8, 8 + l * 18, 24 + m * 18, inventory));
             }
         }
         //The player inventory
@@ -90,6 +95,10 @@ public class BitConverterScreenHandler extends ScreenHandler {
         super.onContentChanged(inventory);
     }
 
+    public IBitConsumerInventory getInventory() {
+        return inventory;
+    }
+
     public PlayerInventory getPlayerInventory() {
         return this.playerInventory;
     }
@@ -101,18 +110,29 @@ public class BitConverterScreenHandler extends ScreenHandler {
 
     public void buildList(String search, float scroll) {
         itemList.clear();
-        double bits = getBits();
+
+        var bits = getBits();
         for (Item item : knowledgeList) {
-            double itemBits = BitRegistries.ITEM.getValue(item);
-            if (itemBits > 0) {
-                String name = item.getName().getString().toLowerCase();
-                if ((search.isEmpty() || name.contains(search.toLowerCase())) && BitHelper.compareBits(bits, itemBits)) {
-                    ItemStack stack =  item.getDefaultStack();
-                    stack.setCount(1);
-                    itemList.add(stack);
-                }
+            var itemBits = BitRegistries.ITEM.getValue(item);
+            if (itemBits == 0) {
+                continue;
             }
+
+            var name = item.getName().getString().toLowerCase();
+            if ((!search.isEmpty() && !name.contains(search.toLowerCase())) || !BitHelper.compareBits(bits, itemBits)) {
+                continue;
+            }
+
+            var stack =  item.getDefaultStack();
+            stack.setCount(1);
+
+            if (BitHelper.isItemDisabled(stack, BitHelper.PurchaseMode.BUY)) {
+                continue;
+            }
+
+            itemList.add(stack);
         }
+
         scrollItems(scroll);
     }
 
@@ -147,7 +167,7 @@ public class BitConverterScreenHandler extends ScreenHandler {
         Slot slot = this.slots.get(invSlot);
         if (slot != null && slot.hasStack()) {
             ItemStack originalStack = slot.getStack();
-            if (slot.inventory == BitConverterScreen.INVENTORY) {
+            if (slot.inventory == INVENTORY) {
                 newStack = this.inventory.createStack(slot.getStack(), slot.getStack().getMaxCount());
                 if (!this.insertItem(newStack, PLAYER_SLOT, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
@@ -173,61 +193,63 @@ public class BitConverterScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public void onSlotClick(int i, int j, SlotActionType actionType, PlayerEntity playerEntity) {
-        if (i >= CONVERSION_SLOT && i < PLAYER_SLOT) {
-            Slot slot = this.slots.get(i);
-            if (slot == null || !slot.canTakeItems(playerEntity)) {
+    public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity playerEntity) {
+        if (slotIndex >= CONVERSION_SLOT && slotIndex < PLAYER_SLOT) {
+            Slot slot = this.slots.get(slotIndex);
+            if (!slot.canTakeItems(playerEntity)) {
                 return;
             }
-            ItemStack resultStack = ItemStack.EMPTY;
-            if (actionType == SlotActionType.QUICK_MOVE) {
-                if (slot.getStack().isEmpty()) {
+            if (playerEntity.world.isClient()) {
+                var itemStack = slot.getStack();
+                var packet = new BitConverterPurchaseC2SPacket(itemStack, actionType, button != 0);
+                packet.send();
+            }
+        } else {
+            super.onSlotClick(slotIndex, button, actionType, playerEntity);
+        }
+    }
+
+    public void receivePurchase(ItemStack slotStack, SlotActionType actionType, boolean grabOne, PlayerEntity player) {
+        BitExchange.log(Level.INFO, "Received purchase");
+        if (actionType == SlotActionType.QUICK_MOVE) {
+            if (slotStack.isEmpty()) {
+                return;
+            }
+            var newStack = this.inventory.createStack(slotStack, slotStack.getMaxCount());
+            while(!newStack.isEmpty() && ItemStack.areItemsEqualIgnoreDamage(slotStack, newStack)) {
+                if (!this.insertItem(newStack, PLAYER_SLOT, this.slots.size(), true)) {
+                    break;
+                }
+            }
+        } else if (actionType == SlotActionType.PICKUP) {
+            var cursorStack = getCursorStack();
+
+            if (cursorStack.isEmpty()) {
+                if (slotStack.isEmpty()) {
                     return;
                 }
-                resultStack = slot.getStack().copy();
-                ItemStack itemStack = this.inventory.createStack(slot.getStack(), slot.getStack().getMaxCount());
-                while(!itemStack.isEmpty() && ItemStack.areItemsEqualIgnoreDamage(slot.getStack(), itemStack)) {
-                    if (!this.insertItem(itemStack, PLAYER_SLOT, this.slots.size(), true)) {
+                var newStack = this.inventory.createStack(slotStack, grabOne ? 1 : slotStack.getMaxCount());
+                if (!newStack.isEmpty()) {
+                    setCursorStack(newStack);
+                }
+            } else if (!grabOne && this.slots.get(1).canInsert(cursorStack) && this.slots.get(1).getStack().isEmpty()) {
+                this.slots.get(1).setStack(cursorStack);
+                setCursorStack(ItemStack.EMPTY);
+            } else if (cursorStack.getCount() < cursorStack.getMaxCount()) {
+                for (ItemBitInfo bitInfo : BitRegistries.ITEM) {
+                    var originalStack = bitInfo.getResource().getDefaultStack();
+                    if (ItemStack.canCombine(originalStack, cursorStack)) {
+                        var count = cursorStack.getMaxCount() - cursorStack.getCount();
+                        if (count > 0) {
+                            var newStack = this.inventory.createStack(originalStack, grabOne ? Math.min(count, 1) : count);
+                            if (!newStack.isEmpty()) {
+                                cursorStack.increment(newStack.getCount());
+                            }
+                        }
                         break;
                     }
                 }
-            } else if (actionType == SlotActionType.PICKUP) {
-                ItemStack itemStack = slot.getStack();
-                ItemStack cursorStack = getCursorStack();
-
-                resultStack = itemStack.copy();
-
-                if (cursorStack.isEmpty()) {
-                    if (itemStack.isEmpty()) {
-                        return;
-                    }
-                    ItemStack newStack = this.inventory.createStack(itemStack, j == 0 ? itemStack.getMaxCount() : 1);
-                    if (!newStack.isEmpty()) {
-                        setCursorStack(newStack);
-                        slot.onTakeItem(playerEntity, newStack);
-                    }
-                } else if (j == 0 && this.slots.get(1).canInsert(cursorStack) && this.slots.get(1).getStack().isEmpty()) {
-                    this.slots.get(1).setStack(cursorStack);
-                    setCursorStack(ItemStack.EMPTY);
-                } else if (cursorStack.getCount() < cursorStack.getMaxCount()) {
-                    for (ItemBitInfo bitInfo : BitRegistries.ITEM) {
-                        ItemStack originalStack = bitInfo.getResource().getDefaultStack();
-                        if (ItemStack.canCombine(originalStack, cursorStack)) {
-                            int count = cursorStack.getMaxCount() - cursorStack.getCount();
-                            if (count > 0) {
-                                ItemStack newStack = this.inventory.createStack(originalStack, j == 0 ? count : Math.min(count, 1));
-                                if (!newStack.isEmpty()) {
-                                    cursorStack.increment(newStack.getCount());
-                                    slot.onTakeItem(playerEntity, newStack);
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
             }
-        } else {
-            super.onSlotClick(i, j, actionType, playerEntity);
         }
     }
 }

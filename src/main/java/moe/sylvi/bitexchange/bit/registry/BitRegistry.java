@@ -3,16 +3,14 @@ package moe.sylvi.bitexchange.bit.registry;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.Recursable;
 import moe.sylvi.bitexchange.bit.registry.builder.BitRegistryBuilder;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.registry.Registry;
 
 import java.util.List;
 
 public interface BitRegistry<R,I extends BitInfo<R>> extends Iterable<I> {
-    static <T,O extends BitInfo<T>> BitRegistry<T,O> of(Registry<T> resourceRegistry, O defaultInfo) {
-        return new SimpleBitRegistry<>(resourceRegistry, defaultInfo);
-    }
-
     void registerBuilder(BitRegistryBuilder<R,I> builder);
     void prepareResource(R resource, BitRegistryBuilder<R,I> builder);
 
@@ -42,4 +40,9 @@ public interface BitRegistry<R,I extends BitInfo<R>> extends Iterable<I> {
     }
 
     List<I> getList();
+
+    void load(List<I> list);
+
+    void writeInfo(I info, PacketByteBuf buf);
+    I readInfo(PacketByteBuf buf);
 }

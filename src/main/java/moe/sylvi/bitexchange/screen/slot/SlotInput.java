@@ -1,7 +1,10 @@
 package moe.sylvi.bitexchange.screen.slot;
 
+import me.shedaniel.autoconfig.AutoConfig;
 import moe.sylvi.bitexchange.BitComponents;
+import moe.sylvi.bitexchange.BitConfig;
 import moe.sylvi.bitexchange.BitRegistries;
+import moe.sylvi.bitexchange.bit.BitHelper;
 import moe.sylvi.bitexchange.bit.storage.BitStorages;
 import moe.sylvi.bitexchange.transfer.SimpleItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -32,7 +35,14 @@ public class SlotInput extends Slot {
             return true;
         }
 
-        if (BitRegistries.ITEM.getValue(item) > 0 && BitComponents.ITEM_KNOWLEDGE.get(playerInventory.player).hasLearned(item)) {
+        var info = BitRegistries.ITEM.get(item);
+
+        var config = AutoConfig.getConfigHolder(BitConfig.class).getConfig();
+        var isDisabled = info != null && !info.isAutomatable() && !config.allowSellCraftables;
+
+        var sellValue = BitHelper.getItemValue(stack, BitHelper.PurchaseMode.SELL);
+
+        if (sellValue > 0 && BitComponents.ITEM_KNOWLEDGE.get(playerInventory.player).hasLearned(item) && !isDisabled) {
             return true;
         }
 

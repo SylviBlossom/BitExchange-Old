@@ -20,7 +20,7 @@ public class FluidDataRegistryBuilder extends AbstractResearchableDataRegistryBu
     FluidBitInfo parseJson(Fluid resource, JsonObject json) throws Throwable {
         double value = parseBitValue(resource, json);
         long ratio = JsonHelper.getLong(json, "ratio", FluidConstants.BUCKET);
-        double research = JsonHelper.getDouble(json, "research", 1);
+        double research = parseResearch(json, 1);
         boolean researchable = JsonHelper.getBoolean(json, "researchable", true);
         List<ResearchRequirement> researchRequirements = parseResearchRequirements(json);
 

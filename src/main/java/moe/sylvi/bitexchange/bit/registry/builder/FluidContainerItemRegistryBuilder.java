@@ -10,6 +10,7 @@ import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
+import moe.sylvi.bitexchange.bit.research.ResearchTier;
 import moe.sylvi.bitexchange.transfer.PreviewContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
@@ -28,6 +29,7 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -87,7 +89,7 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
 
         boolean success = true;
         double bits = 0.0;
-        List<ResearchRequirement> requirements = Lists.newArrayList();
+        List<ResearchRequirement> requirements = new ArrayList<>();
         try (Transaction transaction = Transaction.openOuter()) {
             for (StorageView<FluidVariant> view : storage) {
                 FluidVariant resource = view.getResource();
@@ -142,7 +144,7 @@ public class FluidContainerItemRegistryBuilder implements BitRegistryBuilder<Ite
         }
 
         if (success) {
-            return BitInfo.ofItem(item, bits, 1, true, false, requirements);
+            return BitInfo.ofItem(item, bits, ResearchTier.CRAFTED.getResearch(), true, false, requirements);
         } else {
             return null;
         }

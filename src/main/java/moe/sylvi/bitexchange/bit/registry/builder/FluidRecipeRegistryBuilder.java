@@ -3,6 +3,7 @@ package moe.sylvi.bitexchange.bit.registry.builder;
 import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
+import moe.sylvi.bitexchange.bit.research.ResearchTier;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.recipe.Recipe;
@@ -25,6 +26,6 @@ public class FluidRecipeRegistryBuilder extends AbstractRecipeRegistryBuilder<Fl
 
     @Override
     public FluidBitInfo createInfo(Fluid resource, double bits, Recipe<?> smallestRecipe) {
-        return BitInfo.ofFluid(resource, bits, FluidConstants.BUCKET, FluidConstants.BUCKET, true);
+        return BitInfo.ofFluid(resource, bits, ResearchTier.CRAFTED.getResearch() * FluidConstants.BUCKET, FluidConstants.BUCKET, true);
     }
 }

@@ -1,5 +1,7 @@
 package moe.sylvi.bitexchange.screen.slot;
 
+import me.shedaniel.autoconfig.AutoConfig;
+import moe.sylvi.bitexchange.BitConfig;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.research.ResearchableItem;
 import moe.sylvi.bitexchange.transfer.SimpleItemContext;
@@ -22,29 +24,33 @@ public class SlotResearch extends Slot {
     public boolean canInsert(ItemStack stack) {
         var item = stack.getItem();
 
-        var isResearchable = false;
+        var config = AutoConfig.getConfigHolder(BitConfig.class).getConfig();
+
         if (item instanceof ResearchableItem researchableItem) {
-            isResearchable = researchableItem.canResearch(stack, playerInventory.player);
+            if (researchableItem.canResearch(stack, playerInventory.player)) {
+                return true;
+            }
         } else {
             var info = BitRegistries.ITEM.get(item);
-            isResearchable = info != null && info.isResearchable() && info.getResearch() > 0;
-        }
 
-        if (!isResearchable) {
-            SimpleItemContext context = new SimpleItemContext(stack);
-            var fluidStorage = context.find(FluidStorage.ITEM);
-
-            if (fluidStorage != null) {
-                var fluidVariant = StorageUtil.findStoredResource(fluidStorage);
-
-                if (fluidVariant != null && !fluidVariant.isBlank()) {
-                    var info = BitRegistries.FLUID.get(fluidVariant.getFluid());
-
-                    isResearchable = info != null && info.isResearchable() && info.getResearch() > 0;
-                }
+            if (info != null && info.isResearchable() && info.getResearch() > 0 && (info.isAutomatable() || config.shouldSupportCraftables())) {
+                return true;
             }
         }
 
-        return isResearchable;
+        SimpleItemContext context = new SimpleItemContext(stack);
+        var fluidStorage = context.find(FluidStorage.ITEM);
+
+        if (fluidStorage != null) {
+            var fluidVariant = StorageUtil.findStoredResource(fluidStorage);
+
+            if (fluidVariant != null && !fluidVariant.isBlank()) {
+                var info = BitRegistries.FLUID.get(fluidVariant.getFluid());
+
+                return info != null && info.isResearchable() && info.getResearch() > 0;
+            }
+        }
+
+        return false;
     }
 }

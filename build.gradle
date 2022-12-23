@@ -24,6 +24,20 @@ repositories {
 		}
 	}
 	maven {
+		// saps.dev Maven (KubeJS and Rhino)
+		url = "https://maven.saps.dev/minecraft"
+		content {
+			includeGroup "dev.latvian.mods"
+		}
+	}
+	maven {
+		// IngredientExtensionAPI (Needed for KubeJS)
+		url "https://maven.blamejared.com"
+		content {
+			includeGroup "com.faux.ingredientextension"
+		}
+	}
+	maven {
 		name = "BuildCraft"
 		url = "https://mod-buildcraft.com/maven"
 	}
@@ -109,6 +123,14 @@ dependencies {
 	modCompileOnly("maven.modrinth:ae2:${project.ae2_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
+
+	modCompileOnly("dev.latvian.mods:kubejs-fabric:${project.kubejs_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+	modCompileOnly("com.faux.ingredientextension:IngredientExtensionAPI-fabric-1.19.2:3.0.5") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+	modLocalRuntime("dev.latvian.mods:kubejs-fabric:${project.kubejs_version}")
 }
 
 processResources {
@@ -156,6 +178,16 @@ publishing {
 
 loom {
 	runs {
+		client {
+			client()
+		}
+
+		server {
+			server()
+
+			runDir "runServer"
+		}
+
 		// This adds a new gradle task that runs the datagen API: "gradlew runDatagenClient"
 		datagenClient {
 			inherit client

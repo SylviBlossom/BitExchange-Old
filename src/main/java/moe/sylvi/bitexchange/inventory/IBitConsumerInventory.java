@@ -1,5 +1,7 @@
 package moe.sylvi.bitexchange.inventory;
 
+import me.shedaniel.autoconfig.AutoConfig;
+import moe.sylvi.bitexchange.BitConfig;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.BitHelper;
 import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
@@ -44,14 +46,17 @@ public interface IBitConsumerInventory extends ImplementedInventory {
             ItemBitInfo info = BitRegistries.ITEM.get(stack.getItem());
 
             if (storage != null && info != null) {
-                double toExtract = info.getValue() * Math.max(0, Math.min(stack.getItem().getMaxCount(), count));
+                var config = AutoConfig.getConfigHolder(BitConfig.class).getConfig();
+                var buyValue = config.getBuyPriceMultiplier(!info.isAutomatable()) * info.getValue();
+
+                double toExtract = buyValue * Math.max(0, Math.min(stack.getItem().getMaxCount(), count));
                 double extracted;
                 int itemsExtracted = count;
                 try (Transaction transaction = Transaction.openOuter()) {
-                    extracted = BitHelper.fixBitRounding(storage.extract(toExtract, transaction), info.getValue());
-                    if (info.getValue() != 0) {
-                        itemsExtracted = (int) Math.floor(extracted / info.getValue());
-                        extracted = itemsExtracted * info.getValue();
+                    extracted = BitHelper.fixBitRounding(storage.extract(toExtract, transaction), buyValue);
+                    if (buyValue != 0) {
+                        itemsExtracted = (int) Math.floor(extracted / buyValue);
+                        extracted = itemsExtracted * buyValue;
                     }
                 }
                 if (itemsExtracted > 0) {
@@ -79,18 +84,21 @@ public interface IBitConsumerInventory extends ImplementedInventory {
             ItemVariant resource = ItemVariant.of(stack);
 
             if (storage != null && info != null) {
-                double toExtract = info.getValue() * count;
+                var config = AutoConfig.getConfigHolder(BitConfig.class).getConfig();
+                var buyValue = config.getBuyPriceMultiplier(!info.isAutomatable()) * info.getValue();
+
+                double toExtract = buyValue * count;
                 int itemsExtracted = count;
                 try (Transaction transaction = Transaction.openOuter()) {
-                    double extracted = BitHelper.fixBitRounding(storage.extract(toExtract, transaction), info.getValue());
-                    if (info.getValue() != 0) {
-                        itemsExtracted = (int) Math.floor(extracted / info.getValue());
+                    double extracted = BitHelper.fixBitRounding(storage.extract(toExtract, transaction), buyValue);
+                    if (buyValue != 0) {
+                        itemsExtracted = (int) Math.floor(extracted / buyValue);
                     }
                 }
                 if (itemsExtracted > 0) {
                     try (Transaction transaction = Transaction.openOuter()) {
                         long itemsInserted = context.insert(resource, itemsExtracted, transaction);
-                        storage.extract(itemsInserted * info.getValue(), transaction);
+                        storage.extract(itemsInserted * buyValue, transaction);
                         transaction.commit();
                     }
                 }
@@ -99,22 +107,23 @@ public interface IBitConsumerInventory extends ImplementedInventory {
     }
 
     default void consumeInputs() {
-        ItemStack storageStack = getStack(getStorageSlot());
+        var storageStack = getStack(getStorageSlot());
         if (storageStack.isEmpty()) {
             return;
         }
-        ItemStack inputStack = getStack(getInputSlot());
+        var inputStack = getStack(getInputSlot());
         if (!inputStack.isEmpty()) {
-            InventoryStorage inventoryStorage = FullInventoryStorage.of(this);
-            InventoryItemContext inputContext = new InventoryItemContext(inventoryStorage, getInputSlot(), getConsumerWorld());
-            IBitStorage storage = getStorage();
+            var inventoryStorage = FullInventoryStorage.of(this);
+            var inputContext = new InventoryItemContext(inventoryStorage, getInputSlot(), getConsumerWorld());
+            var storage = getStorage();
+
             if (storage != null) {
-                try (Transaction transaction = Transaction.openOuter()) {
+                try (var transaction = Transaction.openOuter()) {
                     double converted;
-                    try (Transaction initialTransaction = transaction.openNested()) {
+                    try (var initialTransaction = transaction.openNested()) {
                         converted = BitHelper.convertToBits(storage.getMaxBits() - storage.getBits(), inputContext, initialTransaction);
                     }
-                    double inserted = storage.insert(converted, transaction);
+                    var inserted = storage.insert(converted, transaction);
                     BitHelper.convertToBits(inserted, inputContext, transaction);
                     transaction.commit();
                 }

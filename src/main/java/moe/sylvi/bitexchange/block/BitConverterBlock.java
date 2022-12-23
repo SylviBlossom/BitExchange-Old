@@ -63,7 +63,7 @@ public class BitConverterBlock extends BlockWithEntity {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof BitConverterBlockEntity) {
-                ItemScatterer.spawn(world, pos, (BitConverterBlockEntity)blockEntity);
+                //ItemScatterer.spawn(world, pos, (BitConverterBlockEntity)blockEntity);
                 // update comparators
                 world.updateComparators(pos,this);
             }

@@ -23,9 +23,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public abstract class AbstractDataRegistryBuilder<R, I extends BitInfo<R>> implements BitRegistryBuilder<R, I> {
+    public static final HashSet<Object> TEMP_IGNORE = new HashSet<>();
+
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private static final HashMap<BitRegistry<?,?>, List<JsonObject>> JSON_OBJECTS = new HashMap<>();
     private static final HashMap<JsonObject, Identifier> JSON_IDS = new HashMap<>();
@@ -74,6 +77,9 @@ public abstract class AbstractDataRegistryBuilder<R, I extends BitInfo<R>> imple
 
     @Override
     public I process(R resource) {
+        if (TEMP_IGNORE.contains(resource)) {
+            return null;
+        }
         I result = null;
         if (processing.containsKey(resource)) {
             JsonObject json = processing.get(resource);
@@ -102,6 +108,8 @@ public abstract class AbstractDataRegistryBuilder<R, I extends BitInfo<R>> imple
 
     @Override
     public void postProcess() {
+        TEMP_IGNORE.clear();
+
         processing.clear();
         modifying.clear();
         calculated.clear();
@@ -113,12 +121,13 @@ public abstract class AbstractDataRegistryBuilder<R, I extends BitInfo<R>> imple
             id = id.substring(1);
             TagKey<R> tag = TagKey.of(resourceRegistry.getKey(), new Identifier(id));
             for (var entry : resourceRegistry.iterateEntries(tag)) {
+                var resource = entry.value();
                 if (modify) {
-                    modifying.computeIfAbsent(entry.value(), k -> new ArrayList<>()).add(json);
-                    registry.prepareResource(entry.value(), this);
-                } else if (override || !processing.containsKey(entry.value())) {
-                    processing.put(entry.value(), json);
-                    registry.prepareResource(entry.value(), this);
+                    modifying.computeIfAbsent(resource, k -> new ArrayList<>()).add(json);
+                    registry.prepareResource(resource, this);
+                } else if (override || !processing.containsKey(resource)) {
+                    processing.put(resource, json);
+                    registry.prepareResource(resource, this);
                 }
             }
         } else {
@@ -241,7 +250,7 @@ public abstract class AbstractDataRegistryBuilder<R, I extends BitInfo<R>> imple
 
                 String registryType = JsonHelper.getString(root, "type");
                 BitRegistry<?,?> registry = BitRegistries.REGISTRY.get(new Identifier(registryType));
-                List<JsonObject> objectList = JSON_OBJECTS.computeIfAbsent(registry, (j) -> Lists.newArrayList());
+                List<JsonObject> objectList = JSON_OBJECTS.computeIfAbsent(registry, (j) -> new ArrayList<>());
 
                 boolean defaultOverride = JsonHelper.getBoolean(root, "override", true);
                 boolean defaultModify = JsonHelper.getBoolean(root, "modify", false);

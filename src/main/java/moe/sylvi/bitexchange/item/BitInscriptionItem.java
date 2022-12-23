@@ -7,6 +7,8 @@ import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.registry.ResearchableBitRegistry;
 import moe.sylvi.bitexchange.bit.research.ResearchableItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
@@ -121,6 +123,7 @@ public class BitInscriptionItem extends Item implements ResearchableItem {
         return stack;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         tooltip.add(Text.literal("Research Item").formatted(Formatting.DARK_PURPLE));

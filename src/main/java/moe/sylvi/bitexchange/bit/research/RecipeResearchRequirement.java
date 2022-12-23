@@ -6,6 +6,7 @@ import moe.sylvi.bitexchange.bit.registry.builder.recipe.RecipeHandler;
 import moe.sylvi.bitexchange.bit.registry.builder.recipe.ResourceIngredient;
 import net.minecraft.recipe.Recipe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeResearchRequirement extends AbstractListResearchRequirement<IngredientResearchRequirement<?,?>> {
@@ -19,7 +20,7 @@ public class RecipeResearchRequirement extends AbstractListResearchRequirement<I
     }
 
     public RecipeResearchRequirement(List<ResourceIngredient<?,?>> ingredients) {
-        this.requirements = Lists.newArrayList();
+        this.requirements = new ArrayList<>();
         for (var ingredient : ingredients) {
             if (!ingredient.isEmpty()) {
                 IngredientResearchRequirement<?,?> requirement = new IngredientResearchRequirement(ingredient);

@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleItemContext implements ContainerItemContext {
@@ -43,6 +44,6 @@ public class SimpleItemContext implements ContainerItemContext {
 
     @Override
     public List<SingleSlotStorage<ItemVariant>> getAdditionalSlots() {
-        return Lists.newArrayList();
+        return new ArrayList<>();
     }
 }

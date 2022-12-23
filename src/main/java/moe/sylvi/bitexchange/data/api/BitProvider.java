@@ -20,6 +20,7 @@ import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BitProvider implements DataProvider {
@@ -28,7 +29,7 @@ public abstract class BitProvider implements DataProvider {
 
     public BitProvider(FabricDataGenerator generator) {
         pathResolver = generator.createPathResolver(DataGenerator.OutputType.DATA_PACK, "bit_registry");
-        builders = Lists.newArrayList();
+        builders = new ArrayList<>();
     }
 
     public abstract void build();

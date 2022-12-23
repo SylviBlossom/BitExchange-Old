@@ -9,6 +9,7 @@ import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.registry.Registry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BitProviderSimpleEntry<R, I extends BitInfo<R>> implements BitProviderEntry {
@@ -25,7 +26,7 @@ public class BitProviderSimpleEntry<R, I extends BitInfo<R>> implements BitProvi
 
         this.resource = null;
         this.value = 0;
-        this.valueRefs = Lists.newArrayList();
+        this.valueRefs = new ArrayList<>();
         this.override = true;
         this.copy = null;
     }

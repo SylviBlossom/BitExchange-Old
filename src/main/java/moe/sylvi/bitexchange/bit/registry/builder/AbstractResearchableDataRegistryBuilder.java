@@ -8,8 +8,10 @@ import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import moe.sylvi.bitexchange.bit.research.AbstractCombinedResearchRequirement;
 import moe.sylvi.bitexchange.bit.research.ResearchRequirement;
+import moe.sylvi.bitexchange.bit.research.ResearchTier;
 import net.minecraft.util.JsonHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractResearchableDataRegistryBuilder<R, I extends BitInfoResearchable<R>> extends AbstractDataRegistryBuilder<R, I> {
@@ -21,6 +23,14 @@ public abstract class AbstractResearchableDataRegistryBuilder<R, I extends BitIn
     }
 
     protected long parseResearch(JsonObject json, long defaultResearch) {
+        if (JsonHelper.hasString(json, "research")) {
+            var tierName = JsonHelper.getString(json, "research");
+            var tier = ResearchTier.byName(tierName);
+            if (tier == null) {
+                throw new IllegalArgumentException("Invalid research tier: " + tierName);
+            }
+            return tier.getResearch();
+        }
         return JsonHelper.getLong(json, "research", defaultResearch);
     }
 
@@ -29,7 +39,7 @@ public abstract class AbstractResearchableDataRegistryBuilder<R, I extends BitIn
     }
 
     protected List<ResearchRequirement> parseResearchRequirements(JsonObject json) throws Throwable {
-        List<ResearchRequirement> result = Lists.newArrayList();
+        List<ResearchRequirement> result = new ArrayList<>();
         String field = json.has("required_research") ? "required_research" : (json.has("value_ref") ? "value_ref" : null);
         if (field != null) {
             String[] ids = JsonHelper.getString(json, field).split(",");
@@ -39,7 +49,7 @@ public abstract class AbstractResearchableDataRegistryBuilder<R, I extends BitIn
                 }
                 List<BitResource> parsed = BitHelper.parseMultiResourceId(id, registry);
 
-                List<ResearchRequirement> requirements = Lists.newArrayList();
+                List<ResearchRequirement> requirements = new ArrayList<>();
                 for (BitResource resource : parsed) {
                     if (resource.getRegistry().get(resource.getResource()) instanceof BitInfoResearchable researchable) {
                         ResearchRequirement requirement = researchable.createResearchRequirement();

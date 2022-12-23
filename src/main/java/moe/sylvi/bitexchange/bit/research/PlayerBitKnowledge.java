@@ -79,11 +79,12 @@ public interface PlayerBitKnowledge<T, R extends BitInfoResearchable<T>> extends
 
     @Override
     default List<T> getAllLearned() {
+        var knowledgeMap = getKnowledgeMap();
         var result = new ArrayList<T>();
-        for (var entry : getKnowledgeMap().entrySet()) {
-            var info = getBitRegistry().get(entry.getKey());
-            if (info != null && entry.getValue() >= info.getResearch()) {
-                result.add(entry.getKey());
+        for (var resource : getBitRegistry().getResourceRegistry()) {
+            var info = getBitRegistry().get(resource);
+            if (info != null && knowledgeMap.getOrDefault(resource, 0L) >= info.getResearch()) {
+                result.add(resource);
             }
         }
         return result;

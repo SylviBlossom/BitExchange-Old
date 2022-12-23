@@ -1,0 +1,1 @@
+moe.sylvi.bitexchange.compat.kubejs.BitExchangeKubeJSPlugin

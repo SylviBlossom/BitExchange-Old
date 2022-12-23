@@ -5,13 +5,16 @@ import com.google.gson.JsonObject;
 import moe.sylvi.bitexchange.bit.BitResource;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
+import moe.sylvi.bitexchange.bit.research.ResearchTier;
 import net.minecraft.tag.TagKey;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BitProviderResearchableEntry<R, I extends BitInfo<R>> extends BitProviderSimpleEntry<R, I> {
     private boolean researchable;
     private long research;
+    private ResearchTier researchTier;
     private List<BitResource> researchRequirements;
     private boolean noRequirements;
 
@@ -20,7 +23,7 @@ public class BitProviderResearchableEntry<R, I extends BitInfo<R>> extends BitPr
 
         this.researchable = true;
         this.research = registry.getEmpty().getRatio();
-        this.researchRequirements = Lists.newArrayList();
+        this.researchRequirements = new ArrayList<>();
     }
 
 
@@ -37,6 +40,12 @@ public class BitProviderResearchableEntry<R, I extends BitInfo<R>> extends BitPr
 
     public BitProviderResearchableEntry<R, I> research(long research) {
         this.research = research;
+        this.researchTier = null;
+        return this;
+    }
+    public BitProviderResearchableEntry<R, I> research(ResearchTier tier) {
+        this.research = tier.getDefaultResearch();
+        this.researchTier = tier;
         return this;
     }
 
@@ -99,7 +108,11 @@ public class BitProviderResearchableEntry<R, I extends BitInfo<R>> extends BitPr
         }
 
         json.addProperty("researchable", researchable);
-        json.addProperty("research", research);
+        if (researchTier != null) {
+            json.addProperty("research", researchTier.getName());
+        } else {
+            json.addProperty("research", research);
+        }
         if (noRequirements) {
             json.addProperty("required_research", "");
         } else if(!researchRequirements.isEmpty()) {

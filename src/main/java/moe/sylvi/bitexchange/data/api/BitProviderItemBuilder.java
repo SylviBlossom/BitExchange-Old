@@ -2,6 +2,7 @@ package moe.sylvi.bitexchange.data.api;
 
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
+import moe.sylvi.bitexchange.bit.research.ResearchTier;
 import net.minecraft.item.Item;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -29,6 +30,11 @@ public class BitProviderItemBuilder extends BitProviderBuilder<Item, ItemBitInfo
         entries.add(entry);
         return entry;
     }
+    public BitProviderItemEntry register(Item resource, double value, ResearchTier research) {
+        var entry = new BitProviderItemEntry().resource(resource).setOverride(override).value(value).research(research);
+        entries.add(entry);
+        return entry;
+    }
 
     @Override
     public BitProviderItemEntry register(TagKey<Item> tag) {
@@ -37,6 +43,11 @@ public class BitProviderItemBuilder extends BitProviderBuilder<Item, ItemBitInfo
         return entry;
     }
     public BitProviderItemEntry register(TagKey<Item> tag, double value, long research) {
+        var entry = new BitProviderItemEntry().tag(tag).setOverride(override).value(value).research(research);
+        entries.add(entry);
+        return entry;
+    }
+    public BitProviderItemEntry register(TagKey<Item> tag, double value, ResearchTier research) {
         var entry = new BitProviderItemEntry().tag(tag).setOverride(override).value(value).research(research);
         entries.add(entry);
         return entry;

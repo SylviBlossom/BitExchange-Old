@@ -2,6 +2,8 @@ package moe.sylvi.bitexchange.bit;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonSyntaxException;
+import me.shedaniel.autoconfig.AutoConfig;
+import moe.sylvi.bitexchange.BitConfig;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
@@ -10,6 +12,7 @@ import moe.sylvi.bitexchange.bit.storage.BitStorages;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryEntry;
@@ -17,6 +20,7 @@ import net.minecraft.util.registry.RegistryEntryList;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BitHelper {
@@ -27,28 +31,93 @@ public class BitHelper {
     }
 
     public static double convertToBits(double maxAmount, ContainerItemContext context, Transaction transaction) {
-        Item item = context.getItemVariant().getItem();
+        var itemStack = context.getItemVariant().toStack();
 
-        IBitStorage storage = context.find(BitStorages.ITEM);
+        // If the item is a bit storage (e.g. a bit array), then extract the bits from it
+        var storage = context.find(BitStorages.ITEM);
         if (storage != null) {
-            try (Transaction storageTransaction = (transaction == null ? Transaction.openOuter() : transaction.openNested())) {
-                double extracted = storage.extract(maxAmount, storageTransaction);
+            double extracted;
+            try (var storageTransaction = (transaction == null ? Transaction.openOuter() : transaction.openNested())) {
+                extracted = storage.extract(maxAmount, storageTransaction);
                 storageTransaction.commit();
-                return extracted;
             }
-        } else {
-            double value = BitRegistries.ITEM.getValue(item);
-            if (value > 0) {
-                maxAmount = Math.min(context.getAmount() * value, maxAmount);
-                long toExtract = (long)Math.floor(maxAmount / value);
-                try (Transaction storageTransaction = (transaction == null ? Transaction.openOuter() : transaction.openNested())) {
-                    long extracted = context.extract(context.getItemVariant(), toExtract, storageTransaction);
-                    storageTransaction.commit();
-                    return extracted * value;
-                }
-            }
+            return extracted;
         }
-        return 0.0;
+
+        // Fail conversion if the item doesn't have a bit value, or if the item is disabled in the config
+        var value = getItemValue(itemStack, PurchaseMode.SELL);
+        if (value <= 0 || isItemDisabled(itemStack, PurchaseMode.SELL)) {
+            return 0.0;
+        }
+
+        // Get how many of this item we should attempt to convert, given the max amount of bits we can extract
+        maxAmount = Math.min(context.getAmount() * value, maxAmount);
+        var toExtract = (long)Math.floor(maxAmount / value);
+
+        // Convert the items to bits and return the amount of bits we extracted
+        try (var storageTransaction = (transaction == null ? Transaction.openOuter() : transaction.openNested())) {
+            var extracted = context.extract(context.getItemVariant(), toExtract, storageTransaction);
+            storageTransaction.commit();
+            return extracted * value;
+        }
+    }
+
+    public static double getItemValue(ItemStack stack) {
+        return getItemValue(stack, PurchaseMode.NONE);
+    }
+
+    public static double getItemValue(ItemStack stack, PurchaseMode mode) {
+        if (stack.isEmpty()) {
+            return 0.0;
+        }
+
+        var info = BitRegistries.ITEM.get(stack.getItem());
+
+        if (info == null) {
+            return 0.0;
+        }
+
+        var value = info.getValue();
+
+        // Get the adjusted value of the item for the purchase mode
+        var config = AutoConfig.getConfigHolder(BitConfig.class).getConfig();
+
+        if (mode == PurchaseMode.BUY) {
+            value *= config.getBuyPriceMultiplier(!info.isAutomatable());
+        } else if (mode == PurchaseMode.SELL) {
+            value *= config.getSellPriceMultiplier(!info.isAutomatable());
+        }
+
+        // Factor item damage into the final value
+        if (stack.isDamaged()) {
+            value *= (double)(stack.getMaxDamage() - stack.getDamage()) / (double)stack.getMaxDamage();
+        }
+
+        return value;
+    }
+
+    public static boolean isItemDisabled(ItemStack stack) {
+        return isItemDisabled(stack, PurchaseMode.NONE);
+    }
+
+    public static boolean isItemDisabled(ItemStack stack, PurchaseMode mode) {
+        var config = AutoConfig.getConfigHolder(BitConfig.class).getConfig();
+
+        var info = BitRegistries.ITEM.get(stack.getItem());
+
+        if (info == null) {
+            return true;
+        }
+
+        if (info.isAutomatable()) {
+            return false;
+        }
+
+        return switch (mode) {
+            case BUY  -> !config.allowBuyCraftables;
+            case SELL -> !config.allowSellCraftables;
+            case NONE -> !config.shouldSupportCraftables();
+        };
     }
 
     public static double fixBitRounding(double bits, double compareTo) {
@@ -105,7 +174,7 @@ public class BitHelper {
     }
 
     public static List<BitResource> parseMultiResourceId(String id, @Nullable BitRegistry defaultRegistry) throws Throwable {
-        List<BitResource> list = Lists.newArrayList();
+        List<BitResource> list = new ArrayList<>();
 
         for (String subId : id.split("\\|")) {
             BitRegistry registryRef = defaultRegistry;
@@ -174,5 +243,11 @@ public class BitHelper {
 
     public static <R, I extends BitInfo<R>> String getItemId(R resource, BitRegistry<R, I> registry) {
         return registry.getResourceRegistry().getId(resource).toString();
+    }
+
+    public enum PurchaseMode {
+        BUY,
+        SELL,
+        NONE
     }
 }

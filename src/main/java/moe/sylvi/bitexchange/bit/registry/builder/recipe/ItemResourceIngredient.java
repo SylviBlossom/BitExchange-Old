@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemResourceIngredient implements ResourceIngredient<Item, ItemBitInfo> {
@@ -18,7 +19,7 @@ public class ItemResourceIngredient implements ResourceIngredient<Item, ItemBitI
     }
     public ItemResourceIngredient(Ingredient ingredient, int index) {
         this.index = index;
-        this.resources = Lists.newArrayList();
+        this.resources = new ArrayList<>();
         for (var stack : ingredient.getMatchingStacks()) {
             resources.add(BitResource.fromStack(stack));
         }
@@ -29,7 +30,7 @@ public class ItemResourceIngredient implements ResourceIngredient<Item, ItemBitI
     }
     public ItemResourceIngredient(List<ItemStack> stacks, int index) {
         this.index = index;
-        this.resources = Lists.newArrayList();
+        this.resources = new ArrayList<>();
         for (var stack : stacks) {
             resources.add(BitResource.fromStack(stack));
         }

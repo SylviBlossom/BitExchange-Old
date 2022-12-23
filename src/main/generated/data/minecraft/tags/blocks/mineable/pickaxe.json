@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "bitexchange:bit_converter",
+    "bitexchange:bit_researcher",
+    "bitexchange:bit_factory",
+    "bitexchange:bit_liquefier",
+    "bitexchange:bit_miner",
+    "bitexchange:byte_miner",
+    "bitexchange:kilobit_miner",
+    "bitexchange:megabit_miner",
+    "bitexchange:gigabit_miner",
+    "bitexchange:terabit_miner",
+    "bitexchange:petabit_miner",
+    "bitexchange:exabit_miner",
+    "bitexchange:itty_bit_miner"
+  ]
+}

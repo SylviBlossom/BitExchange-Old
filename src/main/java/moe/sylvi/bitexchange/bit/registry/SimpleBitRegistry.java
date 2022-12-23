@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,I> {
+public abstract class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,I> {
     public static boolean DEBUGGING = false;
 
     private final Logger logger;
@@ -23,9 +23,9 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
     private final I emptyInfo;
 
     private final HashMap<R, I> infoMap = new HashMap<>();
-    private final List<I> infoList = Lists.newArrayList();
+    private final List<I> infoList = new ArrayList<>();
 
-    private final List<BitRegistryBuilder<R,I>> builders = Lists.newArrayList();
+    private final List<BitRegistryBuilder<R,I>> builders = new ArrayList<>();
     private final HashMap<R, List<BitRegistryBuilder<R,I>>> resourceProcessors = new HashMap<>();
     private final HashSet<RecursivePair<R,I>> recursiveCheck = new HashSet<>();
 
@@ -45,7 +45,7 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
 
     @Override
     public void prepareResource(R resource, BitRegistryBuilder<R,I> builder) {
-        var list = resourceProcessors.computeIfAbsent(resource, i -> Lists.newArrayList());
+        var list = resourceProcessors.computeIfAbsent(resource, i -> new ArrayList<>());
         if (!list.contains(builder)) {
             list.add(builder);
         }
@@ -180,9 +180,7 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
 
     @Override
     public void add(I info) {
-        if (!infoMap.containsKey(info.getResource())) {
-            infoMap.put(info.getResource(), info);
-        }
+        infoMap.put(info.getResource(), info);
     }
 
     @Override
@@ -207,6 +205,17 @@ public class SimpleBitRegistry<R,I extends BitInfo<R>> implements BitRegistry<R,
 
     @Override
     public List<I> getList() { return infoList; }
+
+    @Override
+    public void load(List<I> list) {
+        infoList.clear();
+        infoMap.clear();
+        for (I info : list) {
+            infoMap.put(info.getResource(), info);
+            infoList.add(info);
+        }
+        logger.log(Level.INFO, "Loaded " + infoList.size() + " bit values");
+    }
 
     protected record RecursivePair<R,I extends BitInfo<R>>(R resource, BitRegistryBuilder<R, I> builder) {}
 }

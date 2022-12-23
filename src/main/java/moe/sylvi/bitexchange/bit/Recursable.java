@@ -4,6 +4,9 @@ public interface Recursable<T> {
     static <O> Recursable<O> of(O value, boolean recursive) {
         return new RecursableImpl<>(value, recursive);
     }
+    static <O> Recursable<O> of(O value) {
+        return of(value, false);
+    }
 
     T get();
 

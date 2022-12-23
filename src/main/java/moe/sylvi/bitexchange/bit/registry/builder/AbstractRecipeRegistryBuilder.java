@@ -19,6 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 
+import java.sql.Array;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -26,7 +27,7 @@ import java.util.function.Function;
 public abstract class AbstractRecipeRegistryBuilder<R, I extends BitInfo<R>> implements BitRegistryBuilder<R, I> {
     public static final RecipeHandler<?> DEFAULT_HANDLER = new SimpleRecipeHandler();
     private static final HashMap<RecipeType<?>, RecipeHandler<?>> recipeHandlers = new HashMap<>();
-    private static final List<Function<Recipe<?>, RecipeHandler<?>>> recipeHandlerGetters = Lists.newArrayList();
+    private static final List<Function<Recipe<?>, RecipeHandler<?>>> recipeHandlerGetters = new ArrayList<>();
 
     static {
         registerHandler(RecipeType.SMITHING, new SmithingRecipeHandler());
@@ -82,7 +83,7 @@ public abstract class AbstractRecipeRegistryBuilder<R, I extends BitInfo<R>> imp
         }
         Recipe<?> smallestRecipe = null;
         double smallestBits = -1;
-        List<Recipe<?>> recipes = Lists.newArrayList();
+        List<Recipe<?>> recipes = new ArrayList<>();
         for (RecipeOutput recipeOutput : recipeMap.get(resource)) {
             var recipe = recipeOutput.recipe;
             double value;
@@ -115,7 +116,7 @@ public abstract class AbstractRecipeRegistryBuilder<R, I extends BitInfo<R>> imp
         processedItems.put(resource, smallestBits);
         I infoResult = createInfo(resource, smallestBits, smallestRecipe);
         if (infoResult instanceof BitInfoResearchable researchInfo) {
-            List<RecipeResearchRequirement> requirements = Lists.newArrayList();
+            List<RecipeResearchRequirement> requirements = new ArrayList<>();
             for (Recipe<?> recipe : recipes) {
                 RecipeResearchRequirement requirement = new RecipeResearchRequirement(recipe, getRecipeHandler(recipe));
                 if (!requirements.contains(requirement)) {
@@ -185,7 +186,9 @@ public abstract class AbstractRecipeRegistryBuilder<R, I extends BitInfo<R>> imp
                 // Mark the recipe and the current output for processing
                 var recipeOutput = new RecipeOutput(((RecipeHandlerOutput)output).resource, (Recipe<?>) recipe);
                 if (!recipeMap.containsKey(resource)) {
-                    recipeMap.put(resource, Lists.newArrayList(recipeOutput));
+                    var recipeList = new ArrayList<RecipeOutput>();
+                    recipeList.add(recipeOutput);
+                    recipeMap.put(resource, recipeList);
                     registry.prepareResource(resource, this);
                 } else {
                     recipeMap.get(resource).add(recipeOutput);

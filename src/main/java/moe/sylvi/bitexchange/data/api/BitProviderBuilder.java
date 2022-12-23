@@ -9,6 +9,7 @@ import moe.sylvi.bitexchange.bit.registry.BitRegistry;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BitProviderBuilder<R, I extends BitInfo<R>, E extends BitProviderEntry> {
@@ -19,7 +20,7 @@ public abstract class BitProviderBuilder<R, I extends BitInfo<R>, E extends BitP
     public BitProviderBuilder(Identifier path, BitRegistry<R, I> registry) {
         this.path = path;
         this.registry = registry;
-        this.entries = Lists.newArrayList();
+        this.entries = new ArrayList<>();
     }
 
     public abstract E register(R resource);

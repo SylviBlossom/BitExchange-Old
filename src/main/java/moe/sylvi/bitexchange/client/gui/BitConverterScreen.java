@@ -29,7 +29,6 @@ import java.util.Objects;
 
 public class BitConverterScreen extends HandledScreen<ScreenHandler> {
     private static final Identifier TEXTURE = new Identifier("bitexchange", "textures/gui/container/bit_converter.png");
-    public static final SimpleInventory INVENTORY = new SimpleInventory(32);
     private TextFieldWidget searchBox;
     private Text bitText;
     private float scrollAmount;
@@ -195,7 +194,7 @@ public class BitConverterScreen extends HandledScreen<ScreenHandler> {
 
     @Override
     protected void onMouseClick(Slot slot, int invSlot, int clickData, SlotActionType actionType) {
-        if (slot != null && slot.inventory == INVENTORY && !searchBox.getText().isEmpty()) {
+        if (slot != null && slot.inventory == BitConverterScreenHandler.INVENTORY && !searchBox.getText().isEmpty()) {
             searchBox.setSelectionStart(0);
             searchBox.setSelectionEnd(searchBox.getText().length());
         }

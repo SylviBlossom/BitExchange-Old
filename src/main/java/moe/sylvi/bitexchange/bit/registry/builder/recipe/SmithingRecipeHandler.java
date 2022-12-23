@@ -1,6 +1,5 @@
 package moe.sylvi.bitexchange.bit.registry.builder.recipe;
 
-import com.google.common.collect.Lists;
 import moe.sylvi.bitexchange.mixin.SmithingRecipeMixin;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -13,7 +12,7 @@ public class SmithingRecipeHandler extends AbstractSimpleRecipeHandler<Recipe<In
 
     @Override
     public List<Ingredient> getItemIngredients(Recipe<Inventory> recipe) {
-        return Lists.newArrayList(((SmithingRecipeMixin)recipe).getBase(), ((SmithingRecipeMixin)recipe).getAddition());
+        return List.of(((SmithingRecipeMixin)recipe).bitexchange_getBase(), ((SmithingRecipeMixin)recipe).bitexchange_getAddition());
     }
 
     @Override

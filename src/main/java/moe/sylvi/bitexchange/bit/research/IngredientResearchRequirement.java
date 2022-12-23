@@ -17,7 +17,7 @@ public class IngredientResearchRequirement<R, I extends BitInfoResearchable<R>> 
 
     @Override
     public List<ResearchRequirement> getRequirements() {
-        List<ResearchRequirement> requirements = Lists.newArrayList();
+        List<ResearchRequirement> requirements = new ArrayList<>();
         for (var resource : ingredient.getResources()) {
             ResearchRequirement requirement = cached.computeIfAbsent(resource.getResource(), item -> {
                 Recursable<I> info = resource.getOrProcessInfo();

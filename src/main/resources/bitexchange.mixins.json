@@ -6,7 +6,8 @@
     "MinecraftServerMixin",
     "SmithingRecipeMixin",
     "SpriteMixin",
-    "DrawableHelperMixin"
+    "DrawableHelperMixin",
+    "FluidBlockMixin"
   ],
   "client": [],
   "server": [],

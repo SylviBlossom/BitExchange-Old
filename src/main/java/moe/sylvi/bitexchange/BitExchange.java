@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
+import me.steven.indrev.registry.PacketRegistry;
 import moe.sylvi.bitexchange.bit.BitHelper;
 import moe.sylvi.bitexchange.bit.info.BitInfoResearchable;
 import moe.sylvi.bitexchange.bit.registry.ResearchableBitRegistry;
@@ -14,22 +15,28 @@ import moe.sylvi.bitexchange.bit.storage.BitStorages;
 import moe.sylvi.bitexchange.block.*;
 import moe.sylvi.bitexchange.block.entity.*;
 import moe.sylvi.bitexchange.compat.indrev.IRCompat;
+import moe.sylvi.bitexchange.compat.kubejs.BitExchangeKubeJSCompat;
 import moe.sylvi.bitexchange.compat.modern_industrialization.MICompat;
 import moe.sylvi.bitexchange.inventory.IBitConsumerInventory;
 import moe.sylvi.bitexchange.item.BitArrayInventory;
 import moe.sylvi.bitexchange.item.BitDatabaseItem;
 import moe.sylvi.bitexchange.item.BitInscriptionItem;
+import moe.sylvi.bitexchange.networking.BitRegistryS2CPacket;
 import moe.sylvi.bitexchange.screen.*;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.impl.networking.PacketCallbackListener;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
@@ -40,6 +47,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -61,7 +69,8 @@ import static net.minecraft.server.command.CommandManager.argument;
 
 public class BitExchange implements ModInitializer {
     public static Logger LOGGER = LogManager.getLogger();
-    private static HashSet<Item> tested = new HashSet<>();
+
+    public static boolean KUBEJS_LOADED = false;
 
     public static final String MOD_ID = "bitexchange";
     public static final String MOD_NAME = "Bit Exchange";
@@ -134,14 +143,14 @@ public class BitExchange implements ModInitializer {
         BIT_RESEARCHER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "bit_researcher"), new BitResearcherBlock(FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
         BIT_FACTORY_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "bit_factory"), new BitFactoryBlock(FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
         BIT_LIQUEFIER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "bit_liquefier"), new BitLiquefierBlock(FabricBlockSettings.of(Material.WOOL).strength(1.0f).luminance(BitLiquefierBlock::getLuminance).nonOpaque()));
-        BIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "bit_miner"), new BitMinerBlock(BIT_ITEM, 20, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
-        BYTE_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "byte_miner"), new BitMinerBlock(BYTE_ITEM, 20, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
-        KILOBIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "kilobit_miner"), new BitMinerBlock(KILOBIT_ITEM, 20, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
-        MEGABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "megabit_miner"), new BitMinerBlock(MEGABIT_ITEM, 20, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
-        GIGABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "gigabit_miner"), new BitMinerBlock(GIGABIT_ITEM, 20, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
-        TERABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "terabit_miner"), new BitMinerBlock(TERABIT_ITEM, 20, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
-        PETABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "petabit_miner"), new BitMinerBlock(PETABIT_ITEM, 20, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
-        EXABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "exabit_miner"), new BitMinerBlock(EXABIT_ITEM, 20, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
+        BIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "bit_miner"), new BitMinerBlock(BIT_ITEM, 40, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
+        BYTE_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "byte_miner"), new BitMinerBlock(BYTE_ITEM, 40, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
+        KILOBIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "kilobit_miner"), new BitMinerBlock(KILOBIT_ITEM, 40, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
+        MEGABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "megabit_miner"), new BitMinerBlock(MEGABIT_ITEM, 40, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
+        GIGABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "gigabit_miner"), new BitMinerBlock(GIGABIT_ITEM, 40, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
+        TERABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "terabit_miner"), new BitMinerBlock(TERABIT_ITEM, 40, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
+        PETABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "petabit_miner"), new BitMinerBlock(PETABIT_ITEM, 40, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
+        EXABIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "exabit_miner"), new BitMinerBlock(EXABIT_ITEM, 40, FabricBlockSettings.of(Material.WOOL).strength(1.0f)));
         ITTY_BIT_MINER_BLOCK = Registry.register(Registry.BLOCK, new Identifier(MOD_ID, "itty_bit_miner"), new IttyBitMinerBlock(ITTY_BIT_ITEM, 1, FabricBlockSettings.of(Material.WOOL).strength(0.75f)));
 
         BIT_CONVERTER_BLOCK_ITEM = Registry.register(Registry.ITEM, new Identifier(MOD_ID, "bit_converter"), new BlockItem(BIT_CONVERTER_BLOCK, new FabricItemSettings().group(ItemGroup.MISC)));
@@ -165,11 +174,11 @@ public class BitExchange implements ModInitializer {
         BIT_MINER_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(MOD_ID, "bit_miner"), FabricBlockEntityTypeBuilder.create(BitMinerBlockEntity::new,
                 BIT_MINER_BLOCK, BYTE_MINER_BLOCK, KILOBIT_MINER_BLOCK, MEGABIT_MINER_BLOCK, GIGABIT_MINER_BLOCK, TERABIT_MINER_BLOCK, PETABIT_MINER_BLOCK, EXABIT_MINER_BLOCK, ITTY_BIT_MINER_BLOCK).build(null));
 
-        BIT_CONVERTER_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(MOD_ID, "bit_converter"), BitConverterScreenHandler::new);
-        BIT_RESEARCHER_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(MOD_ID, "bit_researcher"), BitResearcherScreenHandler::new);
-        BIT_FACTORY_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(MOD_ID, "bit_factory"), BitFactoryScreenHandler::new);
-        BIT_LIQUEFIER_SCREEN_HANDLER = ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "bit_liquefier"), BitLiquefierScreenHandler::new);
-        BIT_MINER_SCREEN_HANDLER = ScreenHandlerRegistry.registerExtended(new Identifier(MOD_ID, "bit_miner"), BitMinerScreenHandler::new);
+        BIT_CONVERTER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(MOD_ID, "bit_converter"), new ScreenHandlerType<>(BitConverterScreenHandler::new));
+        BIT_RESEARCHER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(MOD_ID, "bit_researcher"), new ScreenHandlerType<>(BitResearcherScreenHandler::new));
+        BIT_FACTORY_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(MOD_ID, "bit_factory"), new ScreenHandlerType<>(BitFactoryScreenHandler::new));
+        BIT_LIQUEFIER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(MOD_ID, "bit_liquefier"), new ExtendedScreenHandlerType<>(BitLiquefierScreenHandler::new));
+        BIT_MINER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(MOD_ID, "bit_miner"), new ExtendedScreenHandlerType<>(BitMinerScreenHandler::new));
 
         BitStorages.ITEM.registerForItems((stack, context) -> IBitStorage.of(new BitArrayInventory(Double.MAX_VALUE, context)), BIT_ARRAY_ITEM);
 
@@ -199,6 +208,10 @@ public class BitExchange implements ModInitializer {
         if (FabricLoader.getInstance().isModLoaded("indrev")) {
             IRCompat.load();
         }
+        if (FabricLoader.getInstance().isModLoaded("kubejs")) {
+            KUBEJS_LOADED = true;
+            BitExchangeKubeJSCompat.load();
+        }
 
         AutoConfig.register(BitConfig.class, GsonConfigSerializer::new);
 
@@ -214,131 +227,15 @@ public class BitExchange implements ModInitializer {
             }
         });
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(literal("bit")
-                .then(literal("knowledge")
-                    .then(literal("add")
-                        .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
-                            .executes((ctx) -> {
-                                ItemStackArgument itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
-                                BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).addKnowledge(itemArg.getItem(), Integer.MAX_VALUE);
-                                return 1;
-                            })
-                        ).then(argument("fluid", StringArgumentType.string())
-                            .executes((ctx) -> {
-                                var fluidStr = StringArgumentType.getString(ctx, "fluid");
-                                var fluid = Registry.FLUID.getOrEmpty(new Identifier(fluidStr));
-                                if (!fluid.isEmpty()) {
-                                    BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).addKnowledge(fluid.get(), Long.MAX_VALUE);
-                                }
-                                return 1;
-                            })
-                        )
-                    ).then(literal("set")
-                        .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
-                            .then(argument("count", IntegerArgumentType.integer(0))
-                                .executes((ctx) -> {
-                                    ItemStackArgument itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
-                                    var knowledge = BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow());
-                                    var knowledgeMap = knowledge.getKnowledgeMap();
-                                    knowledgeMap.put(itemArg.getItem(), Math.min(LongArgumentType.getLong(ctx, "count"), BitRegistries.ITEM.getResearch(itemArg.getItem())));
-                                    knowledge.setKnowledgeMap(knowledgeMap);
-                                    return 1;
-                                })
-                            )
-                        ).then(argument("fluid", StringArgumentType.string())
-                            .then(argument("count", LongArgumentType.longArg(0))
-                                .executes((ctx) -> {
-                                    var fluidStr = StringArgumentType.getString(ctx, "fluid");
-                                    var fluid = Registry.FLUID.getOrEmpty(new Identifier(fluidStr));
-                                    if (!fluid.isEmpty()) {
-                                        var knowledge = BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow());
-                                        var knowledgeMap = knowledge.getKnowledgeMap();
-                                        knowledgeMap.put(fluid.get(), Math.min(LongArgumentType.getLong(ctx, "count"), BitRegistries.FLUID.getResearch(fluid.get())));
-                                        knowledge.setKnowledgeMap(knowledgeMap);
-                                    }
-                                    return 1;
-                                })
-                            )
-                        )
-                    ).then(literal("remove")
-                        .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
-                            .executes((ctx) -> {
-                                ItemStackArgument itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
-                                BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).removeKnowledge(itemArg.getItem());
-                                return 1;
-                            })
-                        ).then(argument("fluid", StringArgumentType.string())
-                            .executes((ctx) -> {
-                                var fluidStr = StringArgumentType.getString(ctx, "fluid");
-                                var fluid = Registry.FLUID.getOrEmpty(new Identifier(fluidStr));
-                                if (!fluid.isEmpty()) {
-                                    BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).removeKnowledge(fluid.get());
-                                }
-                                return 1;
-                            })
-                        )
-                    ).then(literal("complete")
-                        .executes((ctx) -> {
-                            completeKnowledge(BitRegistries.ITEM, ctx.getSource().getPlayerOrThrow());
-                            completeKnowledge(BitRegistries.FLUID, ctx.getSource().getPlayerOrThrow());
-                            return 1;
-                        })
-                    ).then(literal("clear")
-                        .executes((ctx) -> {
-                            BitComponents.ITEM_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).setKnowledgeMap(new HashMap<>());
-                            BitComponents.FLUID_KNOWLEDGE.get(ctx.getSource().getPlayerOrThrow()).setKnowledgeMap(new HashMap<>());
-                            return 1;
-                        })
-                    )
-                ).then(literal("test")
-                    .then(literal("clear")
-                        .executes((ctx) -> {
-                            tested.clear();
-                            return 1;
-                        })
-                    )
-                    .executes((ctx) -> {
-                        ctx.getSource().getPlayerOrThrow().sendMessage(Text.literal("Unregistered:").formatted(Formatting.DARK_PURPLE), false);
-                        int count = 0;
-                        for (Item item : Registry.ITEM) {
-                            if (BitRegistries.ITEM.get(item) == null && !tested.contains(item) && !IGNORE_TESTING_SET.contains(Registry.ITEM.getId(item).toString())) {
-                                ctx.getSource().getPlayerOrThrow().sendMessage(item.getDefaultStack().toHoverableText(), false);
-                                tested.add(item);
-                                count++;
-                            }
-                            if (count == 10) {
-                                break;
-                            }
-                        }
-                        return 1;
-                    })
-                ).then(literal("debug")
-                    .then(literal("clear")
-                        .executes(ctx -> {
-                            BitHelper.DEBUG_ITEM = null;
-                            return 1;
-                        })
-                    ).then(literal("set")
-                        .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
-                            .executes(ctx -> {
-                                var itemArg = ItemStackArgumentType.getItemStackArgument(ctx, "item");
-                                BitHelper.DEBUG_ITEM = Registry.ITEM.getId(itemArg.getItem()).toString();
-                                return 1;
-                            })
-                        )
-                    )
-                )
-            );
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            for (var registry : BitRegistries.REGISTRY) {
+                new BitRegistryS2CPacket(registry).send(handler.player);
+            }
         });
-    }
 
-    private <R,I extends BitInfoResearchable<R>> void completeKnowledge(ResearchableBitRegistry<R, I> registry, PlayerEntity player) {
-        Map<R, Long> knowledge = registry.getKnowledge(player).getKnowledgeMap();
-        for (BitInfoResearchable<R> info : registry) {
-            knowledge.put(info.getResource(), info.getResearch());
-        }
-        registry.getKnowledge(player).setKnowledgeMap(knowledge);
+        BitExchangeNetworking.registerServerGlobalReceivers();
+
+        BitExchangeCommands.register();
     }
 
     public static void log(Level level, String message){
@@ -360,80 +257,4 @@ public class BitExchange implements ModInitializer {
     public static void warn(String message, Throwable e) {
         LOGGER.warn(message + "\n" + e.getMessage());
     }
-
-    private static String[] IGNORE_TESTING = new String[] {
-            "minecraft:air",
-            "minecraft:bedrock",
-            "minecraft:coal_ore",
-            "minecraft:deepslate_coal_ore",
-            "minecraft:iron_ore",
-            "minecraft:deepslate_iron_ore",
-            "minecraft:copper_ore",
-            "minecraft:deepslate_copper_ore",
-            "minecraft:gold_ore",
-            "minecraft:deepslate_gold_ore",
-            "minecraft:redstone_ore",
-            "minecraft:deepslate_redstone_ore",
-            "minecraft:emerald_ore",
-            "minecraft:deepslate_emerald_ore",
-            "minecraft:lapis_ore",
-            "minecraft:deepslate_lapis_ore",
-            "minecraft:diamond_ore",
-            "minecraft:deepslate_diamond_ore",
-            "minecraft:nether_gold_ore",
-            "minecraft:nether_quartz_ore",
-            "minecraft:ancient_debris",
-            "minecraft:budding_amethyst",
-            "minecraft:petrified_oak_slab",
-            "minecraft:spawner",
-            "minecraft:farmland",
-            "minecraft:infested_stone",
-            "minecraft:infested_cobblestone",
-            "minecraft:infested_stone_bricks",
-            "minecraft:infested_mossy_stone_bricks",
-            "minecraft:infested_cracked_stone_bricks",
-            "minecraft:infested_chiseled_stone_bricks",
-            "minecraft:infested_deepslate",
-            "minecraft:end_portal_frame",
-            "minecraft:command_block",
-            "minecraft:chipped_anvil",
-            "minecraft:damaged_anvil",
-            "minecraft:barrier",
-            "minecraft:light",
-            "minecraft:repeating_command_block",
-            "minecraft:chain_command_block",
-            "minecraft:structure_void",
-            "minecraft:structure_block",
-            "minecraft:jigsaw",
-            "minecraft:chainmail_helmet",
-            "minecraft:chainmail_chestplate",
-            "minecraft:chainmail_leggings",
-            "minecraft:chainmail_boots",
-            "minecraft:filled_map",
-            "minecraft:written_book",
-            "minecraft:wither_skeleton_skull", //potential
-            "minecraft:player_head",
-            "minecraft:dragon_head", //potential
-            "minecraft:firework_star",
-            "minecraft:enchanted_book",
-            "minecraft:command_block_minecart",
-            "minecraft:splash_potion",
-            "minecraft:tipped_arrow",
-            "minecraft:lingering_potion",
-            "minecraft:knowledge_book",
-            "minecraft:debug_stick",
-            "minecraft:suspicious_stew",
-            "minecraft:skull_banner_pattern",
-            "minecraft:globe_banner_pattern",
-            "minecraft:piglin_banner_pattern",
-            "minecraft:bee_nest",
-            "minecraft:small_amethyst_bud",
-            "minecraft:medium_amethyst_bud",
-            "minecraft:large_amethyst_bud",
-            "minecraft:amethyst_cluster",
-            "minecraft:reinforced_deepslate",
-            "minecraft:frogspawn",
-            "minecraft:chorus_plant"
-    };
-    private static HashSet<String> IGNORE_TESTING_SET = new HashSet<>(Arrays.asList(IGNORE_TESTING));
 }

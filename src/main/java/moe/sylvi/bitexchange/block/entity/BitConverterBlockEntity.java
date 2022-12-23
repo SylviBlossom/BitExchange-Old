@@ -64,12 +64,26 @@ public class BitConverterBlockEntity extends BlockEntity implements NamedScreenH
     @Override
     public void readNbt(NbtCompound tag) {
         super.readNbt(tag);
-        Inventories.readNbt(tag, this.inventory);
+
+        if (tag.contains("Items")) {
+            Inventories.readNbt(tag, this.inventory);
+        }
     }
 
     @Override
     public void writeNbt(NbtCompound tag) {
-        Inventories.writeNbt(tag, this.inventory);
+        var anyItems = false;
+        for (var stack : inventory) {
+            if (!stack.isEmpty()) {
+                anyItems = true;
+                break;
+            }
+        }
+
+        if (anyItems) {
+            Inventories.writeNbt(tag, this.inventory);
+        }
+
         super.writeNbt(tag);
     }
 

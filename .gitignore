@@ -19,6 +19,7 @@ bin/
 
 #fabric
 run/
+runServer/
 remappedSrc/
 oldSrc/
 src/main/generated/.cache/

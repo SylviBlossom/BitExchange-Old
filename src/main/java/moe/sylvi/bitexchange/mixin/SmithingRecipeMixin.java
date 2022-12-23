@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(SmithingRecipe.class)
 public interface SmithingRecipeMixin {
     @Accessor("base")
-    Ingredient getBase();
+    Ingredient bitexchange_getBase();
 
     @Accessor("addition")
-    Ingredient getAddition();
+    Ingredient bitexchange_getAddition();
 }

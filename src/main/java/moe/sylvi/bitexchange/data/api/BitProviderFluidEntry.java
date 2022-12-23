@@ -5,6 +5,7 @@ import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.info.FluidBitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
+import moe.sylvi.bitexchange.bit.research.ResearchTier;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.tag.TagKey;
@@ -38,6 +39,10 @@ public class BitProviderFluidEntry extends BitProviderResearchableEntry<Fluid, F
     @Override
     public BitProviderFluidEntry research(long research) {
         return (BitProviderFluidEntry) super.research(research);
+    }
+    @Override
+    public BitProviderFluidEntry research(ResearchTier tier) {
+        return (BitProviderFluidEntry) super.research(tier);
     }
     @Override
     public BitProviderFluidEntry noRequiredResearch() {

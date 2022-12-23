@@ -1,6 +1,7 @@
 package moe.sylvi.bitexchange.compat.modern_industrialization;
 
 import aztech.modern_industrialization.machines.recipe.MachineRecipe;
+import com.google.common.collect.Lists;
 import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.BitResource;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
@@ -9,8 +10,8 @@ import moe.sylvi.bitexchange.bit.registry.builder.recipe.ResourceIngredient;
 import moe.sylvi.bitexchange.bit.registry.builder.recipe.RecipeHandlerOutput;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.item.Item;
-import org.apache.commons.compress.utils.Lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MIRecipeHandler<R extends MachineRecipe> implements RecipeHandler<R> {
@@ -30,11 +31,11 @@ public class MIRecipeHandler<R extends MachineRecipe> implements RecipeHandler<R
 
     @Override
     public List<ResourceIngredient<?, ?>> getIngredients(MachineRecipe recipe) {
-        List<ResourceIngredient<?, ?>> result = Lists.newArrayList();
+        List<ResourceIngredient<?, ?>> result = new ArrayList<>();
         for (var input : recipe.itemInputs) {
-            List<BitResource<Item, ItemBitInfo>> resources = Lists.newArrayList();
-            for (var stack : input.getInputStacks()) {
-                resources.add(BitResource.of(BitRegistries.ITEM, stack.getItem(), input.amount * input.probability));
+            List<BitResource<Item, ItemBitInfo>> resources = new ArrayList<>();
+            for (var item : input.getInputItems()) {
+                resources.add(BitResource.of(BitRegistries.ITEM, item, input.amount * input.probability));
             }
             if (!resources.isEmpty()) {
                 result.add(ResourceIngredient.of(resources));
@@ -50,7 +51,7 @@ public class MIRecipeHandler<R extends MachineRecipe> implements RecipeHandler<R
 
     @Override
     public List<RecipeHandlerOutput<?, ?>> getOutputs(MachineRecipe recipe) {
-        List<RecipeHandlerOutput<?, ?>> result = Lists.newArrayList();
+        List<RecipeHandlerOutput<?, ?>> result = new ArrayList<>();
         for (var output : recipe.itemOutputs) {
             result.add(new RecipeHandlerOutput<>(BitResource.of(BitRegistries.ITEM, output.item, output.amount * output.probability)));
         }

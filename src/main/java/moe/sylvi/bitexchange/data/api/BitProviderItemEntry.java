@@ -5,6 +5,7 @@ import moe.sylvi.bitexchange.BitRegistries;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
+import moe.sylvi.bitexchange.bit.research.ResearchTier;
 import net.minecraft.item.Item;
 import net.minecraft.tag.TagKey;
 
@@ -40,6 +41,10 @@ public class BitProviderItemEntry extends BitProviderResearchableEntry<Item, Ite
     @Override
     public BitProviderItemEntry research(long research) {
         return (BitProviderItemEntry) super.research(research);
+    }
+    @Override
+    public BitProviderItemEntry research(ResearchTier tier) {
+        return (BitProviderItemEntry) super.research(tier);
     }
     @Override
     public BitProviderItemEntry noRequiredResearch() {

@@ -12,6 +12,7 @@ import moe.sylvi.bitexchange.bit.registry.builder.recipe.ResourceIngredient;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.item.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IRRecipeHandler<R extends IRRecipe> implements RecipeHandler<R> {
@@ -23,9 +24,9 @@ public class IRRecipeHandler<R extends IRRecipe> implements RecipeHandler<R> {
 
     @Override
     public List<ResourceIngredient<?, ?>> getIngredients(R recipe) {
-        List<ResourceIngredient<?, ?>> result = Lists.newArrayList();
+        List<ResourceIngredient<?, ?>> result = new ArrayList<>();
         for (var input : recipe.getInput()) {
-            List<BitResource<Item, ItemBitInfo>> resources = Lists.newArrayList();
+            List<BitResource<Item, ItemBitInfo>> resources = new ArrayList<>();
             for (var stack : input.getIngredient().getMatchingStacks()) {
                 resources.add(BitResource.of(BitRegistries.ITEM, stack.getItem(), input.getCount()));
             }
@@ -36,7 +37,7 @@ public class IRRecipeHandler<R extends IRRecipe> implements RecipeHandler<R> {
 
     @Override
     public List<RecipeHandlerOutput<?, ?>> getOutputs(R recipe) {
-        List<RecipeHandlerOutput<?, ?>> result = Lists.newArrayList();
+        List<RecipeHandlerOutput<?, ?>> result = new ArrayList<>();
         for (var output : recipe.getOutputs()) {
             var stack = output.getStack();
             result.add(new RecipeHandlerOutput<>(BitResource.of(BitRegistries.ITEM, stack.getItem(), stack.getCount() * output.getChance())));

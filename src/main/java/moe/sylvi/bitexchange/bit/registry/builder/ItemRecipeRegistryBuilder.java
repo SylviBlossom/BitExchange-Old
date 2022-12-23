@@ -3,6 +3,7 @@ package moe.sylvi.bitexchange.bit.registry.builder;
 import moe.sylvi.bitexchange.bit.info.BitInfo;
 import moe.sylvi.bitexchange.bit.info.ItemBitInfo;
 import moe.sylvi.bitexchange.bit.registry.BitRegistry;
+import moe.sylvi.bitexchange.bit.research.ResearchTier;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.Recipe;
 
@@ -25,6 +26,6 @@ public class ItemRecipeRegistryBuilder extends AbstractRecipeRegistryBuilder<Ite
     @Override
     public ItemBitInfo createInfo(Item resource, double bits, Recipe<?> smallestRecipe) {
         var isResource = getRecipeHandler(smallestRecipe).isAutomatable(smallestRecipe);
-        return BitInfo.ofItem(resource, bits, 1, true, isResource);
+        return BitInfo.ofItem(resource, bits, ResearchTier.CRAFTED.getResearch(), true, isResource);
     }
 }

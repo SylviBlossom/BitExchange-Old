@@ -4,14 +4,14 @@ import moe.sylvi.bitexchange.bit.BitResource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
-import org.apache.commons.compress.utils.Lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractSimpleRecipeHandler<T extends Recipe<?>> implements RecipeHandler<T> {
     @Override
     public List<ResourceIngredient<?,?>> getIngredients(T recipe) {
-        List<ResourceIngredient<?,?>> result = Lists.newArrayList();
+        List<ResourceIngredient<?,?>> result = new ArrayList<>();
 
         var ingredients = getItemIngredients(recipe);
         for (var i = 0; i < ingredients.size(); i++) {

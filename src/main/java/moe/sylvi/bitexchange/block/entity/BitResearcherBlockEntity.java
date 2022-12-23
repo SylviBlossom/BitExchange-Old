@@ -3,6 +3,7 @@ package moe.sylvi.bitexchange.block.entity;
 import moe.sylvi.bitexchange.BitComponents;
 import moe.sylvi.bitexchange.BitExchange;
 import moe.sylvi.bitexchange.BitRegistries;
+import moe.sylvi.bitexchange.bit.BitHelper;
 import moe.sylvi.bitexchange.bit.research.ResearchableItem;
 import moe.sylvi.bitexchange.inventory.ImplementedInventory;
 import moe.sylvi.bitexchange.screen.BitResearcherScreenHandler;
@@ -126,7 +127,7 @@ public class BitResearcherBlockEntity extends BlockEntity implements NamedScreen
                         }
                     }
                     var component = BitComponents.ITEM_KNOWLEDGE.get(player);
-                    if (component.canLearn(item)) {
+                    if (component.canLearn(item) && !BitHelper.isItemDisabled(input)) {
                         long knowledge = component.getKnowledge(item);
                         if (knowledge < BitRegistries.ITEM.getResearch(item)) {
                             int count = (int) component.addKnowledge(item, input.getCount());
